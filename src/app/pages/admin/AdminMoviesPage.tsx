@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import ImageUploader from '../../ui/ImageUploader'
 import { supabase } from '../../../lib/supabase'
 
 type Movie = {
@@ -100,39 +101,50 @@ export default function AdminMoviesPage() {
 
           {(['poster_images', 'backdrop_images', 'title_logos'] as const).map((key) => {
             const label = key === 'poster_images' ? 'Posters' : key === 'backdrop_images' ? 'Backdrops' : 'Logos'
+            const uploadLabel = key === 'poster_images' ? 'Poster' : key === 'backdrop_images' ? 'Backdrop' : 'Logo'
             const selectedKey = key === 'poster_images' ? 'selected_poster_url' : key === 'backdrop_images' ? 'selected_backdrop_url' : 'selected_logo_url'
             const urls: string[] = (m[key] as string[]) ?? []
-            if (!urls.length) return null
             return (
               <div key={key} className="space-y-2">
-                <div className="text-xs text-white/50">{label} ({urls.length}) — tap to select active</div>
-                <div className={[
-                  'flex gap-2 overflow-x-auto pb-2',
-                  key === 'poster_images' ? 'items-end' : 'items-center',
-                ].join(' ')}>
-                  {urls.map((url) => {
-                    const isSelected = m[selectedKey] === url
-                    return (
-                      <button
-                        key={url}
-                        onClick={() => set(selectedKey, url)}
-                        className={[
-                          'relative shrink-0 overflow-hidden rounded-xl border-2 transition-all',
-                          isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100',
-                        ].join(' ')}
-                      >
-                        <img
-                          src={url}
-                          alt=""
-                          className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : 'h-12 w-auto object-contain'}
-                        />
-                        {isSelected && (
-                          <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>
-                        )}
-                      </button>
-                    )
-                  })}
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-white/50">{label} ({urls.length}) — tap to select active</div>
+                  <ImageUploader
+                    bucket="movie-images"
+                    folder={m.id}
+                    label={uploadLabel}
+                    onUploaded={(url) => {
+                      const updated = [url, ...urls.filter((u) => u !== url)]
+                      set(key, updated)
+                      set(selectedKey, url)
+                    }}
+                  />
                 </div>
+                {urls.length ? (
+                  <div className={['flex gap-2 overflow-x-auto pb-2', key === 'poster_images' ? 'items-end' : 'items-center'].join(' ')}>
+                    {urls.map((url) => {
+                      const isSelected = m[selectedKey] === url
+                      return (
+                        <button
+                          key={url}
+                          onClick={() => set(selectedKey, url)}
+                          className={[
+                            'relative shrink-0 overflow-hidden rounded-xl border-2 transition-all',
+                            isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100',
+                          ].join(' ')}
+                        >
+                          <img
+                            src={url}
+                            alt=""
+                            className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : 'h-12 w-auto object-contain'}
+                          />
+                          {isSelected && (
+                            <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : null}
               </div>
             )
           })}
