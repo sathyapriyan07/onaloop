@@ -15,12 +15,33 @@ import {
 async function upsertCredits(credits: TmdbCredit[], parentKey: 'movie_id' | 'series_id', parentId: string) {
   await supabase.from('credits').delete().eq(parentKey, parentId)
   if (!credits.length) return
+
+  // fetch bios for people not yet in DB
+  const tmdbIds = [...new Set(credits.map((c) => c.tmdb_id))]
+  const { data: existing } = await supabase.from('people').select('tmdb_id').in('tmdb_id', tmdbIds)
+  const existingIds = new Set((existing ?? []).map((r: any) => r.tmdb_id))
+  const bioMap: Record<number, string | null> = {}
+  await Promise.all(
+    tmdbIds.filter((id) => !existingIds.has(id)).map(async (id) => {
+      try {
+        const p = await tmdbFetchPerson(id)
+        bioMap[id] = p.bio
+      } catch { bioMap[id] = null }
+    })
+  )
+
   for (const c of credits) {
     const profileUrls = c.profile_path ? [`https://image.tmdb.org/t/p/w500${c.profile_path}`] : []
     const { data: person, error: pErr } = await supabase
       .from('people')
       .upsert(
-        { tmdb_id: c.tmdb_id, name: c.name, profile_images: profileUrls, selected_profile_url: profileUrls[0] ?? null },
+        {
+          tmdb_id: c.tmdb_id,
+          name: c.name,
+          profile_images: profileUrls,
+          selected_profile_url: profileUrls[0] ?? null,
+          ...(c.tmdb_id in bioMap ? { bio: bioMap[c.tmdb_id] } : {}),
+        },
         { onConflict: 'tmdb_id' },
       )
       .select('id')
