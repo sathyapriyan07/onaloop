@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import Hero from '../ui/Hero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
@@ -11,6 +11,8 @@ type Series = {
   title: string
   overview: string | null
   first_air_date: string | null
+  tmdb_rating: number | null
+  trailer_url: string | null
   selected_backdrop_url: string | null
   backdrop_images: unknown
   selected_logo_url: string | null
@@ -18,26 +20,33 @@ type Series = {
 }
 
 type Genre = { id: string; name: string }
-
-type Review = {
+type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
+type LinkRow = { id: string; label: string; url: string }
+type CreditRow = {
   id: string
-  user_id: string
-  rating: number | null
-  review_text: string
-  created_at: string
+  credit_type: 'cast' | 'crew'
+  character: string | null
+  job: string | null
+  sort_order: number
+  person: { id: string; name: string; selected_profile_url: string | null } | null
 }
 
-type LinkRow = { id: string; label: string; url: string }
+function youtubeEmbedUrl(url: string) {
+  const match = url.match(/[?&]v=([^&]+)/)
+  return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : null
+}
 
 export default function SeriesDetailPage() {
   const { id } = useParams()
   const { user } = useSession()
   const [series, setSeries] = useState<Series | null>(null)
   const [genres, setGenres] = useState<Genre[]>([])
+  const [credits, setCredits] = useState<CreditRow[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showTrailer, setShowTrailer] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -46,82 +55,59 @@ export default function SeriesDetailPage() {
 
       const { data: row } = await supabase
         .from('series')
-        .select('id,title,overview,first_air_date,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos')
+        .select('id,title,overview,first_air_date,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos')
         .eq('id', id)
         .maybeSingle()
-
       if (!isMounted) return
       setSeries((row ?? null) as Series | null)
 
       const { data: genreRows } = await supabase
-        .from('series_genres')
-        .select('genre:genres(id,name)')
-        .eq('series_id', id)
-
+        .from('series_genres').select('genre:genres(id,name)').eq('series_id', id)
       if (!isMounted) return
-      setGenres(((genreRows ?? []).map((r: any) => r.genre).filter(Boolean) as Genre[]) ?? [])
+      setGenres(((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[])
+
+      const { data: creditRows } = await supabase
+        .from('credits')
+        .select('id,credit_type,character,job,sort_order,person:people(id,name,selected_profile_url)')
+        .eq('series_id', id)
+        .order('sort_order', { ascending: true })
+      if (!isMounted) return
+      setCredits((creditRows ?? []) as CreditRow[])
 
       const { data: reviewRows } = await supabase
-        .from('reviews')
-        .select('id,user_id,rating,review_text,created_at')
-        .eq('series_id', id)
-        .order('created_at', { ascending: false })
-
+        .from('reviews').select('id,user_id,rating,review_text,created_at')
+        .eq('series_id', id).order('created_at', { ascending: false })
       if (!isMounted) return
       setReviews((reviewRows ?? []) as Review[])
 
       const { data: streamingRows } = await supabase
-        .from('series_streaming_links')
-        .select('id,label,url')
-        .eq('series_id', id)
-        .order('sort_order', { ascending: true })
-
+        .from('series_streaming_links').select('id,label,url').eq('series_id', id).order('sort_order')
       if (!isMounted) return
       setStreamingLinks((streamingRows ?? []) as LinkRow[])
     }
-
     run()
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [id])
 
-  const meta = useMemo(() => {
-    if (!series) return null
-    return (
-      <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/70">
-        {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
-        {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
-      </div>
-    )
-  }, [series, genres])
-
   async function submitReview() {
-    if (!id || !user) return
-    if (!reviewText.trim()) return
-
+    if (!id || !user || !reviewText.trim()) return
     setIsSubmitting(true)
     try {
-      const { error } = await supabase.from('reviews').insert({
-        user_id: user.id,
-        series_id: id,
-        review_text: reviewText.trim(),
-      })
+      const { error } = await supabase.from('reviews').insert({ user_id: user.id, series_id: id, review_text: reviewText.trim() })
       if (error) throw error
       setReviewText('')
-
-      const { data: reviewRows } = await supabase
-        .from('reviews')
-        .select('id,user_id,rating,review_text,created_at')
-        .eq('series_id', id)
-        .order('created_at', { ascending: false })
-      setReviews((reviewRows ?? []) as Review[])
+      const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('series_id', id).order('created_at', { ascending: false })
+      setReviews((data ?? []) as Review[])
     } finally {
       setIsSubmitting(false)
     }
   }
 
   if (!series) return <div className="text-white/60">Loading…</div>
+
+  const cast = credits.filter((c) => c.credit_type === 'cast')
+  const crew = credits.filter((c) => c.credit_type === 'crew')
+  const embedUrl = series.trailer_url ? youtubeEmbedUrl(series.trailer_url) : null
 
   return (
     <div className="space-y-6">
@@ -135,8 +121,25 @@ export default function SeriesDetailPage() {
 
       <section className="space-y-2">
         <h1 className="text-xl font-semibold tracking-tight">{series.title}</h1>
-        {meta}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/70">
+          {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
+          {series.tmdb_rating ? <span className="flex items-center gap-1">★ {series.tmdb_rating}</span> : null}
+          {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
+        </div>
         {series.overview ? <p className="text-sm leading-relaxed text-white/70">{series.overview}</p> : null}
+        {embedUrl ? (
+          <div className="pt-1">
+            {showTrailer ? (
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
+                <iframe src={embedUrl} className="h-full w-full" allow="autoplay; fullscreen" allowFullScreen title="Trailer" />
+              </div>
+            ) : (
+              <button onClick={() => setShowTrailer(true)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">
+                ▶ Watch Trailer
+              </button>
+            )}
+          </div>
+        ) : null}
       </section>
 
       {streamingLinks.length ? (
@@ -144,15 +147,47 @@ export default function SeriesDetailPage() {
           <h2 className="text-base font-semibold tracking-tight">Streaming</h2>
           <div className="flex flex-wrap gap-2">
             {streamingLinks.map((l) => (
-              <a
-                key={l.id}
-                href={l.url}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10"
-              >
-                {l.label}
-              </a>
+              <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">{l.label}</a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {cast.length ? (
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold tracking-tight">Cast</h2>
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {cast.map((c) => c.person && (
+              <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                  {c.person.selected_profile_url
+                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
+                    : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                </div>
+                <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                {c.character ? <div className="w-full truncate text-xs text-white/50">{c.character}</div> : null}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {crew.length ? (
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold tracking-tight">Crew</h2>
+          <div className="flex flex-wrap gap-3">
+            {crew.map((c) => c.person && (
+              <Link key={c.id} to={`/person/${c.person.id}`} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                <div className="h-8 w-8 overflow-hidden rounded-full bg-white/10 shrink-0">
+                  {c.person.selected_profile_url
+                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
+                    : null}
+                </div>
+                <div>
+                  <div className="text-xs font-medium">{c.person.name}</div>
+                  {c.job ? <div className="text-xs text-white/50">{c.job}</div> : null}
+                </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -160,26 +195,16 @@ export default function SeriesDetailPage() {
 
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">Reviews</h2>
-
         {user ? (
           <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
-            <TextArea
-              placeholder="Write a review…"
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-            />
+            <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
             <div className="flex justify-end">
-              <Button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}>
-                Post review
-              </Button>
+              <Button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}>Post review</Button>
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
-            Log in to add a review.
-          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">Log in to add a review.</div>
         )}
-
         <div className="space-y-3">
           {reviews.map((r) => (
             <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -193,4 +218,3 @@ export default function SeriesDetailPage() {
     </div>
   )
 }
-

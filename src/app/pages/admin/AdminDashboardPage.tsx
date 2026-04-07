@@ -22,20 +22,18 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <Link
-          to="/admin/import"
-          className="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
-        >
-          <div className="text-sm font-semibold">TMDb Import</div>
-          <div className="mt-1 text-xs text-white/60">Search TMDb and import movies/series/people.</div>
-        </Link>
-        <Link
-          to="/admin/home"
-          className="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
-        >
-          <div className="text-sm font-semibold">Homepage Sections</div>
-          <div className="mt-1 text-xs text-white/60">Curate rails on the homepage.</div>
-        </Link>
+        {([
+          { to: '/admin/import', label: 'TMDb Import', desc: 'Search TMDb and import movies/series/people.' },
+          { to: '/admin/movies', label: 'Movies', desc: 'Edit or delete imported movies.' },
+          { to: '/admin/series', label: 'Series', desc: 'Edit or delete imported series.' },
+          { to: '/admin/people', label: 'People', desc: 'Edit or delete imported people.' },
+          { to: '/admin/home', label: 'Homepage Sections', desc: 'Curate rails on the homepage.' },
+        ] as const).map(({ to, label, desc }) => (
+          <Link key={to} to={to} className="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/10">
+            <div className="text-sm font-semibold">{label}</div>
+            <div className="mt-1 text-xs text-white/60">{desc}</div>
+          </Link>
+        ))}
       </div>
     </div>
   )

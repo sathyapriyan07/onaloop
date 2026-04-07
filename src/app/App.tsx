@@ -16,6 +16,9 @@ import AdminLoginPage from './pages/admin/AdminLoginPage'
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import AdminImportPage from './pages/admin/AdminImportPage'
 import AdminHomeSectionsPage from './pages/admin/AdminHomeSectionsPage'
+import AdminMoviesPage from './pages/admin/AdminMoviesPage'
+import AdminSeriesPage from './pages/admin/AdminSeriesPage'
+import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 
 export default function App() {
   return (
@@ -39,6 +42,9 @@ export default function App() {
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/import" element={<AdminImportPage />} />
         <Route path="/admin/home" element={<AdminHomeSectionsPage />} />
+        <Route path="/admin/movies" element={<AdminMoviesPage />} />
+        <Route path="/admin/series" element={<AdminSeriesPage />} />
+        <Route path="/admin/people" element={<AdminPeoplePage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
