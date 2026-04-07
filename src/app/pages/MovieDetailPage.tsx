@@ -76,7 +76,7 @@ export default function MovieDetailPage() {
         .eq('movie_id', id)
         .order('sort_order', { ascending: true })
       if (!isMounted) return
-      setCredits((creditRows ?? []) as CreditRow[])
+      setCredits((creditRows ?? []) as unknown as CreditRow[])
 
       const { data: reviewRows } = await supabase
         .from('reviews').select('id,user_id,rating,review_text,created_at')
