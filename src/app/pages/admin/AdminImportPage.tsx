@@ -9,7 +9,34 @@ import {
   tmdbFetchPerson,
   type TmdbType,
   type TmdbSearchResult,
+  type TmdbCredit,
 } from '../../../lib/tmdb'
+
+async function upsertCredits(credits: TmdbCredit[], parentKey: 'movie_id' | 'series_id', parentId: string) {
+  await supabase.from('credits').delete().eq(parentKey, parentId)
+  if (!credits.length) return
+  for (const c of credits) {
+    const profileUrls = c.profile_path ? [`https://image.tmdb.org/t/p/w500${c.profile_path}`] : []
+    const { data: person, error: pErr } = await supabase
+      .from('people')
+      .upsert(
+        { tmdb_id: c.tmdb_id, name: c.name, profile_images: profileUrls, selected_profile_url: profileUrls[0] ?? null },
+        { onConflict: 'tmdb_id' },
+      )
+      .select('id')
+      .single()
+    if (pErr) throw new Error(pErr.message)
+    const { error: cErr } = await supabase.from('credits').insert({
+      person_id: person.id,
+      [parentKey]: parentId,
+      credit_type: c.credit_type,
+      character: c.character ?? null,
+      job: c.job ?? null,
+      sort_order: c.sort_order,
+    })
+    if (cErr) throw new Error(cErr.message)
+  }
+}
 
 async function upsertGenres(genres: Array<{ id: number; name: string }>) {
   const ids: string[] = []
@@ -27,7 +54,7 @@ async function upsertGenres(genres: Array<{ id: number; name: string }>) {
 
 async function importMovie(tmdbId: number) {
   const movie = await tmdbFetchMovie(tmdbId)
-  const { genres, ...payload } = movie
+  const { genres, credits, ...payload } = movie
   const posterUrls = payload.poster_images
   const backdropUrls = payload.backdrop_images
   const logoUrls = payload.title_logos
@@ -55,12 +82,13 @@ async function importMovie(tmdbId: number) {
       .insert(genreIds.map((genre_id) => ({ movie_id: row.id, genre_id })))
     if (mgError) throw new Error(mgError.message)
   }
+  await upsertCredits(credits, 'movie_id', row.id)
   return row.title
 }
 
 async function importSeries(tmdbId: number) {
   const series = await tmdbFetchSeries(tmdbId)
-  const { genres, ...payload } = series
+  const { genres, credits, ...payload } = series
   const posterUrls = payload.poster_images
   const backdropUrls = payload.backdrop_images
   const logoUrls = payload.title_logos
@@ -88,6 +116,7 @@ async function importSeries(tmdbId: number) {
       .insert(genreIds.map((genre_id) => ({ series_id: row.id, genre_id })))
     if (sgError) throw new Error(sgError.message)
   }
+  await upsertCredits(credits, 'series_id', row.id)
   return row.title
 }
 
