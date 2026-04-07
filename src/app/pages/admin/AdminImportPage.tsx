@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
 import { supabase } from '../../../lib/supabase'
@@ -139,14 +139,29 @@ export default function AdminImportPage() {
   const [type, setType] = useState<TmdbType>('movie')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<TmdbSearchResult[]>([])
+  const [imported, setImported] = useState<Record<number, string>>({})
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [importingId, setImportingId] = useState<number | null>(null)
+
+  async function loadImported(t: TmdbType) {
+    const table = t === 'movie' ? 'movies' : t === 'series' ? 'series' : 'people'
+    const posterCol = t === 'person' ? 'selected_profile_url' : 'selected_poster_url'
+    const { data } = await supabase.from(table).select(`tmdb_id,${posterCol}`).not('tmdb_id', 'is', null)
+    const map: Record<number, string> = {}
+    for (const row of data ?? []) {
+      const url = (row as any)[posterCol]
+      if (row.tmdb_id && url) map[row.tmdb_id] = url
+    }
+    setImported(map)
+  }
 
   const title = useMemo(
     () => (type === 'movie' ? 'Movies' : type === 'series' ? 'Series' : 'People'),
     [type],
   )
+
+  useEffect(() => { loadImported(type) }, [type])
 
   async function search() {
     setError(null)
@@ -209,18 +224,29 @@ export default function AdminImportPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {results.map((r) => (
-          <div key={r.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
-            <div className="text-sm font-semibold">{r.title ?? r.name ?? `#${r.id}`}</div>
-            {r.overview ? <p className="mt-2 line-clamp-3 text-xs text-white/60">{r.overview}</p> : null}
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-xs text-white/50">TMDb #{r.id}</div>
-              <Button disabled={importingId === r.id} onClick={() => doImport(r.id)}>
-                {importingId === r.id ? 'Importing…' : 'Import'}
-              </Button>
+        {results.map((r) => {
+          const imgPath = r.poster_path ?? r.profile_path
+          const imgUrl = imgPath ? `https://image.tmdb.org/t/p/w342${imgPath}` : (imported[r.id] ?? null)
+          return (
+            <div key={r.id} className="flex gap-3 rounded-3xl border border-white/10 bg-white/5 p-3">
+              <div className="h-24 w-16 shrink-0 overflow-hidden rounded-2xl bg-white/10">
+                {imgUrl ? <img src={imgUrl} alt={r.title ?? r.name} className="h-full w-full object-cover" /> : null}
+              </div>
+              <div className="flex flex-1 flex-col justify-between min-w-0">
+                <div>
+                  <div className="text-sm font-semibold leading-snug">{r.title ?? r.name ?? `#${r.id}`}</div>
+                  {r.overview ? <p className="mt-1 line-clamp-2 text-xs text-white/60">{r.overview}</p> : null}
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <div className="text-xs text-white/50">TMDb #{r.id}</div>
+                  <Button disabled={importingId === r.id} onClick={() => doImport(r.id)}>
+                    {importingId === r.id ? 'Importing…' : 'Import'}
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {!results.length ? <div className="text-sm text-white/60">Search TMDb to import content.</div> : null}

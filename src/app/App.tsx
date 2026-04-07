@@ -17,6 +17,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import AdminImportPage from './pages/admin/AdminImportPage'
 import AdminHomeSectionsPage from './pages/admin/AdminHomeSectionsPage'
 import AdminMoviesPage from './pages/admin/AdminMoviesPage'
+import AdminGenresPage from './pages/admin/AdminGenresPage'
 import AdminSeriesPage from './pages/admin/AdminSeriesPage'
 import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/admin/movies" element={<AdminMoviesPage />} />
         <Route path="/admin/series" element={<AdminSeriesPage />} />
         <Route path="/admin/people" element={<AdminPeoplePage />} />
+        <Route path="/admin/genres" element={<AdminGenresPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

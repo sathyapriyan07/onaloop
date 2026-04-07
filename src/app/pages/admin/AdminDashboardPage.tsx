@@ -27,6 +27,7 @@ export default function AdminDashboardPage() {
           { to: '/admin/movies', label: 'Movies', desc: 'Edit or delete imported movies.' },
           { to: '/admin/series', label: 'Series', desc: 'Edit or delete imported series.' },
           { to: '/admin/people', label: 'People', desc: 'Edit or delete imported people.' },
+          { to: '/admin/genres', label: 'Genres', desc: 'Edit genre display images.' },
           { to: '/admin/home', label: 'Homepage Sections', desc: 'Curate rails on the homepage.' },
         ] as const).map(({ to, label, desc }) => (
           <Link key={to} to={to} className="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/10">
