@@ -37,10 +37,10 @@ export default function App() {
         <Route path="/genre/:id" element={<GenreDetailPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
       </Route>
 
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route element={<AdminShell />}>
         <Route path="/admin" element={<AdminDashboardPage />} />
