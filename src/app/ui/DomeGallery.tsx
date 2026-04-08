@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useCallback } from 'react'
 import { useGesture } from '@use-gesture/react'
 import './DomeGallery.css'
 
-type ImageItem = { src: string; alt?: string }
+type ImageItem = { src: string; alt?: string; id?: string }
 
 const DEFAULTS = { maxVerticalRotationDeg: 5, dragSensitivity: 20, enlargeTransitionMs: 300, segments: 35 }
 
@@ -20,9 +20,9 @@ function buildItems(pool: ImageItem[], seg: number) {
   const evenYs = [-4, -2, 0, 2, 4]
   const oddYs = [-3, -1, 1, 3, 5]
   const coords = xCols.flatMap((x, c) => (c % 2 === 0 ? evenYs : oddYs).map(y => ({ x, y, sizeX: 2, sizeY: 2 })))
-  if (!pool.length) return coords.map(c => ({ ...c, src: '', alt: '' }))
+  if (!pool.length) return coords.map(c => ({ ...c, src: '', alt: '', id: '' }))
   const used = Array.from({ length: coords.length }, (_, i) => pool[i % pool.length])
-  return coords.map((c, i) => ({ ...c, src: used[i].src, alt: used[i].alt ?? '' }))
+  return coords.map((c, i) => ({ ...c, src: used[i].src, alt: used[i].alt ?? '', id: used[i].id ?? '' }))
 }
 
 function computeItemBaseRotation(offsetX: number, offsetY: number, sizeX: number, sizeY: number, segments: number) {
@@ -43,6 +43,7 @@ type Props = {
   openedImageHeight?: string
   imageBorderRadius?: string
   openedImageBorderRadius?: string
+  onSelect?: (id: string) => void
 }
 
 export default function DomeGallery({
@@ -58,6 +59,7 @@ export default function DomeGallery({
   openedImageHeight: _openedImageHeight = '350px',
   imageBorderRadius = '20px',
   openedImageBorderRadius = '20px',
+  onSelect,
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLElement>(null)
@@ -246,8 +248,12 @@ export default function DomeGallery({
 
   const onTileClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (draggingRef.current || movedRef.current || performance.now() - lastDragEndAt.current < 80 || openingRef.current) return
+    if (onSelect) {
+      const id = e.currentTarget.closest('.item')?.getAttribute('data-id') ?? ''
+      if (id) { onSelect(id); return }
+    }
     openItemFromElement(e.currentTarget)
-  }, [openItemFromElement])
+  }, [openItemFromElement, onSelect])
 
   useEffect(() => () => { document.body.classList.remove('dg-scroll-lock') }, [])
 
@@ -257,7 +263,7 @@ export default function DomeGallery({
         <div className="stage">
           <div ref={sphereRef} className="sphere">
             {items.map((it, i) => (
-              <div key={`${it.x},${it.y},${i}`} className="item" data-src={it.src} data-offset-x={it.x} data-offset-y={it.y} data-size-x={it.sizeX} data-size-y={it.sizeY}
+              <div key={`${it.x},${it.y},${i}`} className="item" data-src={it.src} data-id={it.id} data-offset-x={it.x} data-offset-y={it.y} data-size-x={it.sizeX} data-size-y={it.sizeY}
                 style={{ ['--offset-x' as any]: it.x, ['--offset-y' as any]: it.y, ['--item-size-x' as any]: it.sizeX, ['--item-size-y' as any]: it.sizeY }}>
                 <div className="item__image" role="button" tabIndex={0} aria-label={it.alt || 'Open image'} onClick={onTileClick}>
                   <img src={it.src} draggable={false} alt={it.alt} />

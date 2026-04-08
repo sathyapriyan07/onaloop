@@ -1,24 +1,28 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import DomeGallery from '../ui/DomeGallery'
 
-type Item = { id: string; title: string; selected_poster_url: string | null; _type: 'movie' | 'series' }
-
 export default function DiscoverPage() {
-  const [images, setImages] = useState<{ src: string; alt: string; id: string; type: 'movie' | 'series' }[]>([])
+  const navigate = useNavigate()
+  const [images, setImages] = useState<{ src: string; alt: string; id: string }[]>([])
 
   useEffect(() => {
     Promise.all([
-      supabase.from('movies').select('id,title,selected_poster_url').not('selected_poster_url', 'is', null).limit(60),
-      supabase.from('series').select('id,title,selected_poster_url').not('selected_poster_url', 'is', null).limit(30),
+      supabase.from('movies').select('id,title,selected_backdrop_url').not('selected_backdrop_url', 'is', null).limit(60),
+      supabase.from('series').select('id,title,selected_backdrop_url').not('selected_backdrop_url', 'is', null).limit(30),
     ]).then(([{ data: movies }, { data: series }]) => {
-      const items: typeof images = [
-        ...((movies ?? []) as Item[]).map((m) => ({ src: m.selected_poster_url!, alt: m.title, id: m.id, type: 'movie' as const })),
-        ...((series ?? []) as Item[]).map((s) => ({ src: s.selected_poster_url!, alt: s.title, id: s.id, type: 'series' as const })),
-      ]
-      setImages(items)
+      setImages([
+        ...((movies ?? []) as any[]).map((m) => ({ src: m.selected_backdrop_url, alt: m.title, id: `movie:${m.id}` })),
+        ...((series ?? []) as any[]).map((s) => ({ src: s.selected_backdrop_url, alt: s.title, id: `series:${s.id}` })),
+      ])
     })
   }, [])
+
+  const onSelect = useCallback((id: string) => {
+    const [type, contentId] = id.split(':')
+    navigate(type === 'movie' ? `/movie/${contentId}` : `/series/${contentId}`)
+  }, [navigate])
 
   return (
     <div className="fixed inset-0 z-0" style={{ height: '100dvh' }}>
@@ -32,6 +36,7 @@ export default function DiscoverPage() {
           dragDampening={2}
           grayscale={false}
           overlayBlurColor="var(--bg, #0a0a0a)"
+          onSelect={onSelect}
         />
       )}
       <div className="absolute inset-x-0 top-0 flex items-center justify-center pt-6 pointer-events-none z-10">
