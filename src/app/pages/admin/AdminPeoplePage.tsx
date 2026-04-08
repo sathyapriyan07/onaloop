@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
 import AdminBackButton from '../../ui/AdminBackButton'
+import ImageUploader from '../../ui/ImageUploader'
 import { supabase } from '../../../lib/supabase'
 
 type Person = {
@@ -56,7 +57,6 @@ export default function AdminPeoplePage() {
   if (editing) {
     const p = editing
     const set = (k: keyof Editing, v: any) => setEditing((prev) => ({ ...prev!, [k]: v }))
-    const urls: string[] = (p.profile_images as string[]) ?? []
     return (
       <div className="space-y-6">
         <div className="space-y-1">
@@ -94,19 +94,40 @@ export default function AdminPeoplePage() {
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/25 focus:bg-white/10"
             />
           </label>
-          {urls.length ? (
-            <div className="space-y-2">
-              <div className="text-xs text-white/50">Profile photo — select active</div>
-              <div className="flex flex-wrap gap-2">
-                {urls.map((url) => (
-                  <button key={url} onClick={() => set('selected_profile_url', url)}
-                    className={['rounded-xl overflow-hidden border-2', p.selected_profile_url === url ? 'border-white' : 'border-transparent'].join(' ')}>
-                    <img src={url} alt="" className="h-24 w-16 object-cover" />
-                  </button>
-                ))}
+          {(() => {
+            const urls: string[] = (p.profile_images as string[]) ?? []
+            return (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-white/50">Profile photo ({urls.length}) — select active</div>
+                  <ImageUploader
+                    bucket="movie-images"
+                    folder={`people/${p.id}`}
+                    label="Photo"
+                    onUploaded={(url) => {
+                      const updated = [url, ...urls.filter((u) => u !== url)]
+                      set('profile_images', updated)
+                      set('selected_profile_url', url)
+                    }}
+                  />
+                </div>
+                {urls.length ? (
+                  <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {urls.map((url) => {
+                      const isSelected = p.selected_profile_url === url
+                      return (
+                        <button key={url} onClick={() => set('selected_profile_url', url)}
+                          className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
+                          <img src={url} alt="" className="h-24 w-16 object-cover" />
+                          {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : null}
               </div>
-            </div>
-          ) : null}
+            )
+          })()}
           {error ? <div className="text-sm text-red-300">{error}</div> : null}
           <Button disabled={saving} onClick={save}>{saving ? 'Saving…' : 'Save'}</Button>
         </div>
