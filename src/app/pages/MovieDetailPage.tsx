@@ -74,20 +74,26 @@ export default function MovieDetailPage() {
       const fetchedGenres = ((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[]
       setGenres(fetchedGenres)
 
-      if (fetchedGenres.length) {
+      if (fetchedGenres.length >= 2) {
         const genreIds = fetchedGenres.map((g) => g.id)
         const { data: simRows } = await supabase
           .from('movie_genres')
-          .select('movie:movies(id,title,selected_poster_url,selected_logo_url,tmdb_rating)')
+          .select('movie_id,genre_id,movie:movies(id,title,selected_poster_url,selected_logo_url,tmdb_rating)')
           .in('genre_id', genreIds)
           .neq('movie_id', id)
-          .limit(20)
         if (isMounted) {
-          const seen = new Set<string>()
-          const sim = (simRows ?? [])
-            .map((r: any) => Array.isArray(r.movie) ? r.movie[0] : r.movie)
-            .filter((m: any) => m && !seen.has(m.id) && seen.add(m.id))
-            .sort((a: any, b: any) => (b.tmdb_rating ?? 0) - (a.tmdb_rating ?? 0))
+          // count genre matches per movie
+          const countMap = new Map<string, number>()
+          const movieMap = new Map<string, any>()
+          for (const row of (simRows ?? []) as any[]) {
+            const movie = Array.isArray(row.movie) ? row.movie[0] : row.movie
+            if (!movie) continue
+            countMap.set(movie.id, (countMap.get(movie.id) ?? 0) + 1)
+            movieMap.set(movie.id, movie)
+          }
+          const sim = [...movieMap.values()]
+            .filter((m) => (countMap.get(m.id) ?? 0) >= 2)
+            .sort((a, b) => (b.tmdb_rating ?? 0) - (a.tmdb_rating ?? 0))
             .slice(0, 12)
           setSimilarMovies(sim)
         }

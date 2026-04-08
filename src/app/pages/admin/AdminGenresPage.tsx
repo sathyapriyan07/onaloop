@@ -5,27 +5,37 @@ import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Genre = { id: string; name: string; tmdb_id: number | null; display_image_url: string | null }
-type Editing = { id: string; name: string; display_image_url: string; images: string[] }
+type Editing = { id: string; name: string; display_image_url: string; images: string[]; imageSearch: string }
 
 async function loadGenreImages(genreId: string): Promise<string[]> {
   const [{ data: mg }, { data: sg }] = await Promise.all([
     supabase.from('movie_genres')
       .select('movie:movies(backdrop_images,poster_images)')
       .eq('genre_id', genreId)
-      .limit(10),
+      .limit(20),
     supabase.from('series_genres')
       .select('series:series(backdrop_images,poster_images)')
       .eq('genre_id', genreId)
-      .limit(10),
+      .limit(20),
   ])
-
   const urls: string[] = []
   for (const row of [...(mg ?? []), ...(sg ?? [])] as any[]) {
     const item = row.movie ?? row.series
     if (!item) continue
-    const backdrops: string[] = item.backdrop_images ?? []
-    const posters: string[] = item.poster_images ?? []
-    urls.push(...backdrops.slice(0, 2), ...posters.slice(0, 1))
+    urls.push(...(item.backdrop_images ?? []), ...(item.poster_images ?? []))
+  }
+  return [...new Set(urls)]
+}
+
+async function searchImages(query: string): Promise<string[]> {
+  if (!query.trim()) return []
+  const [{ data: movies }, { data: series }] = await Promise.all([
+    supabase.from('movies').select('backdrop_images,poster_images').ilike('title', `%${query}%`).limit(10),
+    supabase.from('series').select('backdrop_images,poster_images').ilike('title', `%${query}%`).limit(10),
+  ])
+  const urls: string[] = []
+  for (const row of [...(movies ?? []), ...(series ?? [])] as any[]) {
+    urls.push(...(row.backdrop_images ?? []), ...(row.poster_images ?? []))
   }
   return [...new Set(urls)]
 }
@@ -36,6 +46,7 @@ export default function AdminGenresPage() {
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [loadingImages, setLoadingImages] = useState(false)
+  const [searchingImages, setSearchingImages] = useState(false)
 
   async function refresh() {
     const { data } = await supabase.from('genres').select('id,name,tmdb_id,display_image_url').order('name')
@@ -47,8 +58,18 @@ export default function AdminGenresPage() {
   async function startEdit(g: Genre) {
     setLoadingImages(true)
     const images = await loadGenreImages(g.id)
-    setEditing({ id: g.id, name: g.name, display_image_url: g.display_image_url ?? '', images })
+    setEditing({ id: g.id, name: g.name, display_image_url: g.display_image_url ?? '', images, imageSearch: '' })
     setLoadingImages(false)
+  }
+
+  async function doImageSearch(query: string) {
+    if (!editing) return
+    setEditing({ ...editing, imageSearch: query })
+    if (!query.trim()) return
+    setSearchingImages(true)
+    const results = await searchImages(query)
+    setEditing((prev) => prev ? { ...prev, images: [...new Set([...results, ...prev.images])] } : prev)
+    setSearchingImages(false)
   }
 
   async function save() {
@@ -90,8 +111,16 @@ export default function AdminGenresPage() {
 
           <div className="space-y-2">
             <div className="text-xs text-white/50">Display image — select from imported content</div>
+            <div className="flex gap-2">
+              <Input
+                value={editing.imageSearch}
+                onChange={(e) => doImageSearch(e.target.value)}
+                placeholder="Search by movie/series title…"
+              />
+              {searchingImages ? <span className="shrink-0 text-xs text-white/40 self-center">Searching…</span> : null}
+            </div>
             {editing.images.length ? (
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {editing.images.map((url) => {
                   const isSelected = editing.display_image_url === url
                   return (
