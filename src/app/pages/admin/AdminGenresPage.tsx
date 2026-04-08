@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Genre = { id: string; name: string; tmdb_id: number | null; display_image_url: string | null }
@@ -74,9 +75,12 @@ export default function AdminGenresPage() {
   if (editing) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
-          <h1 className="text-xl font-semibold tracking-tight">{editing.name}</h1>
+      <div className="space-y-1">
+          <AdminBackButton />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
+            <h1 className="text-xl font-semibold tracking-tight">{editing.name}</h1>
+          </div>
         </div>
         <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4">
           <label className="block space-y-1">
@@ -131,7 +135,10 @@ export default function AdminGenresPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">Genres ({genres.length})</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">Genres ({genres.length})</h1>
+      </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
 
       <div className="space-y-2">

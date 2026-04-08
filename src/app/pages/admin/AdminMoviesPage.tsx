@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
 import ImageUploader from '../../ui/ImageUploader'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Movie = {
@@ -72,6 +73,7 @@ function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDe
 
 export default function AdminMoviesPage() {
   const [movies, setMovies] = useState<Movie[]>([])
+  const [search, setSearch] = useState('')
   const [platforms, setPlatforms] = useState<Platform[]>([])
   const [editing, setEditing] = useState<Editing | null>(null)
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
@@ -165,9 +167,12 @@ export default function AdminMoviesPage() {
     const set = (k: keyof Editing, v: any) => setEditing((p) => ({ ...p!, [k]: v }))
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
-          <h1 className="text-xl font-semibold tracking-tight">{m.title}</h1>
+        <div className="space-y-1">
+          <AdminBackButton />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
+            <h1 className="text-xl font-semibold tracking-tight">{m.title}</h1>
+          </div>
         </div>
         <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4">
           <label className="block space-y-1">
@@ -268,10 +273,14 @@ export default function AdminMoviesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">Movies ({movies.length})</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">Movies ({movies.length})</h1>
+      </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
+      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search movies…" />
       <div className="space-y-2">
-        {movies.map((m) => (
+        {movies.filter((m) => m.title.toLowerCase().includes(search.toLowerCase())).map((m) => (
           <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
             {m.selected_poster_url
               ? <img src={m.selected_poster_url} alt="" className="h-12 w-8 rounded-lg object-cover shrink-0" />

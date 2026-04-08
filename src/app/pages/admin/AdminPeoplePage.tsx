@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Person = {
@@ -15,6 +16,7 @@ type Editing = Partial<Person> & { id: string }
 
 export default function AdminPeoplePage() {
   const [people, setPeople] = useState<Person[]>([])
+  const [search, setSearch] = useState('')
   const [editing, setEditing] = useState<Editing | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -54,9 +56,12 @@ export default function AdminPeoplePage() {
     const urls: string[] = (p.profile_images as string[]) ?? []
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
-          <h1 className="text-xl font-semibold tracking-tight">{p.name}</h1>
+        <div className="space-y-1">
+          <AdminBackButton />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
+            <h1 className="text-xl font-semibold tracking-tight">{p.name}</h1>
+          </div>
         </div>
         <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-4">
           <label className="block space-y-1">
@@ -94,10 +99,14 @@ export default function AdminPeoplePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">People ({people.length})</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">People ({people.length})</h1>
+      </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
+      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search people…" />
       <div className="space-y-2">
-        {people.map((p) => (
+        {people.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).map((p) => (
           <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
             {p.selected_profile_url
               ? <img src={p.selected_profile_url} alt="" className="h-10 w-10 rounded-full object-cover shrink-0" />

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
 import ImageUploader from '../../ui/ImageUploader'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Platform = { id: string; name: string; logo_url: string | null }
@@ -56,7 +57,10 @@ export default function AdminPlatformsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">Platforms ({platforms.length})</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">Platforms ({platforms.length})</h1>
+      </div>
 
       <div className="space-y-2 rounded-3xl border border-white/10 bg-white/5 p-4">
         <div className="text-xs text-white/50">New platform</div>

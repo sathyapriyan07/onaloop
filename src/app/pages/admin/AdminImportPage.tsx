@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 import {
   tmdbSearch,
@@ -179,7 +180,10 @@ export default function AdminImportPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">TMDb Import</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">TMDb Import</h1>
+      </div>
 
       <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap gap-2">

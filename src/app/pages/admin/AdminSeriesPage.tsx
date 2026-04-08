@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
 type Series = {
@@ -22,6 +23,7 @@ type Editing = Partial<Series> & { id: string }
 
 export default function AdminSeriesPage() {
   const [items, setItems] = useState<Series[]>([])
+  const [search, setSearch] = useState('')
   const [editing, setEditing] = useState<Editing | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -60,9 +62,12 @@ export default function AdminSeriesPage() {
     const set = (k: keyof Editing, v: any) => setEditing((p) => ({ ...p!, [k]: v }))
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
-          <h1 className="text-xl font-semibold tracking-tight">{s.title}</h1>
+        <div className="space-y-1">
+          <AdminBackButton />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setEditing(null)} className="text-sm text-white/50 hover:text-white">← Back</button>
+            <h1 className="text-xl font-semibold tracking-tight">{s.title}</h1>
+          </div>
         </div>
         <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-4">
           <label className="block space-y-1">
@@ -138,10 +143,14 @@ export default function AdminSeriesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">Series ({items.length})</h1>
+      <div className="space-y-1">
+        <AdminBackButton />
+        <h1 className="text-xl font-semibold tracking-tight">Series ({items.length})</h1>
+      </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
+      <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search series…" />
       <div className="space-y-2">
-        {items.map((s) => (
+        {items.filter((s) => s.title.toLowerCase().includes(search.toLowerCase())).map((s) => (
           <div key={s.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
             {s.selected_poster_url
               ? <img src={s.selected_poster_url} alt="" className="h-12 w-8 rounded-lg object-cover shrink-0" />
