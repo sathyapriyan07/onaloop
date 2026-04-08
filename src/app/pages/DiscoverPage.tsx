@@ -36,7 +36,6 @@ export default function DiscoverPage() {
           dragDampening={2}
           grayscale={false}
           overlayBlurColor="var(--bg, #0a0a0a)"
-          imageBorderRadius="24px"
           onSelect={onSelect}
         />
       )}

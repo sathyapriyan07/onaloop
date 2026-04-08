@@ -16,10 +16,10 @@ const getDataNumber = (el: HTMLElement, name: string, fallback: number) => {
 }
 
 function buildItems(pool: ImageItem[], seg: number) {
-  const xCols = Array.from({ length: seg }, (_, i) => -37 + i * 3)
-  const evenYs = [-3, 0, 3]
-  const oddYs = [-1.5, 1.5]
-  const coords = xCols.flatMap((x, c) => (c % 2 === 0 ? evenYs : oddYs).map(y => ({ x, y, sizeX: 3, sizeY: 2 })))
+  const xCols = Array.from({ length: seg }, (_, i) => -37 + i * 2)
+  const evenYs = [-4, -2, 0, 2, 4]
+  const oddYs = [-3, -1, 1, 3, 5]
+  const coords = xCols.flatMap((x, c) => (c % 2 === 0 ? evenYs : oddYs).map(y => ({ x, y, sizeX: 2, sizeY: 2 })))
   if (!pool.length) return coords.map(c => ({ ...c, src: '', alt: '', id: '' }))
   const used = Array.from({ length: coords.length }, (_, i) => pool[i % pool.length])
   return coords.map((c, i) => ({ ...c, src: used[i].src, alt: used[i].alt ?? '', id: used[i].id ?? '' }))
