@@ -39,6 +39,14 @@ type FlatCredit = {
   type: 'movie' | 'series'
 }
 
+type CrewRow = {
+  contentId: string
+  content: ContentInfo
+  to: string
+  jobs: string[]
+  type: 'movie' | 'series'
+}
+
 function asOne<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null
   if (Array.isArray(value)) return (value[0] ?? null) as T | null
@@ -79,7 +87,7 @@ export default function PersonDetailPage() {
 
   const flatCredits = useMemo((): FlatCredit[] => {
     return credits
-      .filter((c) => c.credit_type === tab)
+      .filter((c) => c.credit_type === 'cast')
       .map((c) => {
         const movie = asOne(c.movie)
         const series = asOne(c.series)
@@ -87,20 +95,45 @@ export default function PersonDetailPage() {
           creditId: c.id,
           content: { ...movie, year: movie.release_date?.slice(0, 4) ?? null },
           to: `/movie/${movie.id}`,
-          role: tab === 'cast' ? c.character : c.job,
+          role: c.character,
           type: 'movie' as const,
         }
         if (series) return {
           creditId: c.id,
           content: { ...series, year: series.first_air_date?.slice(0, 4) ?? null },
           to: `/series/${series.id}`,
-          role: tab === 'cast' ? c.character : c.job,
+          role: c.character,
           type: 'series' as const,
         }
         return null
       })
       .filter(Boolean) as FlatCredit[]
-  }, [credits, tab])
+  }, [credits])
+
+  const crewRows = useMemo((): CrewRow[] => {
+    const map = new Map<string, CrewRow>()
+    for (const c of credits.filter((c) => c.credit_type === 'crew')) {
+      const movie = asOne(c.movie)
+      const series = asOne(c.series)
+      const item = movie ?? series
+      if (!item) continue
+      const contentId = item.id
+      const year = movie ? (movie as any).release_date?.slice(0, 4) ?? null : (series as any).first_air_date?.slice(0, 4) ?? null
+      const to = movie ? `/movie/${contentId}` : `/series/${contentId}`
+      if (map.has(contentId)) {
+        if (c.job) map.get(contentId)!.jobs.push(c.job)
+      } else {
+        map.set(contentId, {
+          contentId,
+          content: { ...item, year },
+          to,
+          jobs: c.job ? [c.job] : [],
+          type: movie ? 'movie' : 'series',
+        })
+      }
+    }
+    return [...map.values()].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0))
+  }, [credits])
 
   const sorted = useMemo(() =>
     [...flatCredits].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0)),
@@ -142,14 +175,39 @@ export default function PersonDetailPage() {
               <button key={t} onClick={() => setTab(t)}
                 className={clsx('rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
                   tab === t ? 'bg-white text-neutral-950' : 'text-white/60 hover:text-white')}>
-                {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewCount})`}
+                {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
               </button>
             ))}
           </div>
         </div>
 
-        {flatCredits.length === 0 ? (
-          <div className="text-sm text-white/50">No {tab === 'cast' ? 'acting' : 'crew'} credits.</div>
+        {tab === 'crew' ? (
+          crewRows.length === 0 ? (
+            <div className="text-sm text-white/50">No crew credits.</div>
+          ) : (
+            <div className="space-y-1">
+              {crewRows.map(({ contentId, content, to, jobs }) => (
+                <Link key={contentId} to={to}
+                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10">
+                  <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg bg-white/10">
+                    {content.selected_poster_url
+                      ? <img src={content.selected_poster_url} alt={content.title} className="h-full w-full object-cover" />
+                      : null}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="truncate text-xs font-semibold">{content.title}</div>
+                    {jobs.length ? <div className="truncate text-xs text-white/50">{jobs.join(' · ')}</div> : null}
+                  </div>
+                  <div className="shrink-0 text-right">
+                    {content.tmdb_rating ? <div className="text-xs text-white/60">★ {content.tmdb_rating}</div> : null}
+                    {content.year ? <div className="text-xs text-white/40">{content.year}</div> : null}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+        ) : flatCredits.length === 0 ? (
+          <div className="text-sm text-white/50">No acting credits.</div>
         ) : (
           <div className="space-y-6">
             {top.length > 0 && (
@@ -165,9 +223,7 @@ export default function PersonDetailPage() {
                       )}
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                       {content.tmdb_rating ? (
-                        <div className="absolute right-2 top-2 rounded-lg bg-black/60 px-1.5 py-0.5 text-xs font-semibold">
-                          ★ {content.tmdb_rating}
-                        </div>
+                        <div className="absolute right-2 top-2 rounded-lg bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {content.tmdb_rating}</div>
                       ) : null}
                       {content.selected_logo_url ? (
                         <div className="absolute inset-x-0 bottom-0 p-2">
@@ -183,7 +239,6 @@ export default function PersonDetailPage() {
                 ))}
               </div>
             )}
-
             {rest.length > 0 && (
               <div className="space-y-1">
                 {rest.map(({ creditId, content, to, role }) => (
