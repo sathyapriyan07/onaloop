@@ -26,6 +26,8 @@ type Platform = { id: string; name: string; logo_url: string | null }
 type Editing = Partial<Movie> & { id: string }
 type LinkRow = { id: string; label: string; url: string; sort_order: number; platform_id: string | null; platform?: { name: string; logo_url: string | null } | null }
 type NewLink = { platform_id: string; url: string }
+type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
+type PersonOption = { id: string; name: string; selected_profile_url: string | null }
 
 function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDelete }: {
   title: string
@@ -80,6 +82,10 @@ export default function AdminMoviesPage() {
   const [musicLinks, setMusicLinks] = useState<LinkRow[]>([])
   const [newStreaming, setNewStreaming] = useState<NewLink>({ platform_id: '', url: '' })
   const [newMusic, setNewMusic] = useState<NewLink>({ platform_id: '', url: '' })
+  const [credits, setCredits] = useState<CreditRow[]>([])
+  const [allPeople, setAllPeople] = useState<PersonOption[]>([])
+  const [peopleSearch, setPeopleSearch] = useState('')
+  const [newCredit, setNewCredit] = useState({ person_id: '', credit_type: 'cast' as 'cast' | 'crew', role: '' })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -95,6 +101,7 @@ export default function AdminMoviesPage() {
 
   useEffect(() => {
     supabase.from('platforms').select('id,name,logo_url').order('name').then(({ data }) => setPlatforms((data ?? []) as Platform[]))
+    supabase.from('people').select('id,name,selected_profile_url').order('name').then(({ data }) => setAllPeople((data ?? []) as PersonOption[]))
   }, [])
 
   async function loadLinks(movieId: string) {
@@ -110,7 +117,41 @@ export default function AdminMoviesPage() {
     setEditing(m)
     setNewStreaming({ platform_id: '', url: '' })
     setNewMusic({ platform_id: '', url: '' })
-    await loadLinks(m.id)
+    setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
+    setPeopleSearch('')
+    await Promise.all([loadLinks(m.id), loadCredits(m.id)])
+  }
+
+  async function loadCredits(movieId: string) {
+    const { data } = await supabase
+      .from('credits')
+      .select('id,credit_type,character,job,sort_order,person:people(id,name,selected_profile_url)')
+      .eq('movie_id', movieId)
+      .order('sort_order')
+    setCredits((data ?? []) as unknown as CreditRow[])
+  }
+
+  async function addCredit() {
+    if (!editing || !newCredit.person_id) return
+    const sort_order = credits.length
+    const payload: any = {
+      movie_id: editing.id,
+      person_id: newCredit.person_id,
+      credit_type: newCredit.credit_type,
+      sort_order,
+    }
+    if (newCredit.credit_type === 'cast') payload.character = newCredit.role || null
+    else payload.job = newCredit.role || null
+    const { error: e } = await supabase.from('credits').insert(payload)
+    if (e) { setError(e.message); return }
+    setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
+    setPeopleSearch('')
+    await loadCredits(editing.id)
+  }
+
+  async function removeCredit(creditId: string) {
+    await supabase.from('credits').delete().eq('id', creditId)
+    if (editing) await loadCredits(editing.id)
   }
 
   async function save() {
@@ -244,6 +285,54 @@ export default function AdminMoviesPage() {
           })}
 
           <div className="border-t border-white/10 pt-4 space-y-4">
+            <div className="space-y-2">
+              <div className="text-xs text-white/50">Cast & Crew</div>
+              {credits.map((c) => {
+                const person = Array.isArray(c.person) ? c.person[0] : c.person
+                if (!person) return null
+                return (
+                  <div key={c.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                    <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-white/10">
+                      {person.selected_profile_url ? <img src={person.selected_profile_url} alt={person.name} className="h-full w-full object-cover" /> : null}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="truncate text-xs font-medium">{person.name}</div>
+                      <div className="text-xs text-white/40">{c.credit_type === 'cast' ? (c.character ?? 'Cast') : (c.job ?? 'Crew')}</div>
+                    </div>
+                    <span className="shrink-0 rounded-md bg-white/10 px-2 py-0.5 text-xs text-white/60">{c.credit_type}</span>
+                    <button onClick={() => removeCredit(c.id)} className="shrink-0 text-xs text-red-300 hover:text-red-200">Remove</button>
+                  </div>
+                )
+              })}
+              <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+                <div className="text-xs text-white/50">Add person</div>
+                <Input value={peopleSearch} onChange={(e) => setPeopleSearch(e.target.value)} placeholder="Search people…" />
+                {peopleSearch.trim() && (
+                  <div className="max-h-40 overflow-y-auto space-y-1">
+                    {allPeople.filter((p) => p.name.toLowerCase().includes(peopleSearch.toLowerCase())).slice(0, 10).map((p) => (
+                      <button key={p.id} onClick={() => { setNewCredit((prev) => ({ ...prev, person_id: p.id })); setPeopleSearch(p.name) }}
+                        className={['flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-white/10', newCredit.person_id === p.id ? 'bg-white/10' : ''].join(' ')}>
+                        <div className="h-6 w-6 shrink-0 overflow-hidden rounded-full bg-white/10">
+                          {p.selected_profile_url ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" /> : null}
+                        </div>
+                        <span className="truncate text-xs">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  <select value={newCredit.credit_type} onChange={(e) => setNewCredit((prev) => ({ ...prev, credit_type: e.target.value as 'cast' | 'crew' }))}
+                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-white outline-none">
+                    <option value="cast">Cast</option>
+                    <option value="crew">Crew</option>
+                  </select>
+                  <Input value={newCredit.role} onChange={(e) => setNewCredit((prev) => ({ ...prev, role: e.target.value }))}
+                    placeholder={newCredit.credit_type === 'cast' ? 'Character name' : 'Job title'} className="flex-1" />
+                  <Button disabled={!newCredit.person_id} onClick={addCredit} className="shrink-0">Add</Button>
+                </div>
+              </div>
+            </div>
+
             <LinksSection
               title="Streaming links"
               links={streamingLinks}
