@@ -77,12 +77,11 @@ export default function HomeBanner({ items }: Props) {
       {items.length > 1 && (
         <div className="absolute bottom-3 right-4 flex gap-1.5">
           {items.map((_, i) => (
-            <button
+            <div
               key={i}
-              onClick={() => setActive(i)}
               className={[
-                'h-1.5 rounded-full transition-all',
-                i === active ? 'w-5 bg-white' : 'w-1.5 bg-white/40',
+                'h-1 rounded-full transition-all pointer-events-none',
+                i === active ? 'w-4 bg-white/70' : 'w-1 bg-white/25',
               ].join(' ')}
             />
           ))}
