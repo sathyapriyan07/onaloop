@@ -22,6 +22,7 @@ import AdminGenresPage from './pages/admin/AdminGenresPage'
 import AdminSeriesPage from './pages/admin/AdminSeriesPage'
 import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 import AdminPlatformsPage from './pages/admin/AdminPlatformsPage'
+import AdminBannersPage from './pages/admin/AdminBannersPage'
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/admin/people" element={<AdminPeoplePage />} />
         <Route path="/admin/genres" element={<AdminGenresPage />} />
         <Route path="/admin/platforms" element={<AdminPlatformsPage />} />
+        <Route path="/admin/banners" element={<AdminBannersPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

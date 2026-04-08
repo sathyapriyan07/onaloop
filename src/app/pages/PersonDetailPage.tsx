@@ -144,7 +144,6 @@ export default function PersonDetailPage() {
   const rest = sorted.slice(6)
 
   const castCount = credits.filter((c) => c.credit_type === 'cast').length
-  const crewCount = credits.filter((c) => c.credit_type === 'crew').length
 
   if (!person) return <div className="text-white/60">Loading…</div>
 

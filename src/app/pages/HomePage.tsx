@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react'
 import PosterRail from '../ui/PosterRail'
+import HomeBanner from '../ui/HomeBanner'
 import { supabase } from '../../lib/supabase'
 
-type HomeSection = {
-  id: string
-  title: string
-}
-
-type HomeCard = {
-  id: string
-  title: string
-  selected_poster_url: string | null
-  selected_logo_url: string | null
-}
+type HomeSection = { id: string; title: string }
+type HomeCard = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
+type BannerItem = { id: string; to: string; title: string; backdropUrl: string | null; logoUrl: string | null; overview: string | null }
 
 function asOne<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null
@@ -23,6 +16,7 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
 export default function HomePage() {
   const [sections, setSections] = useState<HomeSection[]>([])
   const [itemsBySection, setItemsBySection] = useState<Record<string, any[]>>({})
+  const [banners, setBanners] = useState<BannerItem[]>([])
 
   useEffect(() => {
     let isMounted = true
@@ -35,6 +29,28 @@ export default function HomePage() {
 
       if (!isMounted) return
       setSections((sectionRows ?? []) as HomeSection[])
+
+      const { data: bannerRows } = await supabase
+        .from('home_banners')
+        .select('id,sort_order,movie:movies(id,title,overview,selected_backdrop_url,selected_logo_url),series:series(id,title,overview,selected_backdrop_url,selected_logo_url)')
+        .order('sort_order')
+      if (isMounted) {
+        const items: BannerItem[] = (bannerRows ?? []).map((b: any) => {
+          const movie = Array.isArray(b.movie) ? b.movie[0] : b.movie
+          const series = Array.isArray(b.series) ? b.series[0] : b.series
+          const content = movie ?? series
+          if (!content) return null
+          return {
+            id: content.id,
+            to: movie ? `/movie/${content.id}` : `/series/${content.id}`,
+            title: content.title,
+            backdropUrl: content.selected_backdrop_url,
+            logoUrl: content.selected_logo_url,
+            overview: content.overview ?? null,
+          }
+        }).filter(Boolean) as BannerItem[]
+        setBanners(items)
+      }
 
       const { data: itemRows } = await supabase
         .from('home_section_items')
@@ -61,10 +77,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-8">
-      <section className="space-y-2">
-        <h1 className="text-xl font-semibold tracking-tight">Discover</h1>
-        <p className="text-sm text-white/60">Admin-curated movies, series, and people.</p>
-      </section>
+      {banners.length ? <HomeBanner items={banners} /> : null}
 
       {sections.map((section) => {
         const items = (itemsBySection[section.id] ?? []).map((row: any) => {

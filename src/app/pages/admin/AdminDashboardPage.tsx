@@ -24,6 +24,7 @@ export default function AdminDashboardPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {([
           { to: '/admin/import', label: 'TMDb Import', desc: 'Search TMDb and import movies/series/people.' },
+          { to: '/admin/banners', label: 'Hero Banners', desc: 'Manage homepage hero carousel.' },
           { to: '/admin/movies', label: 'Movies', desc: 'Edit or delete imported movies.' },
           { to: '/admin/series', label: 'Series', desc: 'Edit or delete imported series.' },
           { to: '/admin/people', label: 'People', desc: 'Edit or delete imported people.' },
