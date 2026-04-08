@@ -8,6 +8,7 @@ import MovieDetailPage from './pages/MovieDetailPage'
 import SeriesDetailPage from './pages/SeriesDetailPage'
 import PersonDetailPage from './pages/PersonDetailPage'
 import GenresPage from './pages/GenresPage'
+import GenreDetailPage from './pages/GenreDetailPage'
 import PlatformsPage from './pages/PlatformsPage'
 import SearchPage from './pages/SearchPage'
 import LoginPage from './pages/LoginPage'
@@ -20,6 +21,7 @@ import AdminMoviesPage from './pages/admin/AdminMoviesPage'
 import AdminGenresPage from './pages/admin/AdminGenresPage'
 import AdminSeriesPage from './pages/admin/AdminSeriesPage'
 import AdminPeoplePage from './pages/admin/AdminPeoplePage'
+import AdminPlatformsPage from './pages/admin/AdminPlatformsPage'
 
 export default function App() {
   return (
@@ -32,6 +34,7 @@ export default function App() {
         <Route path="/series/:id" element={<SeriesDetailPage />} />
         <Route path="/person/:id" element={<PersonDetailPage />} />
         <Route path="/genres" element={<GenresPage />} />
+        <Route path="/genre/:id" element={<GenreDetailPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -47,6 +50,7 @@ export default function App() {
         <Route path="/admin/series" element={<AdminSeriesPage />} />
         <Route path="/admin/people" element={<AdminPeoplePage />} />
         <Route path="/admin/genres" element={<AdminGenresPage />} />
+        <Route path="/admin/platforms" element={<AdminPlatformsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

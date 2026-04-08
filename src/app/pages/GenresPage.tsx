@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
 type Genre = {
@@ -31,8 +32,9 @@ export default function GenresPage() {
       <h1 className="text-xl font-semibold tracking-tight">Genres</h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {genres.map((g) => (
-          <div
+          <Link
             key={g.id}
+            to={`/genre/${g.id}`}
             className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
           >
             <div className="aspect-[16/10] w-full">
@@ -46,7 +48,7 @@ export default function GenresPage() {
             <div className="absolute inset-x-0 bottom-0 p-3">
               <div className="text-sm font-semibold tracking-tight">{g.name}</div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -11,6 +11,7 @@ type Movie = {
   title: string
   release_date: string | null
   runtime_minutes: number | null
+  show_logo: boolean
   selected_poster_url: string | null
   selected_logo_url: string | null
   overview: string | null
@@ -25,7 +26,7 @@ export default function MoviesPage() {
     async function run() {
       const { data } = await supabase
         .from('movies')
-        .select('id,title,release_date,runtime_minutes,selected_poster_url,selected_logo_url,overview')
+        .select('id,title,release_date,runtime_minutes,show_logo,selected_poster_url,selected_logo_url,overview')
         .order('release_date', { ascending: false })
         .limit(120)
 
@@ -47,7 +48,7 @@ export default function MoviesPage() {
             to={`/movie/${movie.id}`}
             title={movie.title}
             posterUrl={movie.selected_poster_url}
-            logoUrl={movie.selected_logo_url}
+            logoUrl={movie.show_logo ? movie.selected_logo_url : null}
           />
         ))}
       </div>

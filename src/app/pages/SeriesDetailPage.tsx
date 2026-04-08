@@ -20,7 +20,7 @@ type Series = {
 }
 
 type Genre = { id: string; name: string }
-type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
+type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string; profile: { email: string | null } | null }
 type LinkRow = { id: string; label: string; url: string }
 type CreditRow = {
   id: string
@@ -75,10 +75,10 @@ export default function SeriesDetailPage() {
       setCredits((creditRows ?? []) as unknown as CreditRow[])
 
       const { data: reviewRows } = await supabase
-        .from('reviews').select('id,user_id,rating,review_text,created_at')
+        .from('reviews').select('id,user_id,rating,review_text,created_at,profile:profiles(email)')
         .eq('series_id', id).order('created_at', { ascending: false })
       if (!isMounted) return
-      setReviews((reviewRows ?? []) as Review[])
+      setReviews((reviewRows ?? []) as unknown as Review[])
 
       const { data: streamingRows } = await supabase
         .from('series_streaming_links').select('id,label,url').eq('series_id', id).order('sort_order')
@@ -96,8 +96,8 @@ export default function SeriesDetailPage() {
       const { error } = await supabase.from('reviews').insert({ user_id: user.id, series_id: id, review_text: reviewText.trim() })
       if (error) throw error
       setReviewText('')
-      const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('series_id', id).order('created_at', { ascending: false })
-      setReviews((data ?? []) as Review[])
+      const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at,profile:profiles(email)').eq('series_id', id).order('created_at', { ascending: false })
+      setReviews((data ?? []) as unknown as Review[])
     } finally {
       setIsSubmitting(false)
     }
@@ -156,7 +156,7 @@ export default function SeriesDetailPage() {
       {cast.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Cast</h2>
-          <div className="flex gap-3 overflow-x-auto pb-1">
+          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {cast.map((c) => c.person && (
               <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
                 <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
@@ -208,7 +208,10 @@ export default function SeriesDetailPage() {
         <div className="space-y-3">
           {reviews.map((r) => (
             <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="text-xs text-white/50">{new Date(r.created_at).toLocaleString()}</div>
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-medium text-white/70">{(r.profile as any)?.email ?? 'Anonymous'}</div>
+                <div className="text-xs text-white/40">{new Date(r.created_at).toLocaleString()}</div>
+              </div>
               <div className="mt-2 text-sm text-white/80">{r.review_text}</div>
             </div>
           ))}

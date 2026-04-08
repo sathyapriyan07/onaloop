@@ -15,7 +15,7 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
       to={to}
       className={clsx(
         'group relative block overflow-hidden rounded-2xl border border-white/10 bg-white/5',
-        aspect === 'poster' ? 'aspect-[2/3] w-[44vw] max-w-[180px]' : 'aspect-[16/9] w-[78vw] max-w-[420px]',
+        aspect === 'poster' ? 'aspect-[2/3] w-[30vw] max-w-[160px]' : 'aspect-[16/9] w-[78vw] max-w-[420px]',
       )}
     >
       {posterUrl ? (
