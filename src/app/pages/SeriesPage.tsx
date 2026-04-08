@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
+import PixelCard from '../ui/PixelCard'
 import { supabase } from '../../lib/supabase'
 
 type Series = {
@@ -109,11 +110,15 @@ export default function SeriesPage() {
                 className="group text-left"
                 aria-label={s.title}
               >
-                <div className="relative aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <PixelCard
+                  variant="default"
+                  noFocus
+                  className="aspect-[2/3] w-full rounded-2xl border border-white/10 bg-white/5"
+                >
                   <img
                     src={s.selected_poster_url!}
                     alt={s.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     loading="lazy"
                   />
                   {s.selected_logo_url ? (
@@ -130,7 +135,7 @@ export default function SeriesPage() {
                       </div>
                     </div>
                   ) : null}
-                </div>
+                </PixelCard>
               </button>
             ))}
         </div>
