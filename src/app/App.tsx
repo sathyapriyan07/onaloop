@@ -11,6 +11,7 @@ import GenresPage from './pages/GenresPage'
 import GenreDetailPage from './pages/GenreDetailPage'
 import PlatformsPage from './pages/PlatformsPage'
 import SearchPage from './pages/SearchPage'
+import DiscoverPage from './pages/DiscoverPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import AdminLoginPage from './pages/admin/AdminLoginPage'
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/genre/:id" element={<GenreDetailPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
       </Route>
 
       <Route path="/login" element={<LoginPage />} />
