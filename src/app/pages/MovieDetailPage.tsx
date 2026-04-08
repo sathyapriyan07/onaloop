@@ -53,6 +53,7 @@ export default function MovieDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showTrailer, setShowTrailer] = useState(false)
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
+  const [similarMovies, setSimilarMovies] = useState<Array<{ id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }>>([])  
 
   useEffect(() => {
     let isMounted = true
@@ -70,7 +71,27 @@ export default function MovieDetailPage() {
       const { data: genreRows } = await supabase
         .from('movie_genres').select('genre:genres(id,name)').eq('movie_id', id)
       if (!isMounted) return
-      setGenres(((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[])
+      const fetchedGenres = ((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[]
+      setGenres(fetchedGenres)
+
+      if (fetchedGenres.length) {
+        const genreIds = fetchedGenres.map((g) => g.id)
+        const { data: simRows } = await supabase
+          .from('movie_genres')
+          .select('movie:movies(id,title,selected_poster_url,selected_logo_url,tmdb_rating)')
+          .in('genre_id', genreIds)
+          .neq('movie_id', id)
+          .limit(20)
+        if (isMounted) {
+          const seen = new Set<string>()
+          const sim = (simRows ?? [])
+            .map((r: any) => Array.isArray(r.movie) ? r.movie[0] : r.movie)
+            .filter((m: any) => m && !seen.has(m.id) && seen.add(m.id))
+            .sort((a: any, b: any) => (b.tmdb_rating ?? 0) - (a.tmdb_rating ?? 0))
+            .slice(0, 12)
+          setSimilarMovies(sim)
+        }
+      }
 
       const { data: creditRows } = await supabase
         .from('credits')
@@ -253,6 +274,30 @@ export default function MovieDetailPage() {
               />
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {similarMovies.length ? (
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold tracking-tight">Similar Movies</h2>
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {similarMovies.map((m) => (
+              <Link key={m.id} to={`/movie/${m.id}`} className="group relative block aspect-[2/3] w-[30vw] max-w-[140px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                {m.selected_poster_url
+                  ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                  : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/50">{m.title}</div>}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-2">
+                  {m.selected_logo_url
+                    ? <img src={m.selected_logo_url} alt={m.title} className="max-h-7 w-auto max-w-full object-contain drop-shadow-lg" />
+                    : <div className="line-clamp-2 text-xs font-semibold">{m.title}</div>}
+                </div>
+                {m.tmdb_rating ? (
+                  <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {m.tmdb_rating}</div>
+                ) : null}
+              </Link>
+            ))}
+          </div>
         </section>
       ) : null}
 

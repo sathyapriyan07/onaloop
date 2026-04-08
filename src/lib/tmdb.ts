@@ -91,7 +91,6 @@ export async function tmdbSearch(type: TmdbType, query: string): Promise<TmdbSea
 export async function tmdbFetchMovie(tmdbId: number) {
   const data = await get(`/movie/${tmdbId}`, {
     append_to_response: 'images,credits,videos',
-    include_image_language: 'en,null',
   })
   return {
     tmdb_id: tmdbId,
@@ -114,7 +113,6 @@ export async function tmdbFetchMovie(tmdbId: number) {
 export async function tmdbFetchSeries(tmdbId: number) {
   const data = await get(`/tv/${tmdbId}`, {
     append_to_response: 'images,credits,videos',
-    include_image_language: 'en,null',
   })
   return {
     tmdb_id: tmdbId,
