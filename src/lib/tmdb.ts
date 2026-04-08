@@ -41,9 +41,9 @@ function imageUrls(items: any[] | undefined, size: string): string[] {
 
 function extractTrailer(videos: any): string | null {
   const results: any[] = videos?.results ?? []
-  const trailer = results.find(
-    (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official,
-  ) ?? results.find((v) => v.site === 'YouTube' && v.type === 'Trailer')
+  const trailer =
+    results.find((v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official) ??
+    results.find((v) => v.site === 'YouTube' && v.type === 'Trailer')
   return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null
 }
 
@@ -87,6 +87,7 @@ export async function tmdbFetchMovie(tmdbId: number) {
     release_date: data?.release_date || null,
     runtime_minutes: data?.runtime ?? null,
     tmdb_rating: data?.vote_average ? Math.round(data.vote_average * 10) / 10 : null,
+    original_language: data?.original_language ?? null,
     poster_images: imageUrls(data?.images?.posters, 'w780'),
     backdrop_images: imageUrls(data?.images?.backdrops, 'w1280'),
     title_logos: imageUrls(data?.images?.logos, 'w500'),
@@ -107,6 +108,7 @@ export async function tmdbFetchSeries(tmdbId: number) {
     overview: data?.overview ?? null,
     first_air_date: data?.first_air_date || null,
     tmdb_rating: data?.vote_average ? Math.round(data.vote_average * 10) / 10 : null,
+    original_language: data?.original_language ?? null,
     poster_images: imageUrls(data?.images?.posters, 'w780'),
     backdrop_images: imageUrls(data?.images?.backdrops, 'w1280'),
     title_logos: imageUrls(data?.images?.logos, 'w500'),
