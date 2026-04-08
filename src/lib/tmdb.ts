@@ -139,6 +139,9 @@ export async function tmdbFetchPerson(tmdbId: number) {
     tmdb_id: tmdbId,
     name: data?.name ?? '',
     bio: data?.biography ?? null,
+    birthday: data?.birthday || null,
+    place_of_birth: data?.place_of_birth ?? null,
+    known_for_department: data?.known_for_department ?? null,
     profile_images: imageUrls(data?.images?.profiles, 'w500'),
   }
 }

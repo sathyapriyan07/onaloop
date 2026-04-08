@@ -8,6 +8,9 @@ type Person = {
   id: string
   name: string
   bio: string | null
+  birthday: string | null
+  place_of_birth: string | null
+  known_for_department: string | null
   selected_profile_url: string | null
   profile_images: string[]
 }
@@ -24,7 +27,7 @@ export default function AdminPeoplePage() {
   async function refresh() {
     const { data } = await supabase
       .from('people')
-      .select('id,name,bio,selected_profile_url,profile_images')
+      .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url,profile_images')
       .order('name')
     setPeople((data ?? []) as Person[])
   }
@@ -68,6 +71,20 @@ export default function AdminPeoplePage() {
             <span className="text-xs text-white/50">Name</span>
             <Input value={p.name ?? ''} onChange={(e) => set('name', e.target.value)} />
           </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">Department</span>
+              <Input value={p.known_for_department ?? ''} onChange={(e) => set('known_for_department', e.target.value || null)} />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">Birthday</span>
+              <Input type="date" value={p.birthday ?? ''} onChange={(e) => set('birthday', e.target.value || null)} />
+            </label>
+            <label className="block space-y-1 col-span-2">
+              <span className="text-xs text-white/50">Place of birth</span>
+              <Input value={p.place_of_birth ?? ''} onChange={(e) => set('place_of_birth', e.target.value || null)} />
+            </label>
+          </div>
           <label className="block space-y-1">
             <span className="text-xs text-white/50">Bio</span>
             <textarea

@@ -7,6 +7,9 @@ type Person = {
   id: string
   name: string
   bio: string | null
+  birthday: string | null
+  place_of_birth: string | null
+  known_for_department: string | null
   selected_profile_url: string | null
 }
 
@@ -54,7 +57,7 @@ export default function PersonDetailPage() {
     async function run() {
       const { data: row } = await supabase
         .from('people')
-        .select('id,name,bio,selected_profile_url')
+        .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -122,6 +125,11 @@ export default function PersonDetailPage() {
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="text-xl font-semibold tracking-tight">{person.name}</h1>
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-white/50">
+            {person.known_for_department ? <span>{person.known_for_department}</span> : null}
+            {person.birthday ? <span>Born {new Date(person.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span> : null}
+            {person.place_of_birth ? <span>{person.place_of_birth}</span> : null}
+          </div>
           {person.bio ? <p className="mt-2 line-clamp-4 text-sm text-white/70">{person.bio}</p> : null}
         </div>
       </section>
