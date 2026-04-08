@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
-import PosterCard from '../ui/PosterCard'
+import Masonry from '../ui/Masonry'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 
@@ -47,6 +47,7 @@ function Tabs({ options, value, onChange }: { options: string[]; value: string; 
 }
 
 export default function MoviesPage() {
+  const navigate = useNavigate()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [movies, setMovies] = useState<Movie[]>([])
   const [yearFilter, setYearFilter] = useState('All')
@@ -101,11 +102,17 @@ export default function MoviesPage() {
       <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
 
       {view === 'grid' ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {filtered.map((movie) => (
-            <PosterCard key={movie.id} to={`/movie/${movie.id}`} title={movie.title} posterUrl={movie.selected_poster_url} logoUrl={movie.show_logo ? movie.selected_logo_url : null} />
-          ))}
-        </div>
+        <Masonry
+          items={filtered
+            .filter(m => m.selected_poster_url)
+            .map(m => ({ id: m.id, img: m.selected_poster_url!, url: `/movie/${m.id}`, height: 600 }))}
+          animateFrom="bottom"
+          stagger={0.03}
+          blurToFocus
+          scaleOnHover
+          hoverScale={0.97}
+          onItemClick={(id) => navigate(`/movie/${id}`)}
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((movie) => (

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
-import PosterCard from '../ui/PosterCard'
+import Masonry from '../ui/Masonry'
 import { supabase } from '../../lib/supabase'
 
 type Series = {
@@ -44,6 +44,7 @@ function Tabs({ options, value, onChange }: { options: string[]; value: string; 
 }
 
 export default function SeriesPage() {
+  const navigate = useNavigate()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [series, setSeries] = useState<Series[]>([])
   const [yearFilter, setYearFilter] = useState('All')
@@ -98,11 +99,17 @@ export default function SeriesPage() {
       <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
 
       {view === 'grid' ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {filtered.map((s) => (
-            <PosterCard key={s.id} to={`/series/${s.id}`} title={s.title} posterUrl={s.selected_poster_url} logoUrl={s.selected_logo_url} />
-          ))}
-        </div>
+        <Masonry
+          items={filtered
+            .filter(s => s.selected_poster_url)
+            .map(s => ({ id: s.id, img: s.selected_poster_url!, url: `/series/${s.id}`, height: 600 }))}
+          animateFrom="bottom"
+          stagger={0.03}
+          blurToFocus
+          scaleOnHover
+          hoverScale={0.97}
+          onItemClick={(id) => navigate(`/series/${id}`)}
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((s) => (

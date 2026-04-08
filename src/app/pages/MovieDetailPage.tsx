@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import Hero from '../ui/Hero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
-import CircularGallery from '../ui/CircularGallery'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -208,19 +207,18 @@ export default function MovieDetailPage() {
       {cast.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Cast</h2>
-          <div style={{ height: '200px', position: 'relative' }}>
-            <CircularGallery
-              items={cast.filter(c => c.person).map(c => ({
-                image: c.person!.selected_profile_url ?? '',
-                text: c.character ? `${c.person!.name} · ${c.character}` : c.person!.name,
-                id: c.person!.id,
-              })).filter(c => c.image)}
-              bend={1}
-              textColor="#ffffff"
-              borderRadius={0.08}
-              scrollSpeed={2}
-              scrollEase={0.05}
-            />
+          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {cast.map((c) => c.person && (
+              <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                  {c.person.selected_profile_url
+                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
+                    : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                </div>
+                <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                {c.character ? <div className="w-full truncate text-xs text-white/50">{c.character}</div> : null}
+              </Link>
+            ))}
           </div>
         </section>
       ) : null}
@@ -228,19 +226,18 @@ export default function MovieDetailPage() {
       {crew.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Crew</h2>
-          <div style={{ height: '200px', position: 'relative' }}>
-            <CircularGallery
-              items={crew.filter(c => c.person).map(c => ({
-                image: c.person!.selected_profile_url ?? '',
-                text: c.job ? `${c.person!.name} · ${c.job}` : c.person!.name,
-                id: c.person!.id,
-              })).filter(c => c.image)}
-              bend={1}
-              textColor="#ffffff"
-              borderRadius={0.08}
-              scrollSpeed={2}
-              scrollEase={0.05}
-            />
+          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {crew.map((c) => c.person && (
+              <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                  {c.person.selected_profile_url
+                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
+                    : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                </div>
+                <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                {c.job ? <div className="w-full truncate text-xs text-white/50">{c.job}</div> : null}
+              </Link>
+            ))}
           </div>
         </section>
       ) : null}
