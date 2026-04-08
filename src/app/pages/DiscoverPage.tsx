@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import DomeGallery from '../ui/DomeGallery'
 
 type Item = { id: string; title: string; selected_poster_url: string | null; _type: 'movie' | 'series' }
 
 export default function DiscoverPage() {
-  const navigate = useNavigate()
   const [images, setImages] = useState<{ src: string; alt: string; id: string; type: 'movie' | 'series' }[]>([])
 
   useEffect(() => {
