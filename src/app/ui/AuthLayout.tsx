@@ -1,40 +1,43 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-
-type Poster = { id: string; url: string }
+import DomeGallery from './DomeGallery'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  const [posters, setPosters] = useState<Poster[]>([])
+  const [images, setImages] = useState<{ src: string; alt: string }[]>([])
 
   useEffect(() => {
     supabase
       .from('movies')
-      .select('id,selected_poster_url')
+      .select('id,title,selected_poster_url')
       .not('selected_poster_url', 'is', null)
-      .limit(30)
+      .limit(40)
       .then(({ data }) => {
-        const p = (data ?? [])
-          .filter((m: any) => m.selected_poster_url)
-          .map((m: any) => ({ id: m.id, url: m.selected_poster_url }))
-        setPosters(p)
+        setImages(
+          (data ?? [])
+            .filter((m: any) => m.selected_poster_url)
+            .map((m: any) => ({ src: m.selected_poster_url, alt: m.title }))
+        )
       })
   }, [])
 
   return (
-    <div className="relative min-h-dvh overflow-hidden theme-bg">
-      <div className="absolute inset-0 grid grid-cols-3 gap-2 p-2 opacity-20 blur-sm">
-        {posters.map((p, i) => (
-          <div
-            key={p.id}
-            className="aspect-[2/3] overflow-hidden rounded-2xl bg-white/5"
-            style={{ animationDelay: `${i * 0.1}s` }}
-          >
-            <img src={p.url} alt="" className="h-full w-full object-cover" />
-          </div>
-        ))}
+    <div className="relative min-h-dvh overflow-hidden bg-neutral-950">
+      <div className="absolute inset-0">
+        {images.length > 0 && (
+          <DomeGallery
+            images={images}
+            fit={0.8}
+            minRadius={600}
+            maxVerticalRotationDeg={0}
+            segments={34}
+            dragDampening={2}
+            grayscale={false}
+            overlayBlurColor="#0a0a0a"
+          />
+        )}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black/80" />
-      <div className="relative z-10 flex min-h-dvh items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80" />
+      <div className="relative z-10 flex min-h-dvh items-end justify-center p-6 pb-12">
         {children}
       </div>
     </div>
