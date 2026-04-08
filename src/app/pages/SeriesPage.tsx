@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
-import Masonry from '../ui/Masonry'
 import { supabase } from '../../lib/supabase'
 
 type Series = {
@@ -99,17 +98,28 @@ export default function SeriesPage() {
       <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
 
       {view === 'grid' ? (
-        <Masonry
-          items={filtered
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {filtered
             .filter(s => s.selected_poster_url)
-            .map(s => ({ id: s.id, img: s.selected_poster_url!, url: `/series/${s.id}`, height: 600 }))}
-          animateFrom="bottom"
-          stagger={0.03}
-          blurToFocus
-          scaleOnHover
-          hoverScale={0.97}
-          onItemClick={(id) => navigate(`/series/${id}`)}
-        />
+            .map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => navigate(`/series/${s.id}`)}
+                className="group text-left"
+              >
+                <div className="aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  <img
+                    src={s.selected_poster_url!}
+                    alt={s.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-2 line-clamp-1 text-xs font-semibold text-white/90">{s.title}</div>
+              </button>
+            ))}
+        </div>
       ) : (
         <div className="space-y-3">
           {filtered.map((s) => (

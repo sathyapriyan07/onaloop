@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import PosterRail from '../ui/PosterRail'
 import HomeBanner from '../ui/HomeBanner'
-import CircularGallery from '../ui/CircularGallery'
 import { supabase } from '../../lib/supabase'
 
 type HomeSection = { id: string; title: string }
 type HomeCard = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
 type BannerItem = { id: string; to: string; title: string; backdropUrl: string | null; logoUrl: string | null; overview: string | null }
-type GalleryItem = { image: string; text: string; id: string }
 
 function asOne<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null
@@ -19,7 +17,6 @@ export default function HomePage() {
   const [sections, setSections] = useState<HomeSection[]>([])
   const [itemsBySection, setItemsBySection] = useState<Record<string, any[]>>({})
   const [banners, setBanners] = useState<BannerItem[]>([])
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
 
   useEffect(() => {
     let isMounted = true
@@ -71,17 +68,6 @@ export default function HomePage() {
       }
       setItemsBySection(grouped as any)
 
-      const { data: movieRows } = await supabase
-        .from('movies')
-        .select('id,title,selected_backdrop_url')
-        .not('selected_backdrop_url', 'is', null)
-        .order('tmdb_rating', { ascending: false })
-        .limit(20)
-      if (isMounted) {
-        setGalleryItems(
-          (movieRows ?? []).map((m: any) => ({ image: m.selected_backdrop_url, text: m.title, id: m.id }))
-        )
-      }
     }
 
     run()
@@ -93,22 +79,6 @@ export default function HomePage() {
   return (
     <div className="space-y-8">
       {banners.length ? <HomeBanner items={banners} /> : null}
-
-      {galleryItems.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="text-base font-semibold tracking-tight">Featured</h2>
-          <div style={{ height: '220px', position: 'relative' }}>
-            <CircularGallery
-              items={galleryItems}
-              bend={1}
-              textColor="#ffffff"
-              borderRadius={0.05}
-              scrollSpeed={2}
-              scrollEase={0.05}
-            />
-          </div>
-        </section>
-      )}
 
       {sections.map((section) => {
         const items = (itemsBySection[section.id] ?? []).map((row: any) => {
