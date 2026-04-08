@@ -107,16 +107,30 @@ export default function SeriesPage() {
                 type="button"
                 onClick={() => navigate(`/series/${s.id}`)}
                 className="group text-left"
+                aria-label={s.title}
               >
-                <div className="aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <div className="relative aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                   <img
                     src={s.selected_poster_url!}
                     alt={s.title}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     loading="lazy"
                   />
+                  {s.selected_logo_url ? (
+                    <div className="absolute bottom-0 left-0 right-0">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                      <div className="relative p-3">
+                        <img
+                          src={s.selected_logo_url}
+                          alt=""
+                          aria-hidden="true"
+                          className="max-h-10 max-w-[70%] object-contain object-left drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-                <div className="mt-2 line-clamp-1 text-xs font-semibold text-white/90">{s.title}</div>
               </button>
             ))}
         </div>
