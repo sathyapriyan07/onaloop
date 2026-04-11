@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
+import Expandable from '../ui/Expandable'
 import { supabase } from '../../lib/supabase'
 
 type Person = {
@@ -174,7 +175,15 @@ export default function PersonDetailPage() {
             {person.birthday ? <span>Born {new Date(person.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span> : null}
             {person.place_of_birth ? <span>{person.place_of_birth}</span> : null}
           </div>
-          {person.bio ? <p className="mt-2 line-clamp-4 text-sm text-white/70">{person.bio}</p> : null}
+          {person.bio ? (
+            <Expandable
+              preview={<p className="mt-2 line-clamp-3 text-sm text-white/70">{person.bio}</p>}
+              label="Read more"
+              collapseLabel="Show less"
+            >
+              <p className="mt-2 text-sm text-white/70">{person.bio}</p>
+            </Expandable>
+          ) : null}
           {person.social_links?.length ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {(person.social_links as { platform: string; url: string }[]).map((lnk) => {

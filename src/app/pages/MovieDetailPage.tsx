@@ -4,6 +4,7 @@ import TrailerHero from '../ui/TrailerHero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
+import Expandable from '../ui/Expandable'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -162,7 +163,15 @@ export default function MovieDetailPage() {
           {movie.tmdb_rating ? <span className="flex items-center gap-1">★ {movie.tmdb_rating}</span> : null}
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
-        {movie.overview ? <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p> : null}
+        {movie.overview ? (
+          <Expandable
+            preview={<p className="text-sm leading-relaxed text-white/70 line-clamp-3">{movie.overview}</p>}
+            label="Read more"
+            collapseLabel="Show less"
+          >
+            <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p>
+          </Expandable>
+        ) : null}
         {(movie.tags ?? []).length ? (
           <div className="flex flex-wrap gap-1.5 pt-1">
             {(movie.tags ?? []).map((tag) => (
@@ -219,38 +228,70 @@ export default function MovieDetailPage() {
       {cast.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Cast</h2>
-          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {cast.map((c) => c.person && (
-              <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
-                <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
-                  {c.person.selected_profile_url
-                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-                    : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
-                </div>
-                <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
-                {c.character ? <div className="w-full truncate text-xs text-white/50">{c.character}</div> : null}
-              </Link>
-            ))}
-          </div>
+          <Expandable
+            preview={
+              <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {cast.slice(0, 8).map((c) => c.person && (
+                  <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                    <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                      {c.person.selected_profile_url ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                    </div>
+                    <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                    {c.character ? <div className="w-full truncate text-xs text-white/50">{c.character}</div> : null}
+                  </Link>
+                ))}
+              </div>
+            }
+            label={`Show all ${cast.length}`}
+            collapseLabel="Show less"
+          >
+            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {cast.map((c) => c.person && (
+                <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                  <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                    {c.person.selected_profile_url ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                  </div>
+                  <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                  {c.character ? <div className="w-full truncate text-xs text-white/50">{c.character}</div> : null}
+                </Link>
+              ))}
+            </div>
+          </Expandable>
         </section>
       ) : null}
 
       {crew.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Crew</h2>
-          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {crew.map((c) => c.person && (
-              <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
-                <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
-                  {c.person.selected_profile_url
-                    ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-                    : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
-                </div>
-                <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
-                {c.job ? <div className="w-full truncate text-xs text-white/50">{c.job}</div> : null}
-              </Link>
-            ))}
-          </div>
+          <Expandable
+            preview={
+              <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {crew.slice(0, 6).map((c) => c.person && (
+                  <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                    <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                      {c.person.selected_profile_url ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                    </div>
+                    <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                    {c.job ? <div className="w-full truncate text-xs text-white/50">{c.job}</div> : null}
+                  </Link>
+                ))}
+              </div>
+            }
+            label={`Show all ${crew.length}`}
+            collapseLabel="Show less"
+          >
+            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {crew.map((c) => c.person && (
+                <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
+                  <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+                    {c.person.selected_profile_url ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+                  </div>
+                  <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
+                  {c.job ? <div className="w-full truncate text-xs text-white/50">{c.job}</div> : null}
+                </Link>
+              ))}
+            </div>
+          </Expandable>
         </section>
       ) : null}
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Input from '../ui/Input'
 import PosterCard from '../ui/PosterCard'
+import Expandable from '../ui/Expandable'
 import { supabase } from '../../lib/supabase'
 
 type Movie = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
@@ -123,56 +124,71 @@ export default function SearchPage() {
       {movies.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Movies</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-            {movies.map((m) => (
-              <PosterCard
-                key={m.id}
-                to={`/movie/${m.id}`}
-                title={m.title}
-                posterUrl={m.selected_poster_url}
-                logoUrl={m.selected_logo_url}
-              />
-            ))}
-          </div>
+          <Expandable
+            preview={
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+                {movies.slice(0, 6).map((m) => <PosterCard key={m.id} to={`/movie/${m.id}`} title={m.title} posterUrl={m.selected_poster_url} logoUrl={m.selected_logo_url} />)}
+              </div>
+            }
+            label={`Show all ${movies.length}`}
+            collapseLabel="Show less"
+          >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+              {movies.map((m) => <PosterCard key={m.id} to={`/movie/${m.id}`} title={m.title} posterUrl={m.selected_poster_url} logoUrl={m.selected_logo_url} />)}
+            </div>
+          </Expandable>
         </section>
       ) : null}
 
       {series.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Series</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-            {series.map((s) => (
-              <PosterCard
-                key={s.id}
-                to={`/series/${s.id}`}
-                title={s.title}
-                posterUrl={s.selected_poster_url}
-                logoUrl={s.selected_logo_url}
-              />
-            ))}
-          </div>
+          <Expandable
+            preview={
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+                {series.slice(0, 6).map((s) => <PosterCard key={s.id} to={`/series/${s.id}`} title={s.title} posterUrl={s.selected_poster_url} logoUrl={s.selected_logo_url} />)}
+              </div>
+            }
+            label={`Show all ${series.length}`}
+            collapseLabel="Show less"
+          >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+              {series.map((s) => <PosterCard key={s.id} to={`/series/${s.id}`} title={s.title} posterUrl={s.selected_poster_url} logoUrl={s.selected_logo_url} />)}
+            </div>
+          </Expandable>
         </section>
       ) : null}
 
       {people.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">People</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {people.map((p) => (
-              <Link
-                key={p.id}
-                to={`/person/${p.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10"
-              >
-                <div className="h-12 w-12 overflow-hidden rounded-xl bg-white/10">
-                  {p.selected_profile_url ? (
-                    <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" />
-                  ) : null}
-                </div>
-                <div className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</div>
-              </Link>
-            ))}
-          </div>
+          <Expandable
+            preview={
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {people.slice(0, 6).map((p) => (
+                  <Link key={p.id} to={`/person/${p.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10">
+                    <div className="h-12 w-12 overflow-hidden rounded-xl bg-white/10">
+                      {p.selected_profile_url ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" /> : null}
+                    </div>
+                    <div className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</div>
+                  </Link>
+                ))}
+              </div>
+            }
+            label={`Show all ${people.length}`}
+            collapseLabel="Show less"
+          >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {people.map((p) => (
+                <Link key={p.id} to={`/person/${p.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10">
+                  <div className="h-12 w-12 overflow-hidden rounded-xl bg-white/10">
+                    {p.selected_profile_url ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" /> : null}
+                  </div>
+                  <div className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</div>
+                </Link>
+              ))}
+            </div>
+          </Expandable>
         </section>
       ) : null}
 
