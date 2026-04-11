@@ -22,6 +22,7 @@ export default function Footer() {
                 <Link to="/series" className="block text-white/50 hover:text-white transition-colors">Series</Link>
                 <Link to="/genres" className="block text-white/50 hover:text-white transition-colors">Genres</Link>
                 <Link to="/platforms" className="block text-white/50 hover:text-white transition-colors">Platforms</Link>
+                <Link to="/studios" className="block text-white/50 hover:text-white transition-colors">Studios</Link>
               </div>
             </div>
             <div className="space-y-2">

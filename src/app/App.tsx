@@ -11,6 +11,8 @@ import GenresPage from './pages/GenresPage'
 import GenreDetailPage from './pages/GenreDetailPage'
 import PlatformsPage from './pages/PlatformsPage'
 import PlatformDetailPage from './pages/PlatformDetailPage'
+import ProductionHousesPage from './pages/ProductionHousesPage'
+import ProductionHouseDetailPage from './pages/ProductionHouseDetailPage'
 import SearchPage from './pages/SearchPage'
 import DiscoverPage from './pages/DiscoverPage'
 import LoginPage from './pages/LoginPage'
@@ -24,6 +26,7 @@ import AdminGenresPage from './pages/admin/AdminGenresPage'
 import AdminSeriesPage from './pages/admin/AdminSeriesPage'
 import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 import AdminPlatformsPage from './pages/admin/AdminPlatformsPage'
+import AdminProductionHousesPage from './pages/admin/AdminProductionHousesPage'
 import AdminBannersPage from './pages/admin/AdminBannersPage'
 
 export default function App() {
@@ -40,6 +43,8 @@ export default function App() {
         <Route path="/genre/:id" element={<GenreDetailPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
         <Route path="/platform/:id" element={<PlatformDetailPage />} />
+        <Route path="/studios" element={<ProductionHousesPage />} />
+        <Route path="/studio/:id" element={<ProductionHouseDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
       </Route>
@@ -56,6 +61,7 @@ export default function App() {
         <Route path="/admin/people" element={<AdminPeoplePage />} />
         <Route path="/admin/genres" element={<AdminGenresPage />} />
         <Route path="/admin/platforms" element={<AdminPlatformsPage />} />
+        <Route path="/admin/studios" element={<AdminProductionHousesPage />} />
         <Route path="/admin/banners" element={<AdminBannersPage />} />
       </Route>
 

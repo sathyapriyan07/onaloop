@@ -24,6 +24,7 @@ type Movie = {
 }
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
+type ProductionHouse = { id: string; name: string; logo_url: string | null }
 type Editing = Partial<Movie> & { id: string }
 type LinkRow = { id: string; label: string; url: string; sort_order: number; platform_id: string | null; platform?: { name: string; logo_url: string | null } | null }
 type NewLink = { platform_id: string; url: string }
@@ -78,6 +79,8 @@ export default function AdminMoviesPage() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [search, setSearch] = useState('')
   const [platforms, setPlatforms] = useState<Platform[]>([])
+  const [productionHouses, setProductionHouses] = useState<ProductionHouse[]>([])
+  const [assignedStudios, setAssignedStudios] = useState<ProductionHouse[]>([])
   const [editing, setEditing] = useState<Editing | null>(null)
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [musicLinks, setMusicLinks] = useState<LinkRow[]>([])
@@ -113,6 +116,7 @@ export default function AdminMoviesPage() {
 
   useEffect(() => {
     supabase.from('platforms').select('id,name,logo_url,category').order('name').then(({ data }) => setPlatforms((data ?? []) as Platform[]))
+    supabase.from('production_houses').select('id,name,logo_url').order('name').then(({ data }) => setProductionHouses((data ?? []) as ProductionHouse[]))
   }, [])
 
   useEffect(() => {
@@ -142,6 +146,9 @@ export default function AdminMoviesPage() {
     setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
     setPeopleSearch('')
     setAllPeople([])
+    const { data: studioRows } = await supabase.from('movie_production_houses').select('production_house:production_houses(id,name,logo_url)').eq('movie_id', m.id)
+    const studios = ((studioRows ?? []) as any[]).map((r) => Array.isArray(r.production_house) ? r.production_house[0] : r.production_house).filter(Boolean)
+    setAssignedStudios(studios as ProductionHouse[])
   }
 
   async function loadCredits(movieId: string) {
@@ -385,6 +392,39 @@ export default function AdminMoviesPage() {
                   <Button disabled={!newCredit.person_id} onClick={addCredit} className="shrink-0">Add</Button>
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="text-xs text-white/50">Production Houses</div>
+              <div className="flex flex-wrap gap-2">
+                {assignedStudios.map((s) => (
+                  <div key={s.id} className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5">
+                    {s.logo_url ? <img src={s.logo_url} alt={s.name} className="h-4 w-auto max-w-[40px] object-contain" /> : null}
+                    <span className="text-xs font-medium">{s.name}</span>
+                    <button onClick={async () => {
+                      await supabase.from('movie_production_houses').delete().eq('movie_id', editing!.id).eq('production_house_id', s.id)
+                      setAssignedStudios((prev) => prev.filter((x) => x.id !== s.id))
+                    }} className="text-white/40 hover:text-red-300 text-xs leading-none">&times;</button>
+                  </div>
+                ))}
+              </div>
+              <select
+                defaultValue=""
+                onChange={async (e) => {
+                  const phId = e.target.value; if (!phId || !editing) return
+                  if (assignedStudios.find((s) => s.id === phId)) return
+                  await supabase.from('movie_production_houses').insert({ movie_id: editing.id, production_house_id: phId })
+                  const ph = productionHouses.find((p) => p.id === phId)
+                  if (ph) setAssignedStudios((prev) => [...prev, ph])
+                  e.target.value = ''
+                }}
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white outline-none w-full"
+              >
+                <option value="">+ Assign production house…</option>
+                {productionHouses.filter((p) => !assignedStudios.find((s) => s.id === p.id)).map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
             </div>
 
             <LinksSection

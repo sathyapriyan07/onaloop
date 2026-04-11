@@ -50,7 +50,8 @@ export default function MovieDetailPage() {
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
-  const [similarMovies, setSimilarMovies] = useState<Array<{ id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }>>([])  
+  const [similarMovies, setSimilarMovies] = useState<Array<{ id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }>>([])
+  const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
 
   useEffect(() => {
     let isMounted = true
@@ -119,6 +120,11 @@ export default function MovieDetailPage() {
         .from('movie_streaming_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order')
       if (!isMounted) return
       setStreamingLinks((streamingRows ?? []) as unknown as LinkRow[])
+
+      const { data: studioRows } = await supabase
+        .from('movie_production_houses').select('production_house:production_houses(id,name,logo_url)').eq('movie_id', id)
+      if (!isMounted) return
+      setStudios(((studioRows ?? []) as any[]).map((r) => Array.isArray(r.production_house) ? r.production_house[0] : r.production_house).filter(Boolean))
     }
     run()
     return () => { isMounted = false }
@@ -163,6 +169,16 @@ export default function MovieDetailPage() {
           {movie.tmdb_rating ? <span className="flex items-center gap-1">★ {movie.tmdb_rating}</span> : null}
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
+        {studios.length ? (
+          <div className="flex flex-wrap gap-2">
+            {studios.map((s) => (
+              <Link key={s.id} to={`/studio/${s.id}`} className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition-colors">
+                {s.logo_url ? <img src={s.logo_url} alt={s.name} className="h-4 w-auto max-w-[40px] object-contain" /> : null}
+                <span className="text-xs font-medium">{s.name}</span>
+              </Link>
+            ))}
+          </div>
+        ) : null}
         {movie.overview ? (
           <Expandable
             preview={<p className="text-sm leading-relaxed text-white/70 line-clamp-3">{movie.overview}</p>}

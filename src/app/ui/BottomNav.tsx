@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Clapperboard, Home, Tv, Compass, Layers, MonitorPlay } from 'lucide-react'
+import { Clapperboard, Home, Tv, Compass, MonitorPlay, Clapperboard as StudioIcon } from 'lucide-react'
 import clsx from 'clsx'
 
 const linkBase = 'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] transition-colors'
@@ -24,9 +24,9 @@ export default function BottomNav() {
           <Tv size={17} />
           Series
         </NavLink>
-        <NavLink to="/genres" className={({ isActive }) => clsx(linkBase, isActive ? 'text-white' : 'text-white/60 hover:text-white/80')}>
-          <Layers size={17} />
-          Genres
+        <NavLink to="/studios" className={({ isActive }) => clsx(linkBase, isActive ? 'text-white' : 'text-white/60 hover:text-white/80')}>
+          <StudioIcon size={17} />
+          Studios
         </NavLink>
         <NavLink to="/platforms" className={({ isActive }) => clsx(linkBase, isActive ? 'text-white' : 'text-white/60 hover:text-white/80')}>
           <MonitorPlay size={17} />
