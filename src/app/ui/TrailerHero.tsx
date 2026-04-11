@@ -10,8 +10,6 @@ type Props = {
   trailerUrl?: string | null
   backdropUrl?: string | null
   backdropImages?: unknown
-  logoUrl?: string | null
-  titleLogos?: unknown
 }
 
 function extractYouTubeId(url: string) {
@@ -19,9 +17,8 @@ function extractYouTubeId(url: string) {
   return m?.[1] ?? null
 }
 
-export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropImages, logoUrl, titleLogos }: Props) {
+export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropImages }: Props) {
   const bg = pickImageUrl(backdropUrl, backdropImages, null)
-  const logo = pickImageUrl(logoUrl, titleLogos, null)
   const videoId = trailerUrl ? extractYouTubeId(trailerUrl) : null
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -120,15 +117,6 @@ export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropIm
 
         {/* Gradient overlay */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/30 to-transparent" />
-
-        {/* Logo / title */}
-        <div className="absolute inset-x-0 bottom-14 p-4">
-          {logo ? (
-            <img src={logo} alt={title} className="max-h-14 w-auto max-w-[70%] object-contain drop-shadow-[0_12px_26px_rgba(0,0,0,0.7)]" />
-          ) : (
-            <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-          )}
-        </div>
 
         {/* Controls bar */}
         <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 px-4 pb-3">

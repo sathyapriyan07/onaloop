@@ -149,12 +149,12 @@ export default function MovieDetailPage() {
         trailerUrl={movie.trailer_url}
         backdropUrl={movie.selected_backdrop_url}
         backdropImages={movie.backdrop_images}
-        logoUrl={movie.selected_logo_url}
-        titleLogos={movie.title_logos}
       />
 
       <section className="space-y-2">
-        <h1 className="text-xl font-semibold tracking-tight">{movie.title}</h1>
+        {movie.selected_logo_url
+          ? <img src={movie.selected_logo_url} alt={movie.title} className="max-h-14 w-auto max-w-[60%] object-contain" />
+          : <h1 className="text-xl font-semibold tracking-tight">{movie.title}</h1>}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/70">
           {movie.release_date ? <span>{movie.release_date.slice(0, 4)}</span> : null}
           {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
