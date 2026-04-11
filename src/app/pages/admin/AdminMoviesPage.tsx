@@ -85,6 +85,7 @@ export default function AdminMoviesPage() {
   const [credits, setCredits] = useState<CreditRow[]>([])
   const [allPeople, setAllPeople] = useState<PersonOption[]>([])
   const [peopleSearch, setPeopleSearch] = useState('')
+  const [peopleSearching, setPeopleSearching] = useState(false)
   const [newCredit, setNewCredit] = useState({ person_id: '', credit_type: 'cast' as 'cast' | 'crew', role: '' })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -101,8 +102,18 @@ export default function AdminMoviesPage() {
 
   useEffect(() => {
     supabase.from('platforms').select('id,name,logo_url').order('name').then(({ data }) => setPlatforms((data ?? []) as Platform[]))
-    supabase.from('people').select('id,name,selected_profile_url').order('name').then(({ data }) => setAllPeople((data ?? []) as PersonOption[]))
   }, [])
+
+  useEffect(() => {
+    const q = peopleSearch.trim()
+    if (!q) { setAllPeople([]); return }
+    setPeopleSearching(true)
+    const timer = setTimeout(() => {
+      supabase.from('people').select('id,name,selected_profile_url').ilike('name', `%${q}%`).order('name').limit(20)
+        .then(({ data }) => { setAllPeople((data ?? []) as PersonOption[]); setPeopleSearching(false) })
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [peopleSearch])
 
   async function loadLinks(movieId: string) {
     const [{ data: s }, { data: m }] = await Promise.all([
@@ -119,7 +130,7 @@ export default function AdminMoviesPage() {
     setNewMusic({ platform_id: '', url: '' })
     setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
     setPeopleSearch('')
-    await Promise.all([loadLinks(m.id), loadCredits(m.id)])
+    setAllPeople([])
   }
 
   async function loadCredits(movieId: string) {
@@ -146,6 +157,7 @@ export default function AdminMoviesPage() {
     if (e) { setError(e.message); return }
     setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
     setPeopleSearch('')
+    setAllPeople([])
     await loadCredits(editing.id)
   }
 
@@ -306,10 +318,11 @@ export default function AdminMoviesPage() {
               })}
               <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
                 <div className="text-xs text-white/50">Add person</div>
-                <Input value={peopleSearch} onChange={(e) => setPeopleSearch(e.target.value)} placeholder="Search people…" />
+                <Input value={peopleSearch} onChange={(e) => { setPeopleSearch(e.target.value); setNewCredit((prev) => ({ ...prev, person_id: '' })) }} placeholder="Search people…" />
                 {peopleSearch.trim() && (
                   <div className="max-h-40 overflow-y-auto space-y-1">
-                    {allPeople.filter((p) => p.name.toLowerCase().includes(peopleSearch.toLowerCase())).slice(0, 10).map((p) => (
+                    {peopleSearching && <div className="px-2 py-1 text-xs text-white/40">Searching…</div>}
+                    {!peopleSearching && allPeople.map((p) => (
                       <button key={p.id} onClick={() => { setNewCredit((prev) => ({ ...prev, person_id: p.id })); setPeopleSearch(p.name) }}
                         className={['flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-white/10', newCredit.person_id === p.id ? 'bg-white/10' : ''].join(' ')}>
                         <div className="h-6 w-6 shrink-0 overflow-hidden rounded-full bg-white/10">
