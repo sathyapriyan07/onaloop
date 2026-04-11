@@ -11,7 +11,7 @@ body {
 
 body {
   @apply bg-neutral-950 text-neutral-100 antialiased;
-  font-family: var(--app-font, 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif);
+  font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
 }
 

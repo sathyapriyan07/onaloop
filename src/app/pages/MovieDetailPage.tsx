@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import Hero from '../ui/Hero'
+import TrailerHero from '../ui/TrailerHero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
@@ -36,11 +36,6 @@ type CreditRow = {
   person: { id: string; name: string; selected_profile_url: string | null } | null
 }
 
-function youtubeEmbedUrl(url: string) {
-  const match = url.match(/[?&]v=([^&]+)/)
-  return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : null
-}
-
 export default function MovieDetailPage() {
   const { id } = useParams()
   const { user } = useSession()
@@ -52,7 +47,6 @@ export default function MovieDetailPage() {
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showTrailer, setShowTrailer] = useState(false)
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
   const [similarMovies, setSimilarMovies] = useState<Array<{ id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }>>([])  
 
@@ -146,13 +140,13 @@ export default function MovieDetailPage() {
 
   const cast = credits.filter((c) => c.credit_type === 'cast')
   const crew = credits.filter((c) => c.credit_type === 'crew')
-  const embedUrl = movie.trailer_url ? youtubeEmbedUrl(movie.trailer_url) : null
   const videos = (movie.videos ?? []) as Array<{ key: string; name: string; type: string }>
 
   return (
     <div className="space-y-6">
-      <Hero
+      <TrailerHero
         title={movie.title}
+        trailerUrl={movie.trailer_url}
         backdropUrl={movie.selected_backdrop_url}
         backdropImages={movie.backdrop_images}
         logoUrl={movie.selected_logo_url}
@@ -168,19 +162,6 @@ export default function MovieDetailPage() {
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
         {movie.overview ? <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p> : null}
-        {embedUrl ? (
-          <div className="pt-1">
-            {showTrailer ? (
-              <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-                <iframe src={embedUrl} className="h-full w-full" allow="autoplay; fullscreen" allowFullScreen title="Trailer" />
-              </div>
-            ) : (
-              <button onClick={() => setShowTrailer(true)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">
-                ▶ Watch Trailer
-              </button>
-            )}
-          </div>
-        ) : null}
       </section>
 
       {streamingLinks.length ? (
