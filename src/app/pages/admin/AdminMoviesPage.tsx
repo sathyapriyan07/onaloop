@@ -92,11 +92,21 @@ export default function AdminMoviesPage() {
   const [saving, setSaving] = useState(false)
 
   async function refresh() {
-    const { data } = await supabase
-      .from('movies')
-      .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags')
-      .order('title')
-    setMovies((data ?? []) as Movie[])
+    const all: Movie[] = []
+    const pageSize = 1000
+    let from = 0
+    while (true) {
+      const { data } = await supabase
+        .from('movies')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags')
+        .order('title')
+        .range(from, from + pageSize - 1)
+      if (!data || data.length === 0) break
+      all.push(...(data as Movie[]))
+      if (data.length < pageSize) break
+      from += pageSize
+    }
+    setMovies(all)
   }
 
   useEffect(() => { refresh() }, [])
@@ -412,21 +422,25 @@ export default function AdminMoviesPage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search movies…" />
-      <div className="space-y-2">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {movies.filter((m) => m.title.toLowerCase().includes(search.toLowerCase())).map((m) => (
-          <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
-            {m.selected_poster_url
-              ? <img src={m.selected_poster_url} alt="" className="h-12 w-8 rounded-lg object-cover shrink-0" />
-              : <div className="h-12 w-8 rounded-lg bg-white/10 shrink-0" />}
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-sm font-semibold">{m.title}</div>
-              <div className="text-xs text-white/50">{m.release_date?.slice(0, 4) ?? '—'} · {m.runtime_minutes ? `${m.runtime_minutes}m` : '—'} · ★ {m.tmdb_rating ?? '—'}</div>
-            </div>
-            <button onClick={() => startEdit(m)} className="text-xs text-white/60 hover:text-white shrink-0">Edit</button>
-            <button onClick={() => remove(m.id, m.title)} className="text-xs text-red-300 hover:text-red-200 shrink-0">Delete</button>
+          <div key={m.id} className="group relative">
+            <button onClick={() => startEdit(m)} className="w-full text-left">
+              <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-white/5">
+                {m.selected_poster_url
+                  ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" loading="lazy" />
+                  : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/30">{m.title}</div>}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-1.5">
+                  <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{m.title}</div>
+                  {m.release_date ? <div className="text-[10px] text-white/50">{m.release_date.slice(0, 4)}</div> : null}
+                </div>
+              </div>
+            </button>
+            <button onClick={() => remove(m.id, m.title)} className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-[10px] text-red-300 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-900/80">&times;</button>
           </div>
         ))}
-        {!movies.length ? <div className="text-sm text-white/60">No movies imported yet.</div> : null}
+        {!movies.length ? <div className="col-span-full text-sm text-white/60">No movies imported yet.</div> : null}
       </div>
     </div>
   )

@@ -203,21 +203,25 @@ export default function AdminPeoplePage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search people…" />
-      <div className="space-y-2">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {people.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).map((p) => (
-          <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
-            {p.selected_profile_url
-              ? <img src={p.selected_profile_url} alt="" className="h-10 w-10 rounded-full object-cover shrink-0" />
-              : <div className="h-10 w-10 rounded-full bg-white/10 shrink-0" />}
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-sm font-semibold">{p.name}</div>
-              {p.bio ? <div className="line-clamp-1 text-xs text-white/50">{p.bio}</div> : null}
-            </div>
-            <button onClick={() => setEditing(p)} className="text-xs text-white/60 hover:text-white shrink-0">Edit</button>
-            <button onClick={() => remove(p.id, p.name)} className="text-xs text-red-300 hover:text-red-200 shrink-0">Delete</button>
+          <div key={p.id} className="group relative">
+            <button onClick={() => setEditing(p)} className="w-full text-left">
+              <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-white/5">
+                {p.selected_profile_url
+                  ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
+                  : <div className="flex h-full w-full items-center justify-center text-2xl text-white/20">{p.name[0]}</div>}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-1.5">
+                  <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{p.name}</div>
+                  {p.known_for_department ? <div className="text-[10px] text-white/50">{p.known_for_department}</div> : null}
+                </div>
+              </div>
+            </button>
+            <button onClick={() => remove(p.id, p.name)} className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-[10px] text-red-300 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-900/80">&times;</button>
           </div>
         ))}
-        {!people.length ? <div className="text-sm text-white/60">No people imported yet.</div> : null}
+        {!people.length ? <div className="col-span-full text-sm text-white/60">No people imported yet.</div> : null}
       </div>
     </div>
   )
