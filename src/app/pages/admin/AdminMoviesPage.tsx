@@ -20,6 +20,7 @@ type Movie = {
   poster_images: string[]
   backdrop_images: string[]
   title_logos: string[]
+  tags: string[]
 }
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
@@ -93,7 +94,7 @@ export default function AdminMoviesPage() {
   async function refresh() {
     const { data } = await supabase
       .from('movies')
-      .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos')
+      .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags')
       .order('title')
     setMovies((data ?? []) as Movie[])
   }
@@ -259,6 +260,36 @@ export default function AdminMoviesPage() {
               <Input value={m.trailer_url ?? ''} onChange={(e) => set('trailer_url', e.target.value || null)} />
             </label>
           </div>
+          {(() => {
+            const tags: string[] = (m.tags as string[]) ?? []
+            return (
+              <div className="space-y-2">
+                <div className="text-xs text-white/50">Tags</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {tags.map((tag) => (
+                    <span key={tag} className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs">
+                      {tag}
+                      <button type="button" onClick={() => set('tags', tags.filter((t) => t !== tag))} className="text-white/40 hover:text-red-300 leading-none">&times;</button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder='e.g. Highest grossing movie of 2026'
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        const val = (e.target as HTMLInputElement).value.trim()
+                        if (val && !tags.includes(val)) { set('tags', [...tags, val]); (e.target as HTMLInputElement).value = '' }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="text-xs text-white/30">Press Enter to add a tag</div>
+              </div>
+            )
+          })()}
+
           <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 cursor-pointer">
             <span className="text-sm">Show logo on grid</span>
             <div className="flex gap-1 rounded-lg border border-white/10 bg-white/5 p-1">

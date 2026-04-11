@@ -26,6 +26,16 @@ export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropIm
   const [muted, setMuted] = useState(true)
   const [trailerActive, setTrailerActive] = useState(false)
   const [ready, setReady] = useState(false)
+  const [quality, setQuality] = useState('hd720')
+  const [showQuality, setShowQuality] = useState(false)
+
+  const QUALITIES = [
+    { value: 'small', label: '240p' },
+    { value: 'medium', label: '360p' },
+    { value: 'large', label: '480p' },
+    { value: 'hd720', label: '720p' },
+    { value: 'hd1080', label: '1080p' },
+  ]
 
   // Listen for YT iframe API messages
   useEffect(() => {
@@ -68,6 +78,12 @@ export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropIm
 
   function skipBack() { skipRelative(-10) }
   function skipForward() { skipRelative(10) }
+
+  function setResolution(q: string) {
+    send('setPlaybackQuality', [q])
+    setQuality(q)
+    setShowQuality(false)
+  }
 
   // Track approximate current time ourselves
   const currentTimeRef = useRef(0)
@@ -145,6 +161,28 @@ export default function TrailerHero({ title, trailerUrl, backdropUrl, backdropIm
                   <button onClick={toggleMute} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 backdrop-blur hover:bg-white/25 transition-colors">
                     <MI name={muted ? 'volume_off' : 'volume_up'} />
                   </button>
+                  <div className="relative ml-auto">
+                    <button
+                      onClick={() => setShowQuality((v) => !v)}
+                      className="flex items-center gap-1 rounded-xl bg-white/15 px-2.5 py-1.5 text-xs font-semibold backdrop-blur hover:bg-white/25 transition-colors"
+                    >
+                      <MI name="hd" />
+                      {QUALITIES.find((q) => q.value === quality)?.label ?? '720p'}
+                    </button>
+                    {showQuality && (
+                      <div className="absolute bottom-10 right-0 flex flex-col gap-0.5 rounded-xl border border-white/10 bg-neutral-900/95 p-1 backdrop-blur">
+                        {QUALITIES.map((q) => (
+                          <button
+                            key={q.value}
+                            onClick={() => setResolution(q.value)}
+                            className={['rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors text-left', quality === q.value ? 'bg-white text-neutral-950' : 'text-white/70 hover:bg-white/10'].join(' ')}
+                          >
+                            {q.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : null}
             </>

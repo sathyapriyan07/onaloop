@@ -22,6 +22,7 @@ type Movie = {
   selected_logo_url: string | null
   title_logos: unknown
   selected_poster_url: string | null
+  tags: string[]
 }
 
 type Genre = { id: string; name: string }
@@ -57,7 +58,7 @@ export default function MovieDetailPage() {
 
       const { data: movieRow } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -162,6 +163,15 @@ export default function MovieDetailPage() {
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
         {movie.overview ? <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p> : null}
+        {movie.tags?.length ? (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {movie.tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {streamingLinks.length ? (
