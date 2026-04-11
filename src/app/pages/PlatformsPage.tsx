@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import SpotlightCard from '../ui/SpotlightCard'
 
 type Platform = {
   id: string
@@ -32,23 +33,23 @@ export default function PlatformsPage() {
       <h1 className="text-xl font-semibold tracking-tight">Platforms</h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {platforms.map((p) => (
-          <div
-            key={p.id}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-          >
-            <div className="aspect-[16/10] w-full">
-              {p.display_image_url ? (
+          {p.display_image_url ? (
+            <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              <div className="aspect-[16/10] w-full">
                 <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
-              ) : (
-                <div className="h-full w-full bg-gradient-to-br from-white/10 via-white/5 to-white/0" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
+                <div className="text-sm font-semibold tracking-tight">{p.name}</div>
+                {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
+              </div>
             </div>
-            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">
+          ) : (
+            <SpotlightCard key={p.id} className="aspect-[16/10] flex items-center justify-between gap-3 p-3">
               <div className="text-sm font-semibold tracking-tight">{p.name}</div>
               {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
-            </div>
-          </div>
+            </SpotlightCard>
+          )}
         ))}
       </div>
     </div>

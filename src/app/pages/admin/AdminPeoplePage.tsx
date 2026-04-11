@@ -26,11 +26,21 @@ export default function AdminPeoplePage() {
   const [saving, setSaving] = useState(false)
 
   async function refresh() {
-    const { data } = await supabase
-      .from('people')
-      .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url,profile_images')
-      .order('name')
-    setPeople((data ?? []) as Person[])
+    const all: Person[] = []
+    const pageSize = 1000
+    let from = 0
+    while (true) {
+      const { data } = await supabase
+        .from('people')
+        .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url,profile_images')
+        .order('name')
+        .range(from, from + pageSize - 1)
+      if (!data || data.length === 0) break
+      all.push(...(data as Person[]))
+      if (data.length < pageSize) break
+      from += pageSize
+    }
+    setPeople(all)
   }
 
   useEffect(() => { refresh() }, [])

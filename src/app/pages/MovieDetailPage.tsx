@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import Hero from '../ui/Hero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
+import SpotlightCard from '../ui/SpotlightCard'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -321,13 +322,13 @@ export default function MovieDetailPage() {
         )}
         <div className="space-y-3">
           {reviews.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <SpotlightCard key={r.id} className="p-4" spotlightColor="rgba(255,255,255,0.06)">
               <div className="flex items-center justify-between">
                 <div className="text-xs font-medium text-white/70">{(r.profile as any)?.email ?? 'Anonymous'}</div>
                 <div className="text-xs text-white/40">{new Date(r.created_at).toLocaleString()}</div>
               </div>
               <div className="mt-2 text-sm text-white/80">{r.review_text}</div>
-            </div>
+            </SpotlightCard>
           ))}
           {!reviews.length ? <div className="text-sm text-white/50">No reviews yet.</div> : null}
         </div>
