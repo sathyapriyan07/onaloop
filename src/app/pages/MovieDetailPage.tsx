@@ -163,9 +163,9 @@ export default function MovieDetailPage() {
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
         {movie.overview ? <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p> : null}
-        {movie.tags?.length ? (
+        {(movie.tags ?? []).length ? (
           <div className="flex flex-wrap gap-1.5 pt-1">
-            {movie.tags.map((tag) => (
+            {(movie.tags ?? []).map((tag) => (
               <span key={tag} className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70">
                 {tag}
               </span>
