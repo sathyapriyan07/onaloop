@@ -21,6 +21,8 @@ type Movie = {
   backdrop_images: string[]
   title_logos: string[]
   tags: string[]
+  budget: number | null
+  collection: number | null
 }
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
@@ -101,7 +103,7 @@ export default function AdminMoviesPage() {
     while (true) {
       const { data } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags,budget,collection')
         .order('title')
         .range(from, from + pageSize - 1)
       if (!data || data.length === 0) break
@@ -275,6 +277,14 @@ export default function AdminMoviesPage() {
             <label className="block space-y-1">
               <span className="text-xs text-white/50">Trailer URL</span>
               <Input value={m.trailer_url ?? ''} onChange={(e) => set('trailer_url', e.target.value || null)} />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">Budget (₹)</span>
+              <Input type="number" value={m.budget ?? ''} onChange={(e) => set('budget', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 500000000" />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">Collection (₹)</span>
+              <Input type="number" value={m.collection ?? ''} onChange={(e) => set('collection', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 1200000000" />
             </label>
           </div>
           {(() => {

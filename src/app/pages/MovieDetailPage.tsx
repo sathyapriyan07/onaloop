@@ -24,6 +24,8 @@ type Movie = {
   title_logos: unknown
   selected_poster_url: string | null
   tags: string[]
+  budget: number | null
+  collection: number | null
 }
 
 type Genre = { id: string; name: string }
@@ -36,6 +38,13 @@ type CreditRow = {
   job: string | null
   sort_order: number
   person: { id: string; name: string; selected_profile_url: string | null } | null
+}
+
+function formatCrore(amount: number): string {
+  if (amount >= 1_00_00_00_000) return `₹${(amount / 1_00_00_00_000).toFixed(2)} Billion`
+  if (amount >= 1_00_00_000) return `₹${(amount / 1_00_00_000).toFixed(2)} Cr`
+  if (amount >= 1_00_000) return `₹${(amount / 1_00_000).toFixed(2)} L`
+  return `₹${amount.toLocaleString('en-IN')}`
 }
 
 export default function MovieDetailPage() {
@@ -60,7 +69,7 @@ export default function MovieDetailPage() {
 
       const { data: movieRow } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -195,6 +204,23 @@ export default function MovieDetailPage() {
                 {tag}
               </span>
             ))}
+          </div>
+        ) : null}
+        {(movie.budget || movie.collection) ? (
+          <div className="flex flex-wrap gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            {movie.budget ? (
+              <div className="space-y-0.5">
+                <div className="text-[10px] uppercase tracking-wider text-white/40">Budget</div>
+                <div className="text-sm font-semibold">{formatCrore(movie.budget)}</div>
+              </div>
+            ) : null}
+            {movie.budget && movie.collection ? <div className="w-px bg-white/10" /> : null}
+            {movie.collection ? (
+              <div className="space-y-0.5">
+                <div className="text-[10px] uppercase tracking-wider text-white/40">Collection</div>
+                <div className="text-sm font-semibold text-green-400">{formatCrore(movie.collection)}</div>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </section>
