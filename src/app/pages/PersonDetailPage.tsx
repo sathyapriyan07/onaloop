@@ -224,11 +224,6 @@ export default function PersonDetailPage() {
                       {content.tmdb_rating ? (
                         <div className="absolute right-2 top-2 rounded-lg bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {content.tmdb_rating}</div>
                       ) : null}
-                      {content.selected_logo_url ? (
-                        <div className="absolute inset-x-0 bottom-0 p-2">
-                          <img src={content.selected_logo_url} alt={content.title} className="max-h-8 w-auto max-w-full object-contain drop-shadow-lg" />
-                        </div>
-                      ) : null}
                     </div>
                     <div>
                       <div className="truncate text-xs font-semibold">{content.title}</div>

@@ -78,11 +78,15 @@ export default function MoviesPage() {
     return ['All', ...Array.from(s).sort()]
   }, [movies])
 
-  const filtered = useMemo(() => movies.filter((m) => {
-    if (yearFilter !== 'All' && m.release_date?.slice(0, 4) !== yearFilter) return false
-    if (langFilter !== 'All' && m.original_language !== langFilter) return false
-    return true
-  }), [movies, yearFilter, langFilter])
+  const filtered = useMemo(() => {
+    const result = movies.filter((m) => {
+      if (yearFilter !== 'All' && m.release_date?.slice(0, 4) !== yearFilter) return false
+      if (langFilter !== 'All' && m.original_language !== langFilter) return false
+      return true
+    })
+    if (yearFilter === 'All') result.sort((a, b) => (b.release_date ?? '').localeCompare(a.release_date ?? ''))
+    return result
+  }, [movies, yearFilter, langFilter])
 
   return (
     <div className="space-y-4">
@@ -98,8 +102,16 @@ export default function MoviesPage() {
         </div>
       </div>
 
-      <Tabs options={years} value={yearFilter} onChange={(v) => { setYearFilter(v) }} />
-      <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
+      <div className="flex flex-wrap items-center gap-2">
+        <select
+          value={yearFilter}
+          onChange={(e) => setYearFilter(e.target.value)}
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white outline-none focus:border-white/25"
+        >
+          {years.map((y) => <option key={y} value={y}>{y}</option>)}
+        </select>
+        <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
+      </div>
 
       {view === 'grid' ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">

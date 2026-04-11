@@ -26,7 +26,7 @@ type Movie = {
 
 type Genre = { id: string; name: string }
 type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string; profile: { email: string | null } | null }
-type LinkRow = { id: string; label: string; url: string }
+type LinkRow = { id: string; label: string; url: string; platform?: { name: string; logo_url: string | null } | null }
 type CreditRow = {
   id: string
   credit_type: 'cast' | 'crew'
@@ -115,14 +115,14 @@ export default function MovieDetailPage() {
       setReviews((reviewRows ?? []) as unknown as Review[])
 
       const { data: musicRows } = await supabase
-        .from('movie_music_links').select('id,label,url').eq('movie_id', id).order('sort_order')
+        .from('movie_music_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order')
       if (!isMounted) return
-      setMusicLinks((musicRows ?? []) as LinkRow[])
+      setMusicLinks((musicRows ?? []) as unknown as LinkRow[])
 
       const { data: streamingRows } = await supabase
-        .from('movie_streaming_links').select('id,label,url').eq('movie_id', id).order('sort_order')
+        .from('movie_streaming_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order')
       if (!isMounted) return
-      setStreamingLinks((streamingRows ?? []) as LinkRow[])
+      setStreamingLinks((streamingRows ?? []) as unknown as LinkRow[])
     }
     run()
     return () => { isMounted = false }
@@ -187,9 +187,19 @@ export default function MovieDetailPage() {
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Streaming</h2>
           <div className="flex flex-wrap gap-2">
-            {streamingLinks.map((l) => (
-              <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">{l.label}</a>
-            ))}
+            {streamingLinks.map((l) => {
+              const logo = (l.platform as any)?.logo_url
+              const name = (l.platform as any)?.name ?? l.label
+              return (
+                <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                  className="flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors"
+                  title={name}>
+                  {logo
+                    ? <img src={logo} alt={name} className="h-5 w-auto max-w-[80px] object-contain" />
+                    : <span className="text-sm">{name}</span>}
+                </a>
+              )
+            })}
           </div>
         </section>
       ) : null}
@@ -198,9 +208,19 @@ export default function MovieDetailPage() {
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Music</h2>
           <div className="flex flex-wrap gap-2">
-            {musicLinks.map((l) => (
-              <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">{l.label}</a>
-            ))}
+            {musicLinks.map((l) => {
+              const logo = (l.platform as any)?.logo_url
+              const name = (l.platform as any)?.name ?? l.label
+              return (
+                <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                  className="flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors"
+                  title={name}>
+                  {logo
+                    ? <img src={logo} alt={name} className="h-5 w-auto max-w-[80px] object-contain" />
+                    : <span className="text-sm">{name}</span>}
+                </a>
+              )
+            })}
           </div>
         </section>
       ) : null}
@@ -295,9 +315,7 @@ export default function MovieDetailPage() {
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/50">{m.title}</div>}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-2">
-                  {m.selected_logo_url
-                    ? <img src={m.selected_logo_url} alt={m.title} className="max-h-7 w-auto max-w-full object-contain drop-shadow-lg" />
-                    : <div className="line-clamp-2 text-xs font-semibold">{m.title}</div>}
+                  <div className="line-clamp-2 text-xs font-semibold">{m.title}</div>
                 </div>
                 {m.tmdb_rating ? (
                   <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {m.tmdb_rating}</div>
