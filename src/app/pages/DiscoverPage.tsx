@@ -8,15 +8,27 @@ export default function DiscoverPage() {
   const [images, setImages] = useState<{ src: string; alt: string; id: string }[]>([])
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('movies').select('id,title,selected_backdrop_url').not('selected_backdrop_url', 'is', null).limit(60),
-      supabase.from('series').select('id,title,selected_backdrop_url').not('selected_backdrop_url', 'is', null).limit(30),
-    ]).then(([{ data: movies }, { data: series }]) => {
+    async function load() {
+      const fetchAll = async (table: 'movies' | 'series') => {
+        const all: any[] = []
+        const pageSize = 1000
+        let from = 0
+        while (true) {
+          const { data } = await supabase.from(table).select('id,title,selected_backdrop_url').not('selected_backdrop_url', 'is', null).order('title').range(from, from + pageSize - 1)
+          if (!data || data.length === 0) break
+          all.push(...data)
+          if (data.length < pageSize) break
+          from += pageSize
+        }
+        return all
+      }
+      const [movies, series] = await Promise.all([fetchAll('movies'), fetchAll('series')])
       setImages([
-        ...((movies ?? []) as any[]).map((m) => ({ src: m.selected_backdrop_url, alt: m.title, id: `movie:${m.id}` })),
-        ...((series ?? []) as any[]).map((s) => ({ src: s.selected_backdrop_url, alt: s.title, id: `series:${s.id}` })),
+        ...movies.map((m) => ({ src: m.selected_backdrop_url, alt: m.title, id: `movie:${m.id}` })),
+        ...series.map((s) => ({ src: s.selected_backdrop_url, alt: s.title, id: `series:${s.id}` })),
       ])
-    })
+    }
+    load()
   }, [])
 
   const onSelect = useCallback((id: string) => {
