@@ -32,8 +32,8 @@ export default function PlatformsPage() {
     <div className="space-y-5">
       <h1 className="text-xl font-semibold tracking-tight">Platforms</h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {platforms.map((p) => (
-          {p.display_image_url ? (
+        {platforms.map((p) =>
+          p.display_image_url ? (
             <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               <div className="aspect-[16/10] w-full">
                 <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
@@ -49,8 +49,8 @@ export default function PlatformsPage() {
               <div className="text-sm font-semibold tracking-tight">{p.name}</div>
               {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
             </SpotlightCard>
-          )}
-        ))}
+          )
+        )}
       </div>
     </div>
   )
