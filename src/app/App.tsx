@@ -10,6 +10,7 @@ import PersonDetailPage from './pages/PersonDetailPage'
 import GenresPage from './pages/GenresPage'
 import GenreDetailPage from './pages/GenreDetailPage'
 import PlatformsPage from './pages/PlatformsPage'
+import PlatformDetailPage from './pages/PlatformDetailPage'
 import SearchPage from './pages/SearchPage'
 import DiscoverPage from './pages/DiscoverPage'
 import LoginPage from './pages/LoginPage'
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/genres" element={<GenresPage />} />
         <Route path="/genre/:id" element={<GenreDetailPage />} />
         <Route path="/platforms" element={<PlatformsPage />} />
+        <Route path="/platform/:id" element={<PlatformDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
       </Route>

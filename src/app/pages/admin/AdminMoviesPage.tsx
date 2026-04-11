@@ -22,7 +22,7 @@ type Movie = {
   title_logos: string[]
 }
 
-type Platform = { id: string; name: string; logo_url: string | null }
+type Platform = { id: string; name: string; logo_url: string | null; category: string }
 type Editing = Partial<Movie> & { id: string }
 type LinkRow = { id: string; label: string; url: string; sort_order: number; platform_id: string | null; platform?: { name: string; logo_url: string | null } | null }
 type NewLink = { platform_id: string; url: string }
@@ -101,7 +101,7 @@ export default function AdminMoviesPage() {
   useEffect(() => { refresh() }, [])
 
   useEffect(() => {
-    supabase.from('platforms').select('id,name,logo_url').order('name').then(({ data }) => setPlatforms((data ?? []) as Platform[]))
+    supabase.from('platforms').select('id,name,logo_url,category').order('name').then(({ data }) => setPlatforms((data ?? []) as Platform[]))
   }, [])
 
   useEffect(() => {
@@ -349,7 +349,7 @@ export default function AdminMoviesPage() {
             <LinksSection
               title="Streaming links"
               links={streamingLinks}
-              platforms={platforms}
+              platforms={platforms.filter((p) => p.category === 'ott')}
               newLink={newStreaming}
               onNewLink={setNewStreaming}
               onAdd={addStreaming}
@@ -358,7 +358,7 @@ export default function AdminMoviesPage() {
             <LinksSection
               title="Music links"
               links={musicLinks}
-              platforms={platforms}
+              platforms={platforms.filter((p) => p.category === 'music')}
               newLink={newMusic}
               onNewLink={setNewMusic}
               onAdd={addMusic}

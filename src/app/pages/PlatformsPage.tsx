@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import SpotlightCard from '../ui/SpotlightCard'
 
@@ -18,7 +19,7 @@ function PlatformGrid({ platforms }: { platforms: Platform[] }) {
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
       {platforms.map((p) =>
         p.display_image_url ? (
-          <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+          <Link key={p.id} to={`/platform/${p.id}`} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 block">
             <div className="aspect-[16/10] w-full">
               <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
@@ -27,12 +28,14 @@ function PlatformGrid({ platforms }: { platforms: Platform[] }) {
               <div className="text-sm font-semibold tracking-tight">{p.name}</div>
               {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
             </div>
-          </div>
+          </Link>
         ) : (
-          <SpotlightCard key={p.id} className="aspect-[16/10] flex items-center justify-between gap-3 p-3">
-            <div className="text-sm font-semibold tracking-tight">{p.name}</div>
-            {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
-          </SpotlightCard>
+          <Link key={p.id} to={`/platform/${p.id}`}>
+            <SpotlightCard className="aspect-[16/10] flex items-center justify-between gap-3 p-3">
+              <div className="text-sm font-semibold tracking-tight">{p.name}</div>
+              {p.logo_url ? <img src={p.logo_url} alt="" className="h-6 w-auto opacity-80" /> : null}
+            </SpotlightCard>
+          </Link>
         )
       )}
     </div>
