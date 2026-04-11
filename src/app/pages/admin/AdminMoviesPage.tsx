@@ -21,8 +21,8 @@ type Movie = {
   backdrop_images: string[]
   title_logos: string[]
   tags: string[]
-  budget: number | null
-  collection: number | null
+  budget: string | null
+  collection: string | null
 }
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
@@ -279,12 +279,12 @@ export default function AdminMoviesPage() {
               <Input value={m.trailer_url ?? ''} onChange={(e) => set('trailer_url', e.target.value || null)} />
             </label>
             <label className="block space-y-1">
-              <span className="text-xs text-white/50">Budget (₹)</span>
-              <Input type="number" value={m.budget ?? ''} onChange={(e) => set('budget', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 500000000" />
+              <span className="text-xs text-white/50">Budget</span>
+              <Input value={m.budget ?? ''} onChange={(e) => set('budget', e.target.value || null)} placeholder="e.g. 30 Cr, 45 Lakhs" />
             </label>
             <label className="block space-y-1">
-              <span className="text-xs text-white/50">Collection (₹)</span>
-              <Input type="number" value={m.collection ?? ''} onChange={(e) => set('collection', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 1200000000" />
+              <span className="text-xs text-white/50">Collection</span>
+              <Input value={m.collection ?? ''} onChange={(e) => set('collection', e.target.value || null)} placeholder="e.g. 300 Cr, 1.2 Billion" />
             </label>
           </div>
           {(() => {

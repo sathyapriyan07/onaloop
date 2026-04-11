@@ -24,8 +24,8 @@ type Movie = {
   title_logos: unknown
   selected_poster_url: string | null
   tags: string[]
-  budget: number | null
-  collection: number | null
+  budget: string | null
+  collection: string | null
 }
 
 type Genre = { id: string; name: string }
@@ -38,13 +38,6 @@ type CreditRow = {
   job: string | null
   sort_order: number
   person: { id: string; name: string; selected_profile_url: string | null } | null
-}
-
-function formatCrore(amount: number): string {
-  if (amount >= 1_00_00_00_000) return `₹${(amount / 1_00_00_00_000).toFixed(2)} Billion`
-  if (amount >= 1_00_00_000) return `₹${(amount / 1_00_00_000).toFixed(2)} Cr`
-  if (amount >= 1_00_000) return `₹${(amount / 1_00_000).toFixed(2)} L`
-  return `₹${amount.toLocaleString('en-IN')}`
 }
 
 export default function MovieDetailPage() {
@@ -211,14 +204,14 @@ export default function MovieDetailPage() {
             {movie.budget ? (
               <div className="space-y-0.5">
                 <div className="text-[10px] uppercase tracking-wider text-white/40">Budget</div>
-                <div className="text-sm font-semibold">{formatCrore(movie.budget)}</div>
+                <div className="text-sm font-semibold">{movie.budget}</div>
               </div>
             ) : null}
             {movie.budget && movie.collection ? <div className="w-px bg-white/10" /> : null}
             {movie.collection ? (
               <div className="space-y-0.5">
                 <div className="text-[10px] uppercase tracking-wider text-white/40">Collection</div>
-                <div className="text-sm font-semibold text-green-400">{formatCrore(movie.collection)}</div>
+                <div className="text-sm font-semibold text-green-400">{movie.collection}</div>
               </div>
             ) : null}
           </div>
