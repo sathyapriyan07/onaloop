@@ -46,6 +46,10 @@ export default function App() {
         <Route path="/studios" element={<ProductionHousesPage />} />
         <Route path="/studio/:id" element={<ProductionHouseDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
+      </Route>
+
+      {/* Discover has no footer */}
+      <Route element={<AppShell noFooter />}>
         <Route path="/discover" element={<DiscoverPage />} />
       </Route>
 
