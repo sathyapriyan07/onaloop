@@ -14,9 +14,24 @@ type Person = {
   known_for_department: string | null
   selected_profile_url: string | null
   profile_images: string[]
+  social_links: { platform: string; url: string }[]
 }
 
 type Editing = Partial<Person> & { id: string }
+
+const SOCIAL_PLATFORMS = [
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'x', label: 'X (Twitter)' },
+  { value: 'facebook', label: 'Facebook' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'spotify', label: 'Spotify' },
+  { value: 'applemusic', label: 'Apple Music' },
+  { value: 'youtubemusic', label: 'YouTube Music' },
+  { value: 'website', label: 'Website' },
+]
+
+const SOUND_PLATFORMS = ['spotify', 'applemusic', 'youtubemusic', 'youtube', 'instagram', 'x', 'website']
+const DEFAULT_PLATFORMS = ['instagram', 'x', 'facebook', 'youtube', 'website']
 
 export default function AdminPeoplePage() {
   const [people, setPeople] = useState<Person[]>([])
@@ -32,7 +47,7 @@ export default function AdminPeoplePage() {
     while (true) {
       const { data } = await supabase
         .from('people')
-        .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url,profile_images')
+        .select('id,name,bio,birthday,place_of_birth,known_for_department,selected_profile_url,profile_images,social_links')
         .order('name')
         .range(from, from + pageSize - 1)
       if (!data || data.length === 0) break
@@ -135,6 +150,41 @@ export default function AdminPeoplePage() {
                     })}
                   </div>
                 ) : null}
+              </div>
+            )
+          })()}
+          {(() => {
+            const links: { platform: string; url: string }[] = (p.social_links as any) ?? []
+            const dept = (p.known_for_department ?? '').toLowerCase()
+            const isSound = dept.includes('sound') || dept.includes('music')
+            const suggested = SOCIAL_PLATFORMS.filter((pl) =>
+              isSound ? SOUND_PLATFORMS.includes(pl.value) : DEFAULT_PLATFORMS.includes(pl.value)
+            )
+            return (
+              <div className="space-y-2">
+                <div className="text-xs text-white/50">Social & Music Links</div>
+                {links.map((lnk, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <select
+                      value={lnk.platform}
+                      onChange={(e) => { const updated = [...links]; updated[i] = { ...lnk, platform: e.target.value }; set('social_links', updated) }}
+                      className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white outline-none"
+                    >
+                      {SOCIAL_PLATFORMS.map((pl) => <option key={pl.value} value={pl.value}>{pl.label}</option>)}
+                    </select>
+                    <Input value={lnk.url} onChange={(e) => { const updated = [...links]; updated[i] = { ...lnk, url: e.target.value }; set('social_links', updated) }} placeholder="URL" className="flex-1" />
+                    <button type="button" onClick={() => set('social_links', links.filter((_, j) => j !== i))} className="text-xs text-red-300 hover:text-red-200 shrink-0">Remove</button>
+                  </div>
+                ))}
+                <div className="flex flex-wrap gap-1.5">
+                  {suggested.filter((pl) => !links.find((l) => l.platform === pl.value)).map((pl) => (
+                    <button key={pl.value} type="button"
+                      onClick={() => set('social_links', [...links, { platform: pl.value, url: '' }])}
+                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs hover:bg-white/10">
+                      + {pl.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )
           })()}
