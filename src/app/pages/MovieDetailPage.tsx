@@ -27,6 +27,8 @@ type Movie = {
   budget: string | null
   collection: string | null
   gallery_images: string[]
+  imdb_rating: number | null
+  rotten_tomatoes_rating: number | null
 }
 
 type Genre = { id: string; name: string }
@@ -62,7 +64,7 @@ export default function MovieDetailPage() {
 
       const { data: movieRow } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images,imdb_rating,rotten_tomatoes_rating')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -170,6 +172,22 @@ export default function MovieDetailPage() {
           {movie.tmdb_rating ? <span className="flex items-center gap-1">★ {movie.tmdb_rating}</span> : null}
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
+        {(movie.imdb_rating || movie.rotten_tomatoes_rating) ? (
+          <div className="flex flex-wrap items-center gap-3">
+            {movie.imdb_rating ? (
+              <div className="flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1">
+                <div className="flex h-5 w-5 items-center justify-center rounded bg-yellow-500 text-xs font-bold text-black">i</div>
+                <span className="text-sm font-semibold text-yellow-400">{movie.imdb_rating}</span>
+              </div>
+            ) : null}
+            {movie.rotten_tomatoes_rating ? (
+              <div className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1">
+                <div className="text-red-400 text-sm">🍅</div>
+                <span className="text-sm font-semibold text-red-400">{movie.rotten_tomatoes_rating}%</span>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         {studios.length ? (
           <div className="flex flex-wrap gap-2">
             {studios.map((s) => (

@@ -249,10 +249,26 @@ export default function AdminSeriesPage() {
                   {urls.map((url) => {
                     const isSelected = s[selectedKey] === url
                     return (
-                      <button key={url} onClick={() => set(selectedKey, url)} className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
-                        <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : 'h-12 w-auto object-contain'} />
-                        {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
-                      </button>
+                      <div key={url} className="relative shrink-0 group">
+                        <button onClick={() => set(selectedKey, url)} className={['relative overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
+                          <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : 'h-12 w-auto object-contain'} />
+                          {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm('Delete this image?')) {
+                              const updated = urls.filter((u) => u !== url)
+                              set(key, updated)
+                              if (s[selectedKey] === url) {
+                                set(selectedKey, updated[0] ?? null)
+                              }
+                            }
+                          }}
+                          className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
                     )
                   })}
                 </div>

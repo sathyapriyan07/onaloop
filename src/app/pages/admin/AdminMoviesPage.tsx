@@ -24,6 +24,8 @@ type Movie = {
   tags: string[]
   budget: string | null
   collection: string | null
+  imdb_rating: number | null
+  rotten_tomatoes_rating: number | null
 }
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
@@ -104,7 +106,7 @@ export default function AdminMoviesPage() {
     while (true) {
       const { data } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,gallery_images,tags,budget,collection')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,gallery_images,tags,budget,collection,imdb_rating,rotten_tomatoes_rating')
         .order('title')
         .range(from, from + pageSize - 1)
       if (!data || data.length === 0) break
@@ -271,10 +273,22 @@ export default function AdminMoviesPage() {
               <span className="text-xs text-white/50">Runtime (min)</span>
               <Input type="number" value={m.runtime_minutes ?? ''} onChange={(e) => set('runtime_minutes', e.target.value ? Number(e.target.value) : null)} />
             </label>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
             <label className="block space-y-1">
               <span className="text-xs text-white/50">TMDb rating</span>
               <Input type="number" step="0.1" value={m.tmdb_rating ?? ''} onChange={(e) => set('tmdb_rating', e.target.value ? Number(e.target.value) : null)} />
             </label>
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">IMDb rating</span>
+              <Input type="number" step="0.1" min="0" max="10" value={m.imdb_rating ?? ''} onChange={(e) => set('imdb_rating', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 8.5" />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-xs text-white/50">Rotten Tomatoes %</span>
+              <Input type="number" min="0" max="100" value={m.rotten_tomatoes_rating ?? ''} onChange={(e) => set('rotten_tomatoes_rating', e.target.value ? Number(e.target.value) : null)} placeholder="e.g. 95" />
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
             <label className="block space-y-1">
               <span className="text-xs text-white/50">Trailer URL</span>
               <Input value={m.trailer_url ?? ''} onChange={(e) => set('trailer_url', e.target.value || null)} />
@@ -342,11 +356,27 @@ export default function AdminMoviesPage() {
                     {urls.map((url) => {
                       const isSelected = selectedKey ? m[selectedKey] === url : false
                       return (
-                        <button key={url} onClick={() => selectedKey && set(selectedKey, url)}
-                          className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', selectedKey ? (isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100') : 'border-white/20'].join(' ')}>
-                          <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : key === 'title_logos' ? 'h-12 w-auto object-contain' : 'h-24 w-auto object-cover'} />
-                          {selectedKey && isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
-                        </button>
+                        <div key={url} className="relative shrink-0 group">
+                          <button onClick={() => selectedKey && set(selectedKey, url)}
+                            className={['relative overflow-hidden rounded-xl border-2 transition-all', selectedKey ? (isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100') : 'border-white/20'].join(' ')}>
+                            <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : key === 'title_logos' ? 'h-12 w-auto object-contain' : 'h-24 w-auto object-cover'} />
+                            {selectedKey && isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm('Delete this image?')) {
+                                const updated = urls.filter((u) => u !== url)
+                                set(key, updated)
+                                if (selectedKey && m[selectedKey] === url) {
+                                  set(selectedKey, updated[0] ?? null)
+                                }
+                              }
+                            }}
+                            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
                       )
                     })}
                   </div>

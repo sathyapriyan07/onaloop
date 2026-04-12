@@ -141,11 +141,27 @@ export default function AdminPeoplePage() {
                     {urls.map((url) => {
                       const isSelected = p.selected_profile_url === url
                       return (
-                        <button key={url} onClick={() => set('selected_profile_url', url)}
-                          className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
-                          <img src={url} alt="" className="h-24 w-16 object-cover" />
-                          {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
-                        </button>
+                        <div key={url} className="relative shrink-0 group">
+                          <button onClick={() => set('selected_profile_url', url)}
+                            className={['relative overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
+                            <img src={url} alt="" className="h-24 w-16 object-cover" />
+                            {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm('Delete this image?')) {
+                                const updated = urls.filter((u) => u !== url)
+                                set('profile_images', updated)
+                                if (p.selected_profile_url === url) {
+                                  set('selected_profile_url', updated[0] ?? null)
+                                }
+                              }
+                            }}
+                            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
                       )
                     })}
                   </div>
