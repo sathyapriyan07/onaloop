@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import Expandable from '../ui/Expandable'
-import ContentRail from '../ui/ContentRail'
+import ContentGrid from '../ui/ContentGrid'
 import { supabase } from '../../lib/supabase'
 
 type Person = {
@@ -155,7 +155,27 @@ export default function PersonDetailPage() {
   )
 
   const castCount = credits.filter((c) => c.credit_type === 'cast').length
-  const rest = sorted.slice(20)
+  const PREVIEW_COUNT = 24
+
+  const castItems = useMemo(() => sorted.map(({ creditId, content, to, role }) => ({
+    id: creditId,
+    title: content.title,
+    to,
+    imageUrl: content.selected_poster_url,
+    logoUrl: content.selected_logo_url,
+    badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
+    sub: [role, content.year].filter(Boolean).join(' · ') || null,
+  })), [sorted])
+
+  const crewItems = useMemo(() => crewRows.map(({ contentId, content, to, jobs }) => ({
+    id: contentId,
+    title: content.title,
+    to,
+    imageUrl: content.selected_poster_url,
+    logoUrl: content.selected_logo_url,
+    badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
+    sub: [content.year, jobs.length ? jobs.join(' · ') : null].filter(Boolean).join(' · ') || null,
+  })), [crewRows])
 
   if (!person) return <div className="text-white/60">Loading…</div>
 
@@ -219,70 +239,31 @@ export default function PersonDetailPage() {
         </div>
 
         {tab === 'crew' ? (
-          crewRows.length === 0 ? (
+          crewItems.length === 0 ? (
             <div className="text-sm text-white/50">No crew credits.</div>
+          ) : crewItems.length > PREVIEW_COUNT ? (
+            <Expandable
+              preview={<ContentGrid title="" items={crewItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />}
+              label={`Show all ${crewItems.length}`}
+              collapseLabel="Show less"
+            >
+              <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
+            </Expandable>
           ) : (
-            <div className="space-y-1">
-              {crewRows.map(({ contentId, content, to, jobs }) => (
-                <Link key={contentId} to={to}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10">
-                  <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg bg-white/10">
-                    {content.selected_poster_url
-                      ? <img src={content.selected_poster_url} alt={content.title} className="h-full w-full object-cover" />
-                      : null}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="truncate text-xs font-semibold">{content.title}</div>
-                    {jobs.length ? <div className="truncate text-xs text-white/50">{jobs.join(' · ')}</div> : null}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    {content.tmdb_rating ? <div className="text-xs text-white/60">★ {content.tmdb_rating}</div> : null}
-                    {content.year ? <div className="text-xs text-white/40">{content.year}</div> : null}
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
           )
-        ) : flatCredits.length === 0 ? (
+        ) : castItems.length === 0 ? (
           <div className="text-sm text-white/50">No acting credits.</div>
+        ) : castItems.length > PREVIEW_COUNT ? (
+          <Expandable
+            preview={<ContentGrid title="" items={castItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />}
+            label={`Show all ${castItems.length}`}
+            collapseLabel="Show less"
+          >
+            <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />
+          </Expandable>
         ) : (
-          <div className="space-y-4">
-            <ContentRail
-              title=""
-              items={sorted.slice(0, 20).map(({ creditId, content, to, role }) => ({
-                id: creditId,
-                title: content.title,
-                to,
-                imageUrl: content.selected_poster_url,
-                logoUrl: content.selected_logo_url,
-                badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
-                sub: role ?? undefined,
-              }))}
-              aspect="poster"
-            />
-            {rest.length > 0 && (
-              <div className="space-y-1">
-                {rest.map(({ creditId, content, to, role }) => (
-                  <Link key={creditId} to={to}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:bg-white/10">
-                    <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg bg-white/10">
-                      {content.selected_poster_url
-                        ? <img src={content.selected_poster_url} alt={content.title} className="h-full w-full object-cover" />
-                        : null}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="truncate text-xs font-semibold">{content.title}</div>
-                      {role ? <div className="truncate text-xs text-white/50">{role}</div> : null}
-                    </div>
-                    <div className="shrink-0 text-right">
-                      {content.tmdb_rating ? <div className="text-xs text-white/60">★ {content.tmdb_rating}</div> : null}
-                      {content.year ? <div className="text-xs text-white/40">{content.year}</div> : null}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />
         )}
       </section>
     </div>

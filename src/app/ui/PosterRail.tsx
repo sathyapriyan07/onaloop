@@ -8,7 +8,7 @@ type Item = {
   type: 'movie' | 'series'
 }
 
-export default function PosterRail({ title, items }: { title: string; items: Item[] }) {
+export default function PosterRail({ title, items, showLogo = true }: { title: string; items: Item[]; showLogo?: boolean }) {
   return (
     <ContentRail
       title={title}
@@ -20,6 +20,7 @@ export default function PosterRail({ title, items }: { title: string; items: Ite
         logoUrl: item.logoUrl ?? null,
       }))}
       aspect="poster"
+      showLogo={showLogo}
     />
   )
 }

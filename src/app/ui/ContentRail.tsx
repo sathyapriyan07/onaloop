@@ -17,9 +17,10 @@ type Props = {
   title: string
   items: ContentRailItem[]
   aspect?: 'poster' | 'backdrop'
+  showLogo?: boolean
 }
 
-export default function ContentRail({ title, items, aspect = 'poster' }: Props) {
+export default function ContentRail({ title, items, aspect = 'poster', showLogo = true }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     dragFree: true,
@@ -97,7 +98,7 @@ export default function ContentRail({ title, items, aspect = 'poster' }: Props) 
 
               {/* bottom info */}
               <div className="absolute inset-x-0 bottom-0 p-2">
-                {item.logoUrl ? (
+                {showLogo && item.logoUrl ? (
                   <img src={item.logoUrl} alt={item.title} className="max-h-7 max-w-[80%] object-contain object-left drop-shadow-md" />
                 ) : (
                   <div className="line-clamp-2 text-xs font-semibold leading-tight">{item.title}</div>

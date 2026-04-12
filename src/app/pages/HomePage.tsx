@@ -113,7 +113,7 @@ export default function HomePage() {
           logoUrl?: string | null
         }>
 
-        return <PosterRail key={section.id} title={section.title} items={items} />
+        return <PosterRail key={section.id} title={section.title} items={items} showLogo={false} />
       })}
     </div>
   )

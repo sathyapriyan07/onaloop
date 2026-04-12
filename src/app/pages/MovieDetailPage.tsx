@@ -6,7 +6,7 @@ import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
-import ContentRail from '../ui/ContentRail'
+import ContentGrid from '../ui/ContentGrid'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -346,7 +346,7 @@ export default function MovieDetailPage() {
 
       <Gallery images={movie.gallery_images ?? []} title={movie.title} />
 
-      <ContentRail
+      <ContentGrid
         title="Similar Movies"
         items={similarMovies.map((m) => ({
           id: m.id,
@@ -357,6 +357,7 @@ export default function MovieDetailPage() {
           badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null,
         }))}
         aspect="poster"
+        showLogo={false}
       />
 
       <section className="space-y-3">
