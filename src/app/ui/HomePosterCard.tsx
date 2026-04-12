@@ -4,10 +4,9 @@ type Props = {
   to: string
   title: string
   posterUrl?: string | null
-  logoUrl?: string | null
 }
 
-export default function HomePosterCard({ to, title, posterUrl, logoUrl }: Props) {
+export default function HomePosterCard({ to, title, posterUrl }: Props) {
   return (
     <Link
       to={to}

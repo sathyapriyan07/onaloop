@@ -39,13 +39,6 @@ function imageUrls(items: any[] | undefined, size: string): string[] {
     .filter((x): x is string => !!x)
 }
 
-export type TmdbVideo = {
-  key: string
-  name: string
-  type: string
-  site: string
-}
-
 function extractTrailer(videos: any): string | null {
   const results: any[] = videos?.results ?? []
   const trailer =
@@ -76,12 +69,6 @@ function extractCredits(data: any): TmdbCredit[] {
   return [...cast, ...crew]
 }
 
-function extractVideos(videos: any): TmdbVideo[] {
-  return (videos?.results ?? [])
-    .filter((v: any) => v.site === 'YouTube')
-    .map((v: any) => ({ key: v.key, name: v.name, type: v.type, site: v.site }))
-}
-
 export async function tmdbSearch(type: TmdbType, query: string): Promise<TmdbSearchResult[]> {
   const endpoint = type === 'movie' ? '/search/movie' : type === 'series' ? '/search/tv' : '/search/person'
   const data = await get(endpoint, { query, include_adult: 'false' })
@@ -90,7 +77,7 @@ export async function tmdbSearch(type: TmdbType, query: string): Promise<TmdbSea
 
 export async function tmdbFetchMovie(tmdbId: number) {
   const data = await get(`/movie/${tmdbId}`, {
-    append_to_response: 'images,credits,videos',
+    append_to_response: 'images,credits',
   })
   return {
     tmdb_id: tmdbId,
@@ -104,7 +91,6 @@ export async function tmdbFetchMovie(tmdbId: number) {
     backdrop_images: imageUrls(data?.images?.backdrops, 'w1280'),
     title_logos: imageUrls(data?.images?.logos, 'w500'),
     trailer_url: extractTrailer(data?.videos),
-    videos: extractVideos(data?.videos),
     genres: (data?.genres ?? []) as Array<{ id: number; name: string }>,
     credits: extractCredits(data?.credits),
   }
@@ -112,7 +98,7 @@ export async function tmdbFetchMovie(tmdbId: number) {
 
 export async function tmdbFetchSeries(tmdbId: number) {
   const data = await get(`/tv/${tmdbId}`, {
-    append_to_response: 'images,credits,videos',
+    append_to_response: 'images,credits',
   })
   return {
     tmdb_id: tmdbId,
@@ -125,7 +111,6 @@ export async function tmdbFetchSeries(tmdbId: number) {
     backdrop_images: imageUrls(data?.images?.backdrops, 'w1280'),
     title_logos: imageUrls(data?.images?.logos, 'w500'),
     trailer_url: extractTrailer(data?.videos),
-    videos: extractVideos(data?.videos),
     genres: (data?.genres ?? []) as Array<{ id: number; name: string }>,
     credits: extractCredits(data?.credits),
   }

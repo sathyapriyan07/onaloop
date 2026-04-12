@@ -21,7 +21,6 @@ export default function PosterRail({ title, items }: { title: string; items: Ite
             to={item.type === 'movie' ? `/movie/${item.id}` : `/series/${item.id}`}
             title={item.title}
             posterUrl={item.posterUrl}
-            logoUrl={item.logoUrl}
           />
         ))}
       </div>

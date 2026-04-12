@@ -32,8 +32,13 @@ import AdminBannersPage from './pages/admin/AdminBannersPage'
 export default function App() {
   return (
     <Routes>
+      {/* Homepage with footer */}
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
+      </Route>
+
+      {/* All other pages without footer */}
+      <Route element={<AppShell noFooter />}>
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/series" element={<SeriesPage />} />
         <Route path="/movie/:id" element={<MovieDetailPage />} />
@@ -46,10 +51,6 @@ export default function App() {
         <Route path="/studios" element={<ProductionHousesPage />} />
         <Route path="/studio/:id" element={<ProductionHouseDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
-      </Route>
-
-      {/* Discover has no footer */}
-      <Route element={<AppShell noFooter />}>
         <Route path="/discover" element={<DiscoverPage />} />
       </Route>
 

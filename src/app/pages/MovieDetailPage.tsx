@@ -18,7 +18,6 @@ type Movie = {
   runtime_minutes: number | null
   tmdb_rating: number | null
   trailer_url: string | null
-  videos: Array<{ key: string; name: string; type: string }>
   selected_backdrop_url: string | null
   backdrop_images: unknown
   selected_logo_url: string | null
@@ -53,7 +52,6 @@ export default function MovieDetailPage() {
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [activeVideo, setActiveVideo] = useState<string | null>(null)
   const [similarMovies, setSimilarMovies] = useState<Array<{ id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }>>([])
   const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
 
@@ -64,7 +62,7 @@ export default function MovieDetailPage() {
 
       const { data: movieRow } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -152,7 +150,6 @@ export default function MovieDetailPage() {
 
   const cast = credits.filter((c) => c.credit_type === 'cast')
   const crew = credits.filter((c) => c.credit_type === 'crew')
-  const videos = (movie.videos ?? []) as Array<{ key: string; name: string; type: string }>
 
   return (
     <div className="space-y-6">
@@ -329,47 +326,6 @@ export default function MovieDetailPage() {
               ))}
             </div>
           </Expandable>
-        </section>
-      ) : null}
-
-      {videos.length > 1 ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-semibold tracking-tight">Videos</h2>
-          <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {videos.map((v) => (
-              <button
-                key={v.key}
-                onClick={() => setActiveVideo(activeVideo === v.key ? null : v.key)}
-                className={['shrink-0 rounded-2xl border overflow-hidden text-left transition-colors', activeVideo === v.key ? 'border-white' : 'border-white/10 bg-white/5 hover:bg-white/10'].join(' ')}
-              >
-                <div className="relative">
-                  <img
-                    src={`https://img.youtube.com/vi/${v.key}/mqdefault.jpg`}
-                    alt={v.name}
-                    className="h-24 w-40 object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-neutral-950 text-sm">▶</div>
-                  </div>
-                </div>
-                <div className="px-2 py-1.5">
-                  <div className="w-40 truncate text-xs font-medium">{v.name}</div>
-                  <div className="text-xs text-white/40">{v.type}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-          {activeVideo ? (
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-              <iframe
-                src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1`}
-                className="h-full w-full"
-                allow="autoplay; fullscreen"
-                allowFullScreen
-                title="Video"
-              />
-            </div>
-          ) : null}
         </section>
       ) : null}
 
