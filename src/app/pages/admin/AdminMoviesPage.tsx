@@ -87,6 +87,7 @@ export default function AdminMoviesPage() {
   const [productionHouses, setProductionHouses] = useState<ProductionHouse[]>([])
   const [assignedStudios, setAssignedStudios] = useState<ProductionHouse[]>([])
   const [editing, setEditing] = useState<Editing | null>(null)
+  const [tagInput, setTagInput] = useState('')
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [musicLinks, setMusicLinks] = useState<LinkRow[]>([])
   const [newStreaming, setNewStreaming] = useState<NewLink>({ platform_id: '', url: '' })
@@ -146,6 +147,7 @@ export default function AdminMoviesPage() {
 
   async function startEdit(m: Movie) {
     setEditing(m)
+    setTagInput('')
     setNewStreaming({ platform_id: '', url: '' })
     setNewMusic({ platform_id: '', url: '' })
     setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
@@ -163,6 +165,14 @@ export default function AdminMoviesPage() {
       .eq('movie_id', movieId)
       .order('sort_order')
     setCredits((data ?? []) as unknown as CreditRow[])
+  }
+
+  async function updateTags(next: string[]) {
+    if (!editing) return
+    setError(null)
+    setEditing((p) => p ? ({ ...p, tags: next }) : p)
+    const { error: e } = await supabase.from('movies').update({ tags: next }).eq('id', editing.id)
+    if (e) setError(e.message)
   }
 
   async function addCredit() {
@@ -311,23 +321,38 @@ export default function AdminMoviesPage() {
                   {tags.map((tag) => (
                     <span key={tag} className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs">
                       {tag}
-                      <button type="button" onClick={() => set('tags', tags.filter((t) => t !== tag))} className="text-white/40 hover:text-red-300 leading-none">&times;</button>
+                      <button type="button" onClick={() => updateTags(tags.filter((t) => t !== tag))} className="text-white/40 hover:text-red-300 leading-none">&times;</button>
                     </span>
                   ))}
                 </div>
                 <div className="flex gap-2">
                   <Input
                     placeholder='e.g. Highest grossing movie of 2026'
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault()
-                        const val = (e.target as HTMLInputElement).value.trim()
-                        if (val && !tags.includes(val)) { set('tags', [...tags, val]); (e.target as HTMLInputElement).value = '' }
+                        const val = tagInput.trim()
+                        if (val && !tags.includes(val)) updateTags([...tags, val])
+                        setTagInput('')
                       }
                     }}
                   />
+                  <Button
+                    type="button"
+                    className="shrink-0"
+                    disabled={!tagInput.trim()}
+                    onClick={() => {
+                      const val = tagInput.trim()
+                      if (val && !tags.includes(val)) updateTags([...tags, val])
+                      setTagInput('')
+                    }}
+                  >
+                    Add
+                  </Button>
                 </div>
-                <div className="text-xs text-white/30">Press Enter to add a tag</div>
+                <div className="text-xs text-white/30">Press Enter (or click Add) to add a tag</div>
               </div>
             )
           })()}

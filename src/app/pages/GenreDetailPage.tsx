@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
+import ContentGrid from '../ui/ContentGrid'
 
 type Genre = { id: string; name: string; display_image_url: string | null }
 type Movie = { id: string; title: string; overview: string | null; release_date: string | null; runtime_minutes: number | null; tmdb_rating: number | null; selected_poster_url: string | null }
@@ -49,48 +50,37 @@ export default function GenreDetailPage() {
 
       {movies.length ? (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold tracking-tight">Movies ({movies.length})</h2>
-          <div className="space-y-2">
-            {movies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="flex gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10">
-                <div className="aspect-[2/3] w-14 shrink-0 overflow-hidden rounded-xl bg-white/10">
-                  {m.selected_poster_url ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" /> : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold">{m.title}</div>
-                  <div className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-white/50">
-                    {m.release_date ? <span>{m.release_date.slice(0, 4)}</span> : null}
-                    {formatRuntime(m.runtime_minutes) ? <span>{formatRuntime(m.runtime_minutes)}</span> : null}
-                    {m.tmdb_rating ? <span>★ {m.tmdb_rating}</span> : null}
-                  </div>
-                  {m.overview ? <p className="mt-1 line-clamp-2 text-xs text-white/50">{m.overview}</p> : null}
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ContentGrid
+            title={`Movies (${movies.length})`}
+            items={movies.map((m) => ({
+              id: m.id,
+              title: m.title,
+              to: `/movie/${m.id}`,
+              imageUrl: m.selected_poster_url,
+              badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null,
+              sub: [m.release_date?.slice(0, 4) ?? null, formatRuntime(m.runtime_minutes)].filter(Boolean).join(' · ') || null,
+            }))}
+            aspect="poster"
+            showLogo={false}
+          />
         </section>
       ) : null}
 
       {series.length ? (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold tracking-tight">Series ({series.length})</h2>
-          <div className="space-y-2">
-            {series.map((s) => (
-              <Link key={s.id} to={`/series/${s.id}`} className="flex gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10">
-                <div className="aspect-[2/3] w-14 shrink-0 overflow-hidden rounded-xl bg-white/10">
-                  {s.selected_poster_url ? <img src={s.selected_poster_url} alt={s.title} className="h-full w-full object-cover" /> : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold">{s.title}</div>
-                  <div className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-white/50">
-                    {s.first_air_date ? <span>{s.first_air_date.slice(0, 4)}</span> : null}
-                    {s.tmdb_rating ? <span>★ {s.tmdb_rating}</span> : null}
-                  </div>
-                  {s.overview ? <p className="mt-1 line-clamp-2 text-xs text-white/50">{s.overview}</p> : null}
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ContentGrid
+            title={`Series (${series.length})`}
+            items={series.map((s) => ({
+              id: s.id,
+              title: s.title,
+              to: `/series/${s.id}`,
+              imageUrl: s.selected_poster_url,
+              badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null,
+              sub: s.first_air_date ? s.first_air_date.slice(0, 4) : null,
+            }))}
+            aspect="poster"
+            showLogo={false}
+          />
         </section>
       ) : null}
 
