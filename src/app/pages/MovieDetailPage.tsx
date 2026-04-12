@@ -4,6 +4,7 @@ import TrailerHero from '../ui/TrailerHero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
+import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
@@ -26,6 +27,7 @@ type Movie = {
   tags: string[]
   budget: string | null
   collection: string | null
+  gallery_images: string[]
 }
 
 type Genre = { id: string; name: string }
@@ -62,7 +64,7 @@ export default function MovieDetailPage() {
 
       const { data: movieRow } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,videos,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images')
         .eq('id', id)
         .maybeSingle()
       if (!isMounted) return
@@ -371,12 +373,14 @@ export default function MovieDetailPage() {
         </section>
       ) : null}
 
+      <Gallery images={movie.gallery_images ?? []} title={movie.title} />
+
       {similarMovies.length ? (
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight">Similar Movies</h2>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {similarMovies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="group relative block aspect-[2/3] w-[30vw] max-w-[140px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              <Link key={m.id} to={`/movie/${m.id}`} className="group relative block aspect-[2/3] w-[32vw] max-w-[160px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                 {m.selected_poster_url
                   ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/50">{m.title}</div>}

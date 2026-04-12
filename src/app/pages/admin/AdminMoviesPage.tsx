@@ -20,6 +20,7 @@ type Movie = {
   poster_images: string[]
   backdrop_images: string[]
   title_logos: string[]
+  gallery_images: string[]
   tags: string[]
   budget: string | null
   collection: string | null
@@ -103,7 +104,7 @@ export default function AdminMoviesPage() {
     while (true) {
       const { data } = await supabase
         .from('movies')
-        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,tags,budget,collection')
+        .select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,show_logo,selected_poster_url,selected_backdrop_url,selected_logo_url,poster_images,backdrop_images,title_logos,gallery_images,tags,budget,collection')
         .order('title')
         .range(from, from + pageSize - 1)
       if (!data || data.length === 0) break
@@ -325,26 +326,26 @@ export default function AdminMoviesPage() {
             </div>
           </label>
 
-          {(['poster_images', 'backdrop_images', 'title_logos'] as const).map((key) => {
-            const label = key === 'poster_images' ? 'Posters' : key === 'backdrop_images' ? 'Backdrops' : 'Logos'
-            const uploadLabel = key === 'poster_images' ? 'Poster' : key === 'backdrop_images' ? 'Backdrop' : 'Logo'
-            const selectedKey = key === 'poster_images' ? 'selected_poster_url' : key === 'backdrop_images' ? 'selected_backdrop_url' : 'selected_logo_url'
+          {(['poster_images', 'backdrop_images', 'title_logos', 'gallery_images'] as const).map((key) => {
+            const label = key === 'poster_images' ? 'Posters' : key === 'backdrop_images' ? 'Backdrops' : key === 'title_logos' ? 'Logos' : 'Gallery Images'
+            const uploadLabel = key === 'poster_images' ? 'Poster' : key === 'backdrop_images' ? 'Backdrop' : key === 'title_logos' ? 'Logo' : 'Gallery Image'
+            const selectedKey = key === 'poster_images' ? 'selected_poster_url' : key === 'backdrop_images' ? 'selected_backdrop_url' : key === 'title_logos' ? 'selected_logo_url' : null
             const urls: string[] = [...new Set((m[key] as string[]) ?? [])]
             return (
               <div key={key} className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs text-white/50">{label} ({urls.length}) — tap to select active</div>
-                  <ImageUploader bucket="movie-images" folder={m.id} label={uploadLabel} onUploaded={(url) => { const updated = [url, ...urls.filter((u) => u !== url)]; set(key, updated); set(selectedKey, url) }} />
+                  <div className="text-xs text-white/50">{label} ({urls.length}){selectedKey ? ' — tap to select active' : ''}</div>
+                  <ImageUploader bucket="movie-images" folder={m.id} label={uploadLabel} onUploaded={(url) => { const updated = [url, ...urls.filter((u) => u !== url)]; set(key, updated); if (selectedKey) set(selectedKey, url) }} />
                 </div>
                 {urls.length ? (
                   <div className={['flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', key === 'poster_images' ? 'items-end' : 'items-center'].join(' ')}>
                     {urls.map((url) => {
-                      const isSelected = m[selectedKey] === url
+                      const isSelected = selectedKey ? m[selectedKey] === url : false
                       return (
-                        <button key={url} onClick={() => set(selectedKey, url)}
-                          className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100'].join(' ')}>
-                          <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : 'h-12 w-auto object-contain'} />
-                          {isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
+                        <button key={url} onClick={() => selectedKey && set(selectedKey, url)}
+                          className={['relative shrink-0 overflow-hidden rounded-xl border-2 transition-all', selectedKey ? (isSelected ? 'border-white shadow-[0_0_0_2px_rgba(255,255,255,0.3)]' : 'border-transparent opacity-60 hover:opacity-100') : 'border-white/20'].join(' ')}>
+                          <img src={url} alt="" className={key === 'poster_images' ? 'h-32 w-auto object-cover' : key === 'backdrop_images' ? 'h-20 w-auto object-cover' : key === 'title_logos' ? 'h-12 w-auto object-contain' : 'h-24 w-auto object-cover'} />
+                          {selectedKey && isSelected && <div className="absolute inset-x-0 bottom-0 bg-white/90 py-0.5 text-center text-xs font-bold text-neutral-950">Active</div>}
                         </button>
                       )
                     })}

@@ -99,7 +99,7 @@ export default function SeriesPage() {
       <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
 
       {view === 'grid' ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filtered
             .filter(s => s.selected_poster_url)
             .map((s) => (

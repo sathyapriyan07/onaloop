@@ -126,14 +126,14 @@ export default function SearchPage() {
           <h2 className="text-base font-semibold tracking-tight">Movies</h2>
           <Expandable
             preview={
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
                 {movies.slice(0, 6).map((m) => <PosterCard key={m.id} to={`/movie/${m.id}`} title={m.title} posterUrl={m.selected_poster_url} logoUrl={m.selected_logo_url} />)}
               </div>
             }
             label={`Show all ${movies.length}`}
             collapseLabel="Show less"
           >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
               {movies.map((m) => <PosterCard key={m.id} to={`/movie/${m.id}`} title={m.title} posterUrl={m.selected_poster_url} logoUrl={m.selected_logo_url} />)}
             </div>
           </Expandable>
@@ -145,14 +145,14 @@ export default function SearchPage() {
           <h2 className="text-base font-semibold tracking-tight">Series</h2>
           <Expandable
             preview={
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
                 {series.slice(0, 6).map((s) => <PosterCard key={s.id} to={`/series/${s.id}`} title={s.title} posterUrl={s.selected_poster_url} logoUrl={s.selected_logo_url} />)}
               </div>
             }
             label={`Show all ${series.length}`}
             collapseLabel="Show less"
           >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
               {series.map((s) => <PosterCard key={s.id} to={`/series/${s.id}`} title={s.title} posterUrl={s.selected_poster_url} logoUrl={s.selected_logo_url} />)}
             </div>
           </Expandable>
