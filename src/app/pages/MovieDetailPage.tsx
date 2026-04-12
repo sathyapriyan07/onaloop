@@ -170,24 +170,20 @@ export default function MovieDetailPage() {
           {movie.release_date ? <span>{movie.release_date.slice(0, 4)}</span> : null}
           {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
           {movie.tmdb_rating ? <span className="flex items-center gap-1">★ {movie.tmdb_rating}</span> : null}
+          {movie.imdb_rating ? (
+            <span className="flex items-center gap-1 text-white font-semibold">
+              <img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-3 w-auto" />
+              {movie.imdb_rating}
+            </span>
+          ) : null}
+          {movie.rotten_tomatoes_rating ? (
+            <span className="flex items-center gap-1 text-white font-semibold">
+              <img src="/Rotten_Tomatoes.svg.png" alt="Rotten Tomatoes" className="h-3 w-auto" />
+              {movie.rotten_tomatoes_rating}%
+            </span>
+          ) : null}
           {genres.length ? <span>{genres.map((g) => g.name).join(' · ')}</span> : null}
         </div>
-        {(movie.imdb_rating || movie.rotten_tomatoes_rating) ? (
-          <div className="flex flex-wrap items-center gap-3">
-            {movie.imdb_rating ? (
-              <div className="flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1">
-                <div className="flex h-5 w-5 items-center justify-center rounded bg-yellow-500 text-xs font-bold text-black">i</div>
-                <span className="text-sm font-semibold text-yellow-400">{movie.imdb_rating}</span>
-              </div>
-            ) : null}
-            {movie.rotten_tomatoes_rating ? (
-              <div className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1">
-                <div className="text-red-400 text-sm">🍅</div>
-                <span className="text-sm font-semibold text-red-400">{movie.rotten_tomatoes_rating}%</span>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
         {studios.length ? (
           <div className="flex flex-wrap gap-2">
             {studios.map((s) => (
