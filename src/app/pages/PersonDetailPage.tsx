@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import Expandable from '../ui/Expandable'
+import ContentRail from '../ui/ContentRail'
 import { supabase } from '../../lib/supabase'
 
 type Person = {
@@ -153,10 +154,8 @@ export default function PersonDetailPage() {
     [flatCredits]
   )
 
-  const top = sorted.slice(0, 6)
-  const rest = sorted.slice(6)
-
   const castCount = credits.filter((c) => c.credit_type === 'cast').length
+  const rest = sorted.slice(20)
 
   if (!person) return <div className="text-white/60">Loading…</div>
 
@@ -247,31 +246,20 @@ export default function PersonDetailPage() {
         ) : flatCredits.length === 0 ? (
           <div className="text-sm text-white/50">No acting credits.</div>
         ) : (
-          <div className="space-y-6">
-            {top.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {top.map(({ creditId, content, to, role }) => (
-                  <Link key={creditId} to={to} className="group space-y-1.5">
-                    <div className="relative aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                      {content.selected_poster_url ? (
-                        <img src={content.selected_poster_url} alt={content.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/50">{content.title}</div>
-                      )}
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                      {content.tmdb_rating ? (
-                        <div className="absolute right-2 top-2 rounded-lg bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {content.tmdb_rating}</div>
-                      ) : null}
-                    </div>
-                    <div>
-                      <div className="truncate text-xs font-semibold">{content.title}</div>
-                      {role ? <div className="truncate text-xs text-white/50">{role}</div> : null}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+          <div className="space-y-4">
+            <ContentRail
+              title=""
+              items={sorted.slice(0, 20).map(({ creditId, content, to, role }) => ({
+                id: creditId,
+                title: content.title,
+                to,
+                imageUrl: content.selected_poster_url,
+                logoUrl: content.selected_logo_url,
+                badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
+                sub: role ?? undefined,
+              }))}
+              aspect="poster"
+            />
             {rest.length > 0 && (
               <div className="space-y-1">
                 {rest.map(({ creditId, content, to, role }) => (

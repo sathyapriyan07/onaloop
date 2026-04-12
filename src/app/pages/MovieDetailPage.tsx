@@ -6,6 +6,7 @@ import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
+import ContentRail from '../ui/ContentRail'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -345,27 +346,18 @@ export default function MovieDetailPage() {
 
       <Gallery images={movie.gallery_images ?? []} title={movie.title} />
 
-      {similarMovies.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-semibold tracking-tight">Similar Movies</h2>
-          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {similarMovies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="group relative block aspect-[2/3] w-[32vw] max-w-[160px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                {m.selected_poster_url
-                  ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                  : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/50">{m.title}</div>}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-2">
-                  <div className="line-clamp-2 text-xs font-semibold">{m.title}</div>
-                </div>
-                {m.tmdb_rating ? (
-                  <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-xs font-semibold">★ {m.tmdb_rating}</div>
-                ) : null}
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <ContentRail
+        title="Similar Movies"
+        items={similarMovies.map((m) => ({
+          id: m.id,
+          title: m.title,
+          to: `/movie/${m.id}`,
+          imageUrl: m.selected_poster_url,
+          logoUrl: m.selected_logo_url,
+          badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null,
+        }))}
+        aspect="poster"
+      />
 
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">Reviews</h2>

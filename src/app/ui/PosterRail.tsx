@@ -1,4 +1,4 @@
-import HomePosterCard from './HomePosterCard'
+import ContentRail from './ContentRail'
 
 type Item = {
   id: string
@@ -9,21 +9,17 @@ type Item = {
 }
 
 export default function PosterRail({ title, items }: { title: string; items: Item[] }) {
-  if (!items.length) return null
-
   return (
-    <section className="space-y-3">
-      <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {items.map((item) => (
-          <HomePosterCard
-            key={item.id}
-            to={item.type === 'movie' ? `/movie/${item.id}` : `/series/${item.id}`}
-            title={item.title}
-            posterUrl={item.posterUrl}
-          />
-        ))}
-      </div>
-    </section>
+    <ContentRail
+      title={title}
+      items={items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        to: item.type === 'movie' ? `/movie/${item.id}` : `/series/${item.id}`,
+        imageUrl: item.posterUrl ?? null,
+        logoUrl: item.logoUrl ?? null,
+      }))}
+      aspect="poster"
+    />
   )
 }

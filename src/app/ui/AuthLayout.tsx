@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import DomeGallery from './DomeGallery'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const [images, setImages] = useState<{ src: string; alt: string }[]>([])
@@ -22,19 +21,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-neutral-950">
+      {/* Static background with movie posters */}
       <div className="absolute inset-0">
-        {images.length > 0 && (
-          <DomeGallery
-            images={images}
-            fit={0.8}
-            minRadius={600}
-            maxVerticalRotationDeg={0}
-            segments={34}
-            dragDampening={2}
-            grayscale={false}
-            overlayBlurColor="#0a0a0a"
-          />
-        )}
+        <div className="grid grid-cols-6 gap-2 h-full opacity-20">
+          {images.slice(0, 24).map((image, index) => (
+            <div key={index} className="aspect-[2/3] overflow-hidden rounded-lg">
+              <img 
+                src={image.src} 
+                alt={image.alt}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80" />
       <div className="relative z-10 flex min-h-dvh items-end justify-center p-6 pb-12">

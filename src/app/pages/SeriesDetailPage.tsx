@@ -4,6 +4,7 @@ import Hero from '../ui/Hero'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
+import ContentRail from '../ui/ContentRail'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../../lib/useSession'
 
@@ -31,6 +32,7 @@ type CreditRow = {
   sort_order: number
   person: { id: string; name: string; selected_profile_url: string | null } | null
 }
+type SimilarSeries = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }
 
 function youtubeEmbedUrl(url: string) {
   const match = url.match(/[?&]v=([^&]+)/)
@@ -48,6 +50,7 @@ export default function SeriesDetailPage() {
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showTrailer, setShowTrailer] = useState(false)
+  const [similarSeries, setSimilarSeries] = useState<SimilarSeries[]>([])
 
   useEffect(() => {
     let isMounted = true
@@ -65,7 +68,31 @@ export default function SeriesDetailPage() {
       const { data: genreRows } = await supabase
         .from('series_genres').select('genre:genres(id,name)').eq('series_id', id)
       if (!isMounted) return
-      setGenres(((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[])
+      const fetchedGenres = ((genreRows ?? []).map((r: any) => r.genre).filter(Boolean)) as Genre[]
+      setGenres(fetchedGenres)
+
+      if (fetchedGenres.length >= 1) {
+        const genreIds = fetchedGenres.map((g) => g.id)
+        const { data: simRows } = await supabase
+          .from('series_genres')
+          .select('series_id,genre_id,series:series(id,title,selected_poster_url,selected_logo_url,tmdb_rating)')
+          .in('genre_id', genreIds)
+          .neq('series_id', id)
+        if (isMounted) {
+          const countMap = new Map<string, number>()
+          const seriesMap = new Map<string, any>()
+          for (const row of (simRows ?? []) as any[]) {
+            const s = Array.isArray(row.series) ? row.series[0] : row.series
+            if (!s) continue
+            countMap.set(s.id, (countMap.get(s.id) ?? 0) + 1)
+            seriesMap.set(s.id, s)
+          }
+          const sim = [...seriesMap.values()]
+            .sort((a, b) => (b.tmdb_rating ?? 0) - (a.tmdb_rating ?? 0))
+            .slice(0, 12)
+          setSimilarSeries(sim)
+        }
+      }
 
       const { data: creditRows } = await supabase
         .from('credits')
@@ -245,6 +272,19 @@ export default function SeriesDetailPage() {
           </Expandable>
         </section>
       ) : null}
+
+      <ContentRail
+        title="Similar Series"
+        items={similarSeries.map((s) => ({
+          id: s.id,
+          title: s.title,
+          to: `/series/${s.id}`,
+          imageUrl: s.selected_poster_url,
+          logoUrl: s.selected_logo_url,
+          badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null,
+        }))}
+        aspect="poster"
+      />
 
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">Reviews</h2>

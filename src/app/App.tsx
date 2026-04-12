@@ -14,7 +14,6 @@ import PlatformDetailPage from './pages/PlatformDetailPage'
 import ProductionHousesPage from './pages/ProductionHousesPage'
 import ProductionHouseDetailPage from './pages/ProductionHouseDetailPage'
 import SearchPage from './pages/SearchPage'
-import DiscoverPage from './pages/DiscoverPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import AdminLoginPage from './pages/admin/AdminLoginPage'
@@ -51,7 +50,6 @@ export default function App() {
         <Route path="/studios" element={<ProductionHousesPage />} />
         <Route path="/studio/:id" element={<ProductionHouseDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/discover" element={<DiscoverPage />} />
       </Route>
 
       <Route path="/login" element={<LoginPage />} />
