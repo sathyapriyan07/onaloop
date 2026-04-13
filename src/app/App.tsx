@@ -27,6 +27,10 @@ import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 import AdminPlatformsPage from './pages/admin/AdminPlatformsPage'
 import AdminProductionHousesPage from './pages/admin/AdminProductionHousesPage'
 import AdminBannersPage from './pages/admin/AdminBannersPage'
+import ProfilePage from './pages/ProfilePage'
+import DiscoverPage from './pages/DiscoverPage'
+import CollectionsPage from './pages/CollectionsPage'
+import CollectionDetailPage from './pages/CollectionDetailPage'
 
 export default function App() {
   return (
@@ -50,6 +54,10 @@ export default function App() {
         <Route path="/studios" element={<ProductionHousesPage />} />
         <Route path="/studio/:id" element={<ProductionHouseDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
+        <Route path="/collections" element={<CollectionsPage />} />
+        <Route path="/collection/:id" element={<CollectionDetailPage />} />
       </Route>
 
       <Route path="/login" element={<LoginPage />} />

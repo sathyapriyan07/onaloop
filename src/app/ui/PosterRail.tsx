@@ -6,9 +6,20 @@ type Item = {
   posterUrl?: string | null
   logoUrl?: string | null
   type: 'movie' | 'series'
+  rating?: number | null
+  year?: string | null
+  loopScore?: number | null
 }
 
-export default function PosterRail({ title, items, showLogo = true }: { title: string; items: Item[]; showLogo?: boolean }) {
+type Props = {
+  title: string
+  items: Item[]
+  showLogo?: boolean
+  emoji?: string
+  viewAllTo?: string
+}
+
+export default function PosterRail({ title, items, showLogo = true, emoji, viewAllTo }: Props) {
   return (
     <ContentRail
       title={title}
@@ -18,9 +29,14 @@ export default function PosterRail({ title, items, showLogo = true }: { title: s
         to: item.type === 'movie' ? `/movie/${item.id}` : `/series/${item.id}`,
         imageUrl: item.posterUrl ?? null,
         logoUrl: item.logoUrl ?? null,
+        rating: item.rating,
+        year: item.year,
+        loopScore: item.loopScore,
       }))}
       aspect="poster"
       showLogo={showLogo}
+      emoji={emoji}
+      viewAllTo={viewAllTo}
     />
   )
 }

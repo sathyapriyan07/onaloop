@@ -8,3 +8,11 @@ export function pickImageUrl(
   return fallback || null
 }
 
+/** Append a width hint to Supabase Storage URLs for lighter payloads */
+export function imgSrc(url: string | null | undefined, width: number): string | null {
+  if (!url) return null
+  // Only transform Supabase storage URLs
+  if (!url.includes('/storage/v1/object/')) return url
+  return `${url}?width=${width}&quality=80`
+}
+
