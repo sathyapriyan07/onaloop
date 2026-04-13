@@ -79,10 +79,10 @@ export default function TopBar() {
           {isAdmin && (
             <NavLink
               to="/admin"
-              className="hidden sm:flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5 transition-colors"
+              className="flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5 transition-colors"
             >
               <Shield size={14} />
-              Admin
+              <span className="hidden sm:inline">Admin</span>
             </NavLink>
           )}
 

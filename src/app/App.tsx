@@ -27,6 +27,7 @@ import AdminPeoplePage from './pages/admin/AdminPeoplePage'
 import AdminPlatformsPage from './pages/admin/AdminPlatformsPage'
 import AdminProductionHousesPage from './pages/admin/AdminProductionHousesPage'
 import AdminBannersPage from './pages/admin/AdminBannersPage'
+import AdminCollectionsPage from './pages/admin/AdminCollectionsPage'
 import ProfilePage from './pages/ProfilePage'
 import DiscoverPage from './pages/DiscoverPage'
 import CollectionsPage from './pages/CollectionsPage'
@@ -74,6 +75,7 @@ export default function App() {
         <Route path="/admin/platforms" element={<AdminPlatformsPage />} />
         <Route path="/admin/studios" element={<AdminProductionHousesPage />} />
         <Route path="/admin/banners" element={<AdminBannersPage />} />
+        <Route path="/admin/collections" element={<AdminCollectionsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

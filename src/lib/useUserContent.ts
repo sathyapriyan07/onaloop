@@ -16,8 +16,8 @@ export function useUserContent(contentId: string | undefined, type: ContentType)
       supabase.from('watchlist').select('id').eq('user_id', user.id).eq(col, contentId).maybeSingle(),
       supabase.from('watched').select('id').eq('user_id', user.id).eq(col, contentId).maybeSingle(),
     ]).then(([w, wd]) => {
-      setInWatchlist(!!w.data)
-      setIsWatched(!!wd.data)
+      if (!w.error) setInWatchlist(!!w.data)
+      if (!wd.error) setIsWatched(!!wd.data)
     })
   }, [user, contentId, type])
 
@@ -25,11 +25,11 @@ export function useUserContent(contentId: string | undefined, type: ContentType)
     if (!user || !contentId) return
     const col = type === 'movie' ? 'movie_id' : 'series_id'
     if (inWatchlist) {
-      await supabase.from('watchlist').delete().eq('user_id', user.id).eq(col, contentId)
-      setInWatchlist(false)
+      const { error } = await supabase.from('watchlist').delete().eq('user_id', user.id).eq(col, contentId)
+      if (!error) setInWatchlist(false)
     } else {
-      await supabase.from('watchlist').insert({ user_id: user.id, [col]: contentId })
-      setInWatchlist(true)
+      const { error } = await supabase.from('watchlist').insert({ user_id: user.id, [col]: contentId })
+      if (!error) setInWatchlist(true)
     }
   }, [user, contentId, type, inWatchlist])
 
@@ -37,11 +37,11 @@ export function useUserContent(contentId: string | undefined, type: ContentType)
     if (!user || !contentId) return
     const col = type === 'movie' ? 'movie_id' : 'series_id'
     if (isWatched) {
-      await supabase.from('watched').delete().eq('user_id', user.id).eq(col, contentId)
-      setIsWatched(false)
+      const { error } = await supabase.from('watched').delete().eq('user_id', user.id).eq(col, contentId)
+      if (!error) setIsWatched(false)
     } else {
-      await supabase.from('watched').insert({ user_id: user.id, [col]: contentId })
-      setIsWatched(true)
+      const { error } = await supabase.from('watched').insert({ user_id: user.id, [col]: contentId })
+      if (!error) setIsWatched(true)
     }
   }, [user, contentId, type, isWatched])
 

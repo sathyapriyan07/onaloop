@@ -58,8 +58,8 @@ export default function ProfilePage() {
           return null
         }).filter(Boolean) as ContentItem[]
       }
-      setWatchlist(mapRows(wl.data ?? []))
-      setWatched(mapRows(wd.data ?? []))
+      if (!wl.error) setWatchlist(mapRows(wl.data ?? []))
+      if (!wd.error) setWatched(mapRows(wd.data ?? []))
       setLoading(false)
     })
   }, [user])

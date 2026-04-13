@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Play, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
-import TrailerModal from '../ui/TrailerModal'
+import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
 import SpotlightCard from '../ui/SpotlightCard'
@@ -22,7 +21,7 @@ type Movie = {
   imdb_rating: number | null; rotten_tomatoes_rating: number | null; loop_score: number | null
 }
 type Genre = { id: string; name: string }
-type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string; profile: { email: string | null } | null }
+type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
 type LinkRow = { id: string; label: string; url: string; platform?: { name: string; logo_url: string | null } | null }
 type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
 
@@ -59,17 +58,17 @@ export default function MovieDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [similarMovies, setSimilarMovies] = useState<any[]>([])
   const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
-  const [showTrailer, setShowTrailer] = useState(false)
+  const [trailerOpen, setTrailerOpen] = useState(false)
 
   useEffect(() => {
     if (!id) return
     let isMounted = true
     async function run() {
       const [{ data: movieRow }, { data: genreRows }, { data: creditRows }, { data: reviewRows }, { data: musicRows }, { data: streamingRows }, { data: studioRows }] = await Promise.all([
-        supabase.from('movies').select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images,imdb_rating,rotten_tomatoes_rating,loop_score').eq('id', id).maybeSingle(),
+        supabase.from('movies').select('id,title,overview,release_date,runtime_minutes,tmdb_rating,trailer_url,selected_backdrop_url,backdrop_images,selected_logo_url,title_logos,selected_poster_url,tags,budget,collection,gallery_images,imdb_rating,rotten_tomatoes_rating').eq('id', id).maybeSingle(),
         supabase.from('movie_genres').select('genre:genres(id,name)').eq('movie_id', id),
         supabase.from('credits').select('id,credit_type,character,job,sort_order,person:people(id,name,selected_profile_url)').eq('movie_id', id).order('sort_order', { ascending: true }),
-        supabase.from('reviews').select('id,user_id,rating,review_text,created_at,profile:profiles(email)').eq('movie_id', id).order('created_at', { ascending: false }),
+        supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('movie_id', id).order('created_at', { ascending: false }),
         supabase.from('movie_music_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order'),
         supabase.from('movie_streaming_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order'),
         supabase.from('movie_production_houses').select('production_house:production_houses(id,name,logo_url)').eq('movie_id', id),
@@ -109,7 +108,7 @@ export default function MovieDetailPage() {
     try {
       await supabase.from('reviews').upsert({ user_id: user.id, movie_id: id, review_text: reviewText.trim(), rating: reviewRating || null }, { onConflict: 'user_id,movie_id' })
       setReviewText(''); setReviewRating(0)
-      const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at,profile:profiles(email)').eq('movie_id', id).order('created_at', { ascending: false })
+      const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('movie_id', id).order('created_at', { ascending: false })
       setReviews((data ?? []) as unknown as Review[])
     } finally { setIsSubmitting(false) }
   }
@@ -147,8 +146,9 @@ export default function MovieDetailPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               {videoId && (
-                <button onClick={() => setShowTrailer(true)} className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
-                  <Play size={14} fill="currentColor" /> Watch Trailer
+                <button onClick={() => setTrailerOpen((v) => !v)} className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
+                  <Play size={14} fill="currentColor" /> {trailerOpen ? 'Hide Trailer' : 'Watch Trailer'}
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
                 </button>
               )}
               <button onClick={toggleWatchlist} className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${inWatchlist ? 'border-accent bg-accent/15 text-accent' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
@@ -228,6 +228,22 @@ export default function MovieDetailPage() {
           </div>
         ) : null}
       </section>
+
+      {/* Inline Trailer */}
+      {videoId && trailerOpen && (
+        <section className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+          <div className="aspect-video w-full">
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              title={`${movie.title} trailer`}
+              className="h-full w-full"
+              style={{ border: 'none' }}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Where to Watch */}
       {streamingLinks.length ? (
@@ -326,7 +342,7 @@ export default function MovieDetailPage() {
           {reviews.map((r) => (
             <SpotlightCard key={r.id} className="p-4" spotlightColor="rgba(168,85,247,0.06)">
               <div className="flex items-center justify-between">
-                <div className="text-xs font-medium text-white/70">{(r.profile as any)?.email ?? 'Anonymous'}</div>
+                <div className="text-xs font-medium text-white/70">User {r.user_id.slice(0, 8)}</div>
                 <div className="flex items-center gap-2">
                   {r.rating ? <span className="text-xs text-yellow-400">{'★'.repeat(r.rating)}</span> : null}
                   <div className="text-xs text-white/30">{new Date(r.created_at).toLocaleDateString()}</div>
@@ -339,7 +355,7 @@ export default function MovieDetailPage() {
         </div>
       </section>
 
-      {showTrailer && videoId && <TrailerModal videoId={videoId} title={movie.title} onClose={() => setShowTrailer(false)} />}
+
     </div>
   )
 }
