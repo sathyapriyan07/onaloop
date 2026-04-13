@@ -146,18 +146,16 @@ export default function MovieDetailPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               {videoId && (
-                <button onClick={() => setTrailerOpen((v) => !v)} className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
-                  <Play size={14} fill="currentColor" /> {trailerOpen ? 'Hide Trailer' : 'Watch Trailer'}
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
+                <button onClick={() => setTrailerOpen((v) => !v)} className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
+                  <Play size={12} fill="currentColor" /> {trailerOpen ? 'Hide Trailer' : 'Trailer'}
+                  <ChevronDown size={12} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
                 </button>
               )}
-              <button onClick={toggleWatchlist} className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${inWatchlist ? 'border-accent bg-accent/15 text-accent' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-                {inWatchlist ? 'In Watchlist' : 'Watchlist'}
+              <button onClick={toggleWatchlist} title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${inWatchlist ? 'border-accent bg-accent/15 text-accent' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
+                {inWatchlist ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
               </button>
-              <button onClick={toggleWatched} className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isWatched ? 'border-green-500 bg-green-500/15 text-green-400' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
-                {isWatched ? 'Watched' : 'Mark Watched'}
+              <button onClick={toggleWatched} title={isWatched ? 'Mark as Unwatched' : 'Mark as Watched'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${isWatched ? 'border-green-500 bg-green-500/15 text-green-400' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
+                {isWatched ? <Eye size={15} /> : <EyeOff size={15} />}
               </button>
             </div>
           </div>

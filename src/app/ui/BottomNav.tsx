@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Home, Search, User, Compass, Shield } from 'lucide-react'
+import { Home, Search, User, Compass, Shield, Library } from 'lucide-react'
 import clsx from 'clsx'
 import { useAdminGuard } from '../../lib/useAdminGuard'
 
 const userLinks = [
   { to: '/', icon: Home, label: 'Home', end: true },
   { to: '/discover', icon: Compass, label: 'Discover' },
+  { to: '/collections', icon: Library, label: 'Collections' },
   { to: '/search', icon: Search, label: 'Search' },
   { to: '/profile', icon: User, label: 'Profile' },
 ]
