@@ -54,13 +54,10 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
     <section className="space-y-4">
       {/* Section header — elfilming style: accent left bar + bold title */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="w-1 h-5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
-          <h2 className="text-base font-black tracking-tight uppercase flex items-center gap-2">
-            {emoji && <span className="text-sm">{emoji}</span>}
-            {title}
-          </h2>
-        </div>
+        <h2 className="text-base font-bold tracking-tight flex items-center gap-2">
+          {emoji && <span className="text-sm">{emoji}</span>}
+          {title}
+        </h2>
         <div className="flex items-center gap-2">
           {viewAllTo && (
             <Link to={viewAllTo} className="flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-accent transition-colors">

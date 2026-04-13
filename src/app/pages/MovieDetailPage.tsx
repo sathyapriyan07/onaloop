@@ -43,12 +43,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 }
 
 function SectionHeader({ title }: { title: string }) {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <span className="w-1 h-5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
-      <h2 className="text-sm font-black uppercase tracking-tight">{title}</h2>
-    </div>
-  )
+  return <h2 className="text-sm font-black uppercase tracking-tight mb-4">{title}</h2>
 }
 
 export default function MovieDetailPage() {
@@ -148,16 +143,16 @@ export default function MovieDetailPage() {
       <div className="px-4 space-y-6">
 
         {/* Poster + Info row */}
-        <div className="flex gap-4 -mt-16 md:-mt-24 relative z-10">
+        <div className="flex gap-4 -mt-10 md:-mt-24 relative z-10">
           {/* Poster */}
           {movie.selected_poster_url && (
-            <div className="shrink-0 w-24 md:w-36 aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-white/10">
-              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover" />
+            <div className="shrink-0 w-24 md:w-36" style={{ aspectRatio: '2/3' }}>
+              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover rounded-xl shadow-2xl border border-white/10" />
             </div>
           )}
 
           {/* Title + meta */}
-          <div className="flex-1 min-w-0 pt-16 md:pt-20 space-y-2">
+          <div className="flex-1 min-w-0 pt-4 md:pt-20 space-y-2">
             {movie.selected_logo_url ? (
               <img src={movie.selected_logo_url} alt={movie.title} className="max-h-12 md:max-h-16 w-auto max-w-[80%] object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]" />
             ) : (
@@ -171,28 +166,12 @@ export default function MovieDetailPage() {
               {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
             </div>
 
-            {/* Ratings row */}
-            <div className="flex flex-wrap items-center gap-2">
-              {movie.tmdb_rating ? (
-                <span className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-black text-white" style={{ background: 'var(--accent)' }}>
-                  <Star size={10} fill="currentColor" /> {movie.tmdb_rating}
-                </span>
-              ) : null}
-              {movie.imdb_rating ? (
-                <span className="flex items-center gap-1.5 rounded-md bg-yellow-500/15 border border-yellow-500/20 px-2 py-1 text-xs font-bold text-yellow-400">
-                  <img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-2.5 w-auto" /> {movie.imdb_rating}
-                </span>
-              ) : null}
-              {movie.rotten_tomatoes_rating ? (
-                <span className="flex items-center gap-1.5 rounded-md bg-red-500/15 border border-red-500/20 px-2 py-1 text-xs font-bold text-red-400">
-                  <img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-2.5 w-auto" /> {movie.rotten_tomatoes_rating}%
-                </span>
-              ) : null}
-              {avgRating ? (
-                <span className="flex items-center gap-1 rounded-md bg-white/5 border border-white/10 px-2 py-1 text-xs font-bold text-white/70">
-                  ★ {avgRating}
-                </span>
-              ) : null}
+            {/* Ratings row — plain text */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/50">
+              {movie.tmdb_rating ? <span className="flex items-center gap-1 font-bold text-white"><Star size={11} className="text-accent" fill="currentColor" />{movie.tmdb_rating}</span> : null}
+              {movie.imdb_rating ? <span className="flex items-center gap-1"><img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-2.5 w-auto" />{movie.imdb_rating}</span> : null}
+              {movie.rotten_tomatoes_rating ? <span className="flex items-center gap-1"><img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-2.5 w-auto" />{movie.rotten_tomatoes_rating}%</span> : null}
+              {avgRating ? <span className="flex items-center gap-1">★ {avgRating} community</span> : null}
             </div>
           </div>
         </div>

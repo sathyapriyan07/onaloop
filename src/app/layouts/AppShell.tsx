@@ -17,7 +17,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="mx-auto w-full max-w-screen-2xl px-4 pb-24 pt-4 overflow-x-clip"
+          className="mx-auto w-full max-w-screen-2xl px-4 pb-24 overflow-x-clip"
         >
           <Outlet />
         </motion.main>

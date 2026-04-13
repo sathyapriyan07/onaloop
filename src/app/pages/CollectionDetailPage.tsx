@@ -36,13 +36,13 @@ export default function CollectionDetailPage() {
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10">
+      <div className="relative overflow-hidden rounded-xl" style={{ background: '#161616' }}>
         <div className="aspect-[21/6] w-full">
           {collection.cover_image_url
             ? <img src={collection.cover_image_url} alt={collection.name} className="h-full w-full object-cover" />
-            : <div className="h-full w-full bg-gradient-to-br from-accent/30 via-white/5 to-transparent" />
+            : <div className="h-full w-full" style={{ background: '#1a1a1a' }} />
           }
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
         </div>
         <div className="absolute inset-x-0 bottom-0 p-5">
           <h1 className="text-2xl font-black tracking-tight">{collection.name}</h1>
@@ -55,24 +55,22 @@ export default function CollectionDetailPage() {
       {items.length === 0 ? (
         <div className="text-sm text-white/40">No items in this collection yet.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-5">
           {items.map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 aspect-[2/3] hover:border-white/25 transition-colors"
-            >
+            <Link key={item.id} to={item.to}
+              className="group relative overflow-hidden rounded-xl bg-neutral-900 aspect-[2/3]">
               {item.posterUrl
-                ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                : <div className="flex h-full w-full items-center justify-center p-3 text-center text-xs text-white/40">{item.title}</div>
-              }
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-2">
-                <div className="line-clamp-2 text-xs font-semibold">{item.title}</div>
-                <div className="flex items-center gap-1.5 text-[10px] text-white/50 mt-0.5">
-                  {item.rating ? <span>★ {item.rating}</span> : null}
-                  {item.year ? <span>{item.year}</span> : null}
+                ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/30">{item.title}</div>}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+              {item.rating && (
+                <div className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-bold backdrop-blur-sm">
+                  ★ {item.rating}
                 </div>
+              )}
+              <div className="absolute inset-x-0 bottom-0 p-2">
+                <div className="line-clamp-2 text-xs font-bold leading-tight">{item.title}</div>
+                {item.year ? <div className="mt-0.5 text-[10px] text-white/40">{item.year}</div> : null}
               </div>
             </Link>
           ))}

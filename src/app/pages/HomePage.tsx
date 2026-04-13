@@ -76,7 +76,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pt-4">
       <HomeBanner items={banners} />
 
       {loading ? (

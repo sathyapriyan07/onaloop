@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import PixelCard from '../ui/PixelCard'
 
 type Genre = {
   id: string
@@ -31,32 +30,19 @@ export default function GenresPage() {
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-semibold tracking-tight">Genres</h1>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {genres.map((g) =>
-          g.display_image_url ? (
-            <Link
-              key={g.id}
-              to={`/genre/${g.id}`}
-              className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-            >
-              <div className="aspect-[16/10] w-full">
-                <img src={g.display_image_url} alt={g.name} className="h-full w-full object-cover" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-3">
-                <div className="text-sm font-semibold tracking-tight">{g.name}</div>
-              </div>
-            </Link>
-          ) : (
-            <Link key={g.id} to={`/genre/${g.id}`}>
-              <PixelCard variant="blue" className="aspect-[16/10] w-full rounded-2xl border border-white/10">
-                <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold tracking-tight">
-                  {g.name}
-                </span>
-              </PixelCard>
-            </Link>
-          )
-        )}
+      <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-5">
+        {genres.map((g) => (
+          <Link key={g.id} to={`/genre/${g.id}`}
+            className="group relative overflow-hidden rounded-xl bg-neutral-900 aspect-[2/3]">
+            {g.display_image_url
+              ? <img src={g.display_image_url} alt={g.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" loading="lazy" />
+              : <div className="h-full w-full bg-neutral-800" />}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-2">
+              <div className="text-xs font-bold leading-tight">{g.name}</div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )

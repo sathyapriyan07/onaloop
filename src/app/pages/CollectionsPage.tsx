@@ -33,21 +33,17 @@ export default function CollectionsPage() {
           <div className="text-sm text-white/50">No collections yet.</div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
           {collections.map((c) => (
-            <Link
-              key={c.id}
-              to={`/collection/${c.id}`}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 aspect-[16/9] hover:border-white/25 transition-colors"
-            >
+            <Link key={c.id} to={`/collection/${c.id}`}
+              className="group relative overflow-hidden rounded-xl bg-neutral-900 aspect-[16/9]">
               {c.cover_image_url
-                ? <img src={c.cover_image_url} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                : <div className="h-full w-full bg-gradient-to-br from-accent/20 via-white/5 to-transparent" />
-              }
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-3">
-                <div className="text-sm font-bold">{c.name}</div>
-                {c.description && <div className="mt-0.5 line-clamp-1 text-xs text-white/50">{c.description}</div>}
+                ? <img src={c.cover_image_url} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                : <div className="h-full w-full bg-neutral-800" />}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-2.5">
+                <div className="text-xs font-bold">{c.name}</div>
+                {c.description && <div className="mt-0.5 line-clamp-1 text-[10px] text-white/50">{c.description}</div>}
               </div>
             </Link>
           ))}
