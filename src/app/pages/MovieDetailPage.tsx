@@ -134,7 +134,7 @@ export default function MovieDetailPage() {
     <div className="space-y-0 -mx-4">
 
       {/* ── BACKDROP ── full bleed, no border radius */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden -mt-16">
         {movie.selected_backdrop_url
           ? <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
           : <div className="h-full w-full" style={{ background: '#161616' }} />
@@ -193,27 +193,27 @@ export default function MovieDetailPage() {
           </div>
         ) : null}
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2">
+        {/* Action buttons — same style as genre pills */}
+        <div className="flex flex-wrap gap-1.5">
           {videoId && (
             <button onClick={() => setTrailerOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              className="flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               style={{ background: 'var(--accent)' }}>
-              <Play size={13} fill="currentColor" />
+              <Play size={11} fill="currentColor" />
               {trailerOpen ? 'Hide Trailer' : 'Trailer'}
-              <ChevronDown size={13} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={11} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
             </button>
           )}
-          <button onClick={toggleWatchlist} title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold border transition-colors ${inWatchlist ? 'border-accent/50 text-accent' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
+          <button onClick={toggleWatchlist}
+            className={`flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-semibold transition-colors ${inWatchlist ? 'border-accent/50 text-accent' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
             style={{ background: '#1a1a1a' }}>
-            {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            {inWatchlist ? <BookmarkCheck size={11} /> : <Bookmark size={11} />}
             {inWatchlist ? 'Saved' : 'Watchlist'}
           </button>
-          <button onClick={toggleWatched} title={isWatched ? 'Mark as Unwatched' : 'Mark as Watched'}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold border transition-colors ${isWatched ? 'border-green-500/50 text-green-400' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
+          <button onClick={toggleWatched}
+            className={`flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-semibold transition-colors ${isWatched ? 'border-green-500/40 text-green-400' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
             style={{ background: '#1a1a1a' }}>
-            {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
+            {isWatched ? <Eye size={11} /> : <EyeOff size={11} />}
             {isWatched ? 'Watched' : 'Mark Watched'}
           </button>
         </div>

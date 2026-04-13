@@ -103,7 +103,7 @@ export default function SeriesDetailPage() {
   return (
     <div className="space-y-6">
       {/* Backdrop hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-black">
+      <section className="relative overflow-hidden rounded-none border-0 bg-black -mt-16">
         <div className="relative aspect-[16/9] md:aspect-[21/9] w-full">
           {series.selected_backdrop_url
             ? <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />

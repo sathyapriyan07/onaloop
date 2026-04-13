@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import BottomNav from '../ui/BottomNav'
-import TopBar from '../ui/TopBar'
+import FloatingBar from '../ui/FloatingBar'
 import Footer from '../ui/Footer'
 
 export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
@@ -9,7 +9,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
 
   return (
     <div className="min-h-dvh" style={{ background: '#0f0f0f' }}>
-      <TopBar />
+      <FloatingBar />
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
           key={location.pathname}
@@ -17,7 +17,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="mx-auto w-full max-w-screen-2xl px-4 pb-24 overflow-x-clip"
+          className="mx-auto w-full max-w-screen-2xl px-4 pb-24 pt-16 overflow-x-clip"
         >
           <Outlet />
         </motion.main>
