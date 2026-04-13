@@ -86,7 +86,15 @@ export default function SeriesDetailPage() {
     } finally { setIsSubmitting(false) }
   }
 
-  if (!series) return <div className="text-white/40 text-sm">Loading…</div>
+  if (!series) return (
+    <div className="space-y-0 -mx-4">
+      <div className="aspect-[16/9] w-full skeleton" />
+      <div className="px-4 pt-4 space-y-3">
+        <div className="h-8 w-48 skeleton rounded-lg" />
+        <div className="h-4 w-32 skeleton rounded" />
+      </div>
+    </div>
+  )
 
   const videoId = series.trailer_url ? extractYouTubeId(series.trailer_url) : null
   const cast = credits.filter((c) => c.credit_type === 'cast')

@@ -113,9 +113,13 @@ export default function MovieDetailPage() {
   }
 
   if (!movie) return (
-    <div className="space-y-4 animate-pulse">
-      <div className="aspect-[16/9] w-full rounded-xl bg-white/5" />
-      <div className="h-6 w-48 rounded bg-white/5" />
+    <div className="space-y-0 -mx-4">
+      <div className="aspect-[16/9] w-full skeleton" />
+      <div className="px-4 pt-4 space-y-3">
+        <div className="h-8 w-48 skeleton rounded-lg" />
+        <div className="h-4 w-32 skeleton rounded" />
+        <div className="h-4 w-64 skeleton rounded" />
+      </div>
     </div>
   )
 

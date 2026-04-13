@@ -125,7 +125,7 @@ export default function SearchPage() {
 
           {/* Instant dropdown */}
           {showDropdown && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/95 shadow-2xl backdrop-blur-xl">
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-white/8 shadow-2xl" style={{background:'#1a1a1a'}}>
               {!value.trim() ? (
                 <div className="p-3 space-y-3">
                   {history.length > 0 && (
@@ -237,11 +237,11 @@ export default function SearchPage() {
             preview={
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {people.slice(0, 6).map((p) => (
-                  <Link key={p.id} to={`/person/${p.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10 transition-colors">
-                    <div className="h-12 w-12 overflow-hidden rounded-xl bg-white/10 shrink-0">
+                  <Link key={p.id} to={`/person/${p.id}`} className="flex items-center gap-3 rounded-xl p-3 hover:bg-white/5 transition-colors" style={{background:'#161616'}}>
+                    <div className="h-10 w-10 overflow-hidden rounded-lg bg-neutral-800 shrink-0">
                       {p.selected_profile_url ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" /> : null}
                     </div>
-                    <div className="min-w-0 flex-1 truncate text-sm font-semibold">{p.name}</div>
+                    <div className="min-w-0 flex-1 truncate text-sm font-bold">{p.name}</div>
                   </Link>
                 ))}
               </div>

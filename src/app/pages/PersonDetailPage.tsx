@@ -118,7 +118,13 @@ export default function PersonDetailPage() {
       .filter(Boolean) as string[]
   , [flatCredits, crewRows])
 
-  if (!person) return <div className="text-white/40 text-sm">Loading…</div>
+  if (!person) return (
+    <div className="space-y-4">
+      <div className="min-h-[200px] rounded-xl skeleton" />
+      <div className="h-6 w-40 skeleton rounded-lg" />
+      <div className="h-4 w-56 skeleton rounded" />
+    </div>
+  )
 
   return (
     <div className="space-y-6">
