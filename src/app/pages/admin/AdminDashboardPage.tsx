@@ -33,6 +33,7 @@ export default function AdminDashboardPage() {
           { to: '/admin/studios', label: 'Production Houses', desc: 'Manage studios and assign to movies.' },
           { to: '/admin/home', label: 'Homepage Sections', desc: 'Curate rails on the homepage.' },
           { to: '/admin/collections', label: 'Collections', desc: 'Manage movie/series franchises and collections.' },
+          { to: '/admin/hero-collage', label: 'Hero Collage', desc: 'Choose posters displayed in the homepage hero.' },
         ] as const).map(({ to, label, desc }) => (
           <Link key={to} to={to} className="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/10">
             <div className="text-sm font-semibold">{label}</div>
