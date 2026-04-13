@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Search, Shield, LogIn, User, Repeat2 } from 'lucide-react'
+import { Search, Shield, User, Repeat2 } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
 import { useAdminGuard } from '../../lib/useAdminGuard'
