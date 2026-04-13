@@ -139,26 +139,28 @@ export default function MovieDetailPage() {
           ? <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
           : <div className="h-full w-full" style={{ background: '#161616' }} />
         }
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f]/70 via-transparent to-transparent" />
+        {/* Extra bottom fade to cover poster overlap area */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0f0f0f] to-transparent" />
       </div>
 
       {/* ── MAIN CONTENT ── */}
       <div className="px-4 space-y-6">
 
-        {/* Poster + Info row — stacks on mobile, side by side on md+ */}
-        <div className="flex gap-4 md:-mt-24 relative z-10">
-          {/* Poster — hidden on mobile, shown on md+ */}
+        {/* Poster + Info row — poster overlaps backdrop bottom */}
+        <div className="flex gap-3 relative z-10 -mt-16 md:-mt-24">
+          {/* Poster */}
           {movie.selected_poster_url && (
-            <div className="hidden md:block shrink-0 w-36" style={{ aspectRatio: '2/3' }}>
-              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover rounded-xl shadow-2xl" />
+            <div className="shrink-0 w-24 md:w-36 rounded-xl overflow-hidden shadow-2xl" style={{ aspectRatio: '2/3' }}>
+              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover" />
             </div>
           )}
 
-          {/* Title + meta */}
-          <div className="flex-1 min-w-0 md:pt-20 space-y-2 pt-3">
+          {/* Title + meta — aligns to top, with padding to clear backdrop */}
+          <div className="flex-1 min-w-0 flex flex-col justify-start pt-2 space-y-1.5">
             {movie.selected_logo_url ? (
-              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-12 md:max-h-16 w-auto max-w-[80%] object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]" />
+              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-12 md:max-h-16 w-auto max-w-full object-contain object-left drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]" />
             ) : (
               <h1 className="text-xl md:text-3xl font-black tracking-tight leading-tight">{movie.title}</h1>
             )}
