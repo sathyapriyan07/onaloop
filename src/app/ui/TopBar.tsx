@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Search, Shield, LogIn, LogOut, User, Repeat2 } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
