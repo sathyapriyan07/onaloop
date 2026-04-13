@@ -33,7 +33,7 @@ export default function HomeBanner(_props: Props) {
   )
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-neutral-950 border border-white/8 min-h-[260px] md:min-h-[320px]">
+    <section className="relative overflow-hidden rounded-2xl border border-white/5" style={{ background: '#161616', minHeight: 260 }}>
 
       {/* Full-bleed poster grid */}
       {posters.length > 0 && (

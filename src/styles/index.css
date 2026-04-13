@@ -2,9 +2,9 @@
 
 :root {
   color-scheme: dark;
-  --accent: #a855f7;
-  --accent-dim: #7c3aed;
-  --accent-glow: rgba(168, 85, 247, 0.35);
+  --accent: #f97316;
+  --accent-dim: #ea580c;
+  --accent-glow: rgba(249, 115, 22, 0.3);
 }
 
 html,
@@ -18,7 +18,8 @@ body::-webkit-scrollbar {
 }
 
 body {
-  @apply bg-neutral-950 text-neutral-100 antialiased;
+  @apply text-neutral-100 antialiased;
+  background-color: #0f0f0f;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
 }

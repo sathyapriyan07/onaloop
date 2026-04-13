@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Search, Shield, LogIn, LogOut, User, Repeat2 } from 'lucide-react'
+import { Search, Shield, LogIn, User, Repeat2 } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
 import { useAdminGuard } from '../../lib/useAdminGuard'
@@ -31,93 +31,75 @@ export default function TopBar() {
   useKeyboardShortcut('/', () => navigate('/search'))
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-neutral-950/70 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-3 gap-4">
+    <header className="sticky top-0 z-40 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5">
+      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 h-14 gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <Repeat2 size={20} className="text-accent" strokeWidth={2.5} />
-          <span className="text-base font-bold tracking-tight">
+          <Repeat2 size={18} className="text-accent" strokeWidth={2.5} />
+          <span className="text-sm font-black tracking-tight uppercase">
             On<span className="text-accent">The</span>Loop
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-0">
           {navLinks.map(({ to, label, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `px-3 py-1.5 rounded-full text-sm transition-colors ${
-                  isActive
-                    ? 'text-white bg-white/10'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                `relative px-4 h-14 flex items-center text-sm font-medium transition-colors ${
+                  isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
                 }`
               }
             >
-              {label}
+              {({ isActive }) => (
+                <>
+                  {label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full" style={{ background: 'var(--accent)' }} />
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
         {/* Right actions */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => navigate('/search')}
-            className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-            aria-label="Search (press /)"
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+            aria-label="Search"
           >
-            <Search size={16} />
+            <Search size={17} />
             {newCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-neutral-950" style={{ background: 'var(--accent)' }}>
+              <span className="absolute right-1 top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-black text-white" style={{ background: 'var(--accent)' }}>
                 {newCount > 9 ? '9+' : newCount}
               </span>
             )}
           </button>
 
           {isAdmin && (
-            <NavLink
-              to="/admin"
-              className="flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5 transition-colors"
-            >
+            <NavLink to="/admin" className="flex items-center gap-1.5 rounded-lg px-3 h-9 text-xs font-medium text-white/50 hover:text-white hover:bg-white/5 transition-colors">
               <Shield size={14} />
               <span className="hidden sm:inline">Admin</span>
             </NavLink>
           )}
 
           {user ? (
-            <div className="flex items-center gap-1.5">
-              <Link
-                to="/profile"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                aria-label="Profile"
-              >
-                <User size={16} />
-              </Link>
-              <button
-                onClick={() => supabase.auth.signOut()}
-                className="hidden sm:flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5 transition-colors"
-              >
-                <LogOut size={14} />
-                Sign out
-              </button>
-            </div>
+            <Link to="/profile" className="flex h-9 w-9 items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors">
+              <User size={17} />
+            </Link>
           ) : (
             <>
-              <NavLink
-                to="/login"
-                className="flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/5 transition-colors"
-              >
-                <LogIn size={14} />
+              <NavLink to="/login" className="flex items-center h-9 px-3 text-xs font-medium text-white/50 hover:text-white transition-colors">
+                <LogIn size={14} className="mr-1.5" />
                 <span className="hidden sm:inline">Log in</span>
               </NavLink>
-              <NavLink
-                to="/signup"
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-neutral-950 transition-opacity hover:opacity-90"
-                style={{ background: 'var(--accent)' }}
-              >
-                <span>Sign up</span>
+              <NavLink to="/signup" className="flex items-center h-8 px-4 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
+                Sign up
               </NavLink>
             </>
           )}

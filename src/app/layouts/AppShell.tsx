@@ -8,7 +8,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
   const location = useLocation()
 
   return (
-    <div className="min-h-dvh bg-neutral-950">
+    <div className="min-h-dvh" style={{ background: '#0f0f0f' }}>
       <TopBar />
       <AnimatePresence mode="wait" initial={false}>
         <motion.main

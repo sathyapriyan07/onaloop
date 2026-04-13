@@ -26,12 +26,7 @@ type Props = {
 }
 
 export default function ContentRail({ title, items, aspect = 'poster', showLogo = true, viewAllTo, emoji }: Props) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
-    dragFree: true,
-    containScroll: 'trimSnaps',
-  })
-
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', dragFree: true, containScroll: 'trimSnaps' })
   const prevBtnRef = useRef<HTMLButtonElement>(null)
   const nextBtnRef = useRef<HTMLButtonElement>(null)
 
@@ -52,38 +47,33 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
   if (!items.length) return null
 
   const cardClass = aspect === 'poster'
-    ? 'aspect-[2/3] w-[32vw] max-w-[150px] md:max-w-[170px]'
-    : 'aspect-[16/9] w-[60vw] max-w-[280px]'
+    ? 'aspect-[2/3] w-[36vw] max-w-[160px] md:max-w-[180px]'
+    : 'aspect-[16/9] w-[65vw] max-w-[300px]'
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-4">
+      {/* Section header — elfilming style: accent left bar + bold title */}
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold tracking-tight flex items-center gap-2">
-          {emoji && <span>{emoji}</span>}
-          {title}
-        </h2>
+        <div className="flex items-center gap-3">
+          <span className="w-1 h-5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
+          <h2 className="text-base font-black tracking-tight uppercase flex items-center gap-2">
+            {emoji && <span className="text-sm">{emoji}</span>}
+            {title}
+          </h2>
+        </div>
         <div className="flex items-center gap-2">
           {viewAllTo && (
-            <Link
-              to={viewAllTo}
-              className="flex items-center gap-1 text-xs text-white/50 hover:text-accent transition-colors"
-            >
-              View All <ArrowRight size={12} />
+            <Link to={viewAllTo} className="flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-accent transition-colors">
+              See All <ArrowRight size={11} />
             </Link>
           )}
           <div className="flex gap-1">
-            <button
-              ref={prevBtnRef}
-              onClick={() => emblaApi?.scrollPrev()}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
-            >
+            <button ref={prevBtnRef} onClick={() => emblaApi?.scrollPrev()}
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-white/40 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed">
               <ChevronLeft size={14} />
             </button>
-            <button
-              ref={nextBtnRef}
-              onClick={() => emblaApi?.scrollNext()}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
-            >
+            <button ref={nextBtnRef} onClick={() => emblaApi?.scrollNext()}
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-white/40 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed">
               <ChevronRight size={14} />
             </button>
           </div>
@@ -91,61 +81,41 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
       </div>
 
       <div className="overflow-hidden -mx-4" ref={emblaRef}>
-        <div className="flex gap-3 px-4 pb-2">
+        <div className="flex gap-3 px-4 pb-1">
           {items.map((item) => (
             <Link
               key={item.id}
               to={item.to}
-              className={`group relative shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-colors duration-300 hover:border-white/25 ${cardClass}`}
+              className={`group relative shrink-0 overflow-hidden rounded-xl bg-neutral-900 ${cardClass}`}
             >
               {item.imageUrl ? (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                />
+                <img src={item.imageUrl} alt={item.title} loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/40">
-                  {item.title}
+                <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/30">{item.title}</div>
+              )}
+
+              {/* Gradient */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+              {/* Rating badge — top left */}
+              {(item.badge || item.rating) && (
+                <div className="absolute left-2 top-2 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-bold backdrop-blur-sm">
+                  <Star size={8} className="text-yellow-400" fill="currentColor" />
+                  <span>{item.rating ?? item.badge}</span>
                 </div>
               )}
 
-              {/* gradient overlay */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-
-              {/* hover overlay */}
-              <div className="absolute inset-0 flex flex-col justify-end p-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                <div className="space-y-1">
-                  {showLogo && item.logoUrl ? (
-                    <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[80%] object-contain object-left drop-shadow-md" />
-                  ) : (
-                    <div className="line-clamp-2 text-xs font-semibold leading-tight">{item.title}</div>
-                  )}
-                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[9px] text-white/60">
-                    {item.rating ? <span className="flex items-center gap-0.5"><Star size={8} className="text-yellow-400" fill="currentColor" />{item.rating}</span> : null}
-                    {item.year ? <span>{item.year}</span> : null}
-                    {item.loopScore != null ? <span className="text-accent">🔁{item.loopScore}</span> : null}
-                  </div>
-                </div>
-              </div>
-
-              {/* default bottom info */}
-              <div className="absolute inset-x-0 bottom-0 p-2 transition-opacity duration-300 group-hover:opacity-0">
+              {/* Bottom info */}
+              <div className="absolute inset-x-0 bottom-0 p-2.5">
                 {showLogo && item.logoUrl ? (
-                  <img src={item.logoUrl} alt={item.title} className="max-h-7 max-w-[80%] object-contain object-left drop-shadow-md" />
+                  <img src={item.logoUrl} alt={item.title} className="max-h-7 max-w-[85%] object-contain object-left drop-shadow-md" />
                 ) : (
-                  <div className="line-clamp-2 text-xs font-semibold leading-tight">{item.title}</div>
+                  <div className="line-clamp-2 text-xs font-bold leading-tight">{item.title}</div>
                 )}
-                {item.sub ? <div className="mt-0.5 text-[10px] text-white/50">{item.sub}</div> : null}
+                {item.sub && <div className="mt-0.5 text-[10px] text-white/50 truncate">{item.sub}</div>}
+                {item.year && !item.sub && <div className="mt-0.5 text-[10px] text-white/40">{item.year}</div>}
               </div>
-
-              {/* badge */}
-              {item.badge ? (
-                <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold backdrop-blur-sm">
-                  {item.badge}
-                </div>
-              ) : null}
             </Link>
           ))}
         </div>
