@@ -37,7 +37,7 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
           <Link
             key={item.id}
             to={item.to}
-            className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 ${cardClass}`}
+            className={`group relative overflow-hidden rounded-2xl bg-neutral-900 ${cardClass}`}
           >
             {item.imageUrl ? (
               <img

@@ -140,6 +140,27 @@ export default function AdminImportPage() {
     else setSelected(new Set(results.map((r) => r.id)))
   }
 
+  const [idInput, setIdInput] = useState('')
+  const [idImporting, setIdImporting] = useState(false)
+  const [idError, setIdError] = useState<string | null>(null)
+  const [idSuccess, setIdSuccess] = useState<string | null>(null)
+
+  async function importById() {
+    const tmdbId = parseInt(idInput.trim())
+    if (!tmdbId) return
+    setIdImporting(true); setIdError(null); setIdSuccess(null)
+    try {
+      const name = type === 'movie' ? await importMovie(tmdbId) : type === 'series' ? await importSeries(tmdbId) : await importPerson(tmdbId)
+      setIdSuccess(`Imported: ${name}`)
+      setIdInput('')
+      await loadImported(type)
+    } catch (e: any) {
+      setIdError(e?.message ?? 'Import failed')
+    } finally {
+      setIdImporting(false)
+    }
+  }
+
   async function doImport(tmdbId: number) {
     setError(null)
     setImportingId(tmdbId)
@@ -199,6 +220,25 @@ export default function AdminImportPage() {
           <Button disabled={isLoading || !query.trim()} onClick={search} className="shrink-0">Search</Button>
         </div>
         {error ? <div className="text-sm text-red-300">{error}</div> : null}
+
+        {/* Import by TMDb ID */}
+        <div className="border-t border-white/8 pt-3 space-y-2">
+          <div className="text-xs text-white/40 font-medium">Or import directly by TMDb ID</div>
+          <div className="flex gap-2">
+            <Input
+              value={idInput}
+              onChange={(e) => { setIdInput(e.target.value); setIdError(null); setIdSuccess(null) }}
+              onKeyDown={(e) => e.key === 'Enter' && importById()}
+              placeholder={`TMDb ${type} ID…`}
+              type="number"
+            />
+            <Button disabled={idImporting || !idInput.trim()} onClick={importById} className="shrink-0">
+              {idImporting ? 'Importing…' : 'Import'}
+            </Button>
+          </div>
+          {idSuccess ? <div className="text-xs text-green-400">{idSuccess}</div> : null}
+          {idError ? <div className="text-xs text-red-400">{idError}</div> : null}
+        </div>
       </div>
 
       {bulkStatus.length > 0 && (
