@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import Button from '../ui/Button'
 import TextArea from '../ui/TextArea'
-import SpotlightCard from '../ui/SpotlightCard'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
@@ -39,6 +38,15 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
           <Star size={18} className={n <= (hover || value) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20'} />
         </button>
       ))}
+    </div>
+  )
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-4">
+      <span className="w-1 h-5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
+      <h2 className="text-sm font-black uppercase tracking-tight">{title}</h2>
     </div>
   )
 }
@@ -82,17 +90,13 @@ export default function MovieDetailPage() {
       setMusicLinks((musicRows ?? []) as unknown as LinkRow[])
       setStreamingLinks((streamingRows ?? []) as unknown as LinkRow[])
       setStudios(((studioRows ?? []) as any[]).map((r) => Array.isArray(r.production_house) ? r.production_house[0] : r.production_house).filter(Boolean))
-
       if (fetchedGenres.length >= 1) {
         const { data: simRows } = await supabase.from('movie_genres').select('movie_id,genre_id,movie:movies(id,title,selected_poster_url,selected_logo_url,tmdb_rating)').in('genre_id', fetchedGenres.map((g) => g.id)).neq('movie_id', id)
         if (isMounted) {
-          const countMap = new Map<string, number>()
           const movieMap = new Map<string, any>()
           for (const row of (simRows ?? []) as any[]) {
             const m = Array.isArray(row.movie) ? row.movie[0] : row.movie
-            if (!m) continue
-            countMap.set(m.id, (countMap.get(m.id) ?? 0) + 1)
-            movieMap.set(m.id, m)
+            if (m) movieMap.set(m.id, m)
           }
           setSimilarMovies([...movieMap.values()].sort((a, b) => (b.tmdb_rating ?? 0) - (a.tmdb_rating ?? 0)).slice(0, 12))
         }
@@ -113,7 +117,12 @@ export default function MovieDetailPage() {
     } finally { setIsSubmitting(false) }
   }
 
-  if (!movie) return <div className="text-white/40 text-sm">Loading…</div>
+  if (!movie) return (
+    <div className="space-y-4 animate-pulse">
+      <div className="aspect-[16/9] w-full rounded-xl bg-white/5" />
+      <div className="h-6 w-48 rounded bg-white/5" />
+    </div>
+  )
 
   const videoId = movie.trailer_url ? extractYouTubeId(movie.trailer_url) : null
   const cast = credits.filter((c) => c.credit_type === 'cast')
@@ -123,271 +132,308 @@ export default function MovieDetailPage() {
     : null
 
   return (
-    <div className="space-y-6">
-      {/* Backdrop hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-black">
-        <div className="relative aspect-[16/9] md:aspect-[21/9] w-full">
-          {movie.selected_backdrop_url
-            ? <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
-            : <div className="h-full w-full bg-gradient-to-br from-accent/20 via-white/5 to-transparent" />
-          }
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/60 via-transparent to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 space-y-3">
-            {movie.selected_logo_url
-              ? <img src={movie.selected_logo_url} alt={movie.title} className="max-h-16 w-auto max-w-[60%] object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]" />
-              : <h1 className="text-2xl font-black tracking-tight">{movie.title}</h1>
-            }
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/60">
-              {movie.release_date ? <span>{movie.release_date.slice(0, 4)}</span> : null}
-              {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
-              {movie.tmdb_rating ? <span className="flex items-center gap-1">★ {movie.tmdb_rating}</span> : null}
-              {movie.loop_score != null ? <span className="text-accent font-semibold">🔁 {movie.loop_score}</span> : null}
+    <div className="space-y-0 -mx-4">
+
+      {/* ── BACKDROP ── full bleed, no border radius */}
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
+        {movie.selected_backdrop_url
+          ? <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
+          : <div className="h-full w-full" style={{ background: '#161616' }} />
+        }
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f]/70 via-transparent to-transparent" />
+      </div>
+
+      {/* ── MAIN CONTENT ── */}
+      <div className="px-4 space-y-6">
+
+        {/* Poster + Info row */}
+        <div className="flex gap-4 -mt-16 md:-mt-24 relative z-10">
+          {/* Poster */}
+          {movie.selected_poster_url && (
+            <div className="shrink-0 w-24 md:w-36 aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-white/10">
+              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover" />
             </div>
-            <div className="flex flex-wrap gap-2">
-              {videoId && (
-                <button onClick={() => setTrailerOpen((v) => !v)} className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
-                  <Play size={12} fill="currentColor" /> {trailerOpen ? 'Hide Trailer' : 'Trailer'}
-                  <ChevronDown size={12} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
-                </button>
-              )}
-              <button onClick={toggleWatchlist} title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${inWatchlist ? 'border-accent bg-accent/15 text-accent' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {inWatchlist ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
-              </button>
-              <button onClick={toggleWatched} title={isWatched ? 'Mark as Unwatched' : 'Mark as Watched'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${isWatched ? 'border-green-500 bg-green-500/15 text-green-400' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {isWatched ? <Eye size={15} /> : <EyeOff size={15} />}
-              </button>
+          )}
+
+          {/* Title + meta */}
+          <div className="flex-1 min-w-0 pt-16 md:pt-20 space-y-2">
+            {movie.selected_logo_url ? (
+              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-12 md:max-h-16 w-auto max-w-[80%] object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]" />
+            ) : (
+              <h1 className="text-xl md:text-3xl font-black tracking-tight leading-tight">{movie.title}</h1>
+            )}
+
+            {/* Meta row */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/50">
+              {movie.release_date ? <span>{movie.release_date.slice(0, 4)}</span> : null}
+              {movie.release_date && movie.runtime_minutes ? <span className="text-white/20">•</span> : null}
+              {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
+            </div>
+
+            {/* Ratings row */}
+            <div className="flex flex-wrap items-center gap-2">
+              {movie.tmdb_rating ? (
+                <span className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-black text-white" style={{ background: 'var(--accent)' }}>
+                  <Star size={10} fill="currentColor" /> {movie.tmdb_rating}
+                </span>
+              ) : null}
+              {movie.imdb_rating ? (
+                <span className="flex items-center gap-1.5 rounded-md bg-yellow-500/15 border border-yellow-500/20 px-2 py-1 text-xs font-bold text-yellow-400">
+                  <img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-2.5 w-auto" /> {movie.imdb_rating}
+                </span>
+              ) : null}
+              {movie.rotten_tomatoes_rating ? (
+                <span className="flex items-center gap-1.5 rounded-md bg-red-500/15 border border-red-500/20 px-2 py-1 text-xs font-bold text-red-400">
+                  <img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-2.5 w-auto" /> {movie.rotten_tomatoes_rating}%
+                </span>
+              ) : null}
+              {avgRating ? (
+                <span className="flex items-center gap-1 rounded-md bg-white/5 border border-white/10 px-2 py-1 text-xs font-bold text-white/70">
+                  ★ {avgRating}
+                </span>
+              ) : null}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Meta */}
-      <section className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {movie.imdb_rating ? (
-            <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold">
-              <img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-3 w-auto" /> {movie.imdb_rating}
-            </span>
-          ) : null}
-          {movie.rotten_tomatoes_rating ? (
-            <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold">
-              <img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-3 w-auto" /> {movie.rotten_tomatoes_rating}%
-            </span>
-          ) : null}
-          {avgRating ? (
-            <span className="flex items-center gap-1.5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-1.5 text-xs font-semibold text-yellow-400">
-              ★ {avgRating} community
-            </span>
-          ) : null}
-        </div>
-
-        {/* Clickable genre pills */}
+        {/* Genre pills */}
         {genres.length ? (
           <div className="flex flex-wrap gap-1.5">
             {genres.map((g) => (
-              <Link key={g.id} to={`/genre/${g.id}`} className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 hover:border-accent/50 hover:text-accent transition-colors">
+              <Link key={g.id} to={`/genre/${g.id}`}
+                className="rounded-md border border-white/10 px-3 py-1 text-xs font-semibold text-white/60 hover:border-accent/50 hover:text-accent transition-colors"
+                style={{ background: '#1a1a1a' }}>
                 {g.name}
               </Link>
             ))}
           </div>
         ) : null}
 
+        {/* Action buttons */}
+        <div className="flex flex-wrap gap-2">
+          {videoId && (
+            <button onClick={() => setTrailerOpen((v) => !v)}
+              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              style={{ background: 'var(--accent)' }}>
+              <Play size={13} fill="currentColor" />
+              {trailerOpen ? 'Hide Trailer' : 'Trailer'}
+              <ChevronDown size={13} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
+            </button>
+          )}
+          <button onClick={toggleWatchlist} title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold border transition-colors ${inWatchlist ? 'border-accent/50 text-accent' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
+            style={{ background: '#1a1a1a' }}>
+            {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            {inWatchlist ? 'Saved' : 'Watchlist'}
+          </button>
+          <button onClick={toggleWatched} title={isWatched ? 'Mark as Unwatched' : 'Mark as Watched'}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold border transition-colors ${isWatched ? 'border-green-500/50 text-green-400' : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'}`}
+            style={{ background: '#1a1a1a' }}>
+            {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
+            {isWatched ? 'Watched' : 'Mark Watched'}
+          </button>
+        </div>
+
+        {/* Overview */}
+        {movie.overview ? (
+          <div style={{ background: '#161616' }} className="rounded-xl p-4">
+            <SectionHeader title="Overview" />
+            <Expandable preview={<p className="text-sm leading-relaxed text-white/60 line-clamp-4">{movie.overview}</p>} label="Read more" collapseLabel="Show less">
+              <p className="text-sm leading-relaxed text-white/60">{movie.overview}</p>
+            </Expandable>
+          </div>
+        ) : null}
+
+        {/* Inline Trailer */}
+        {videoId && trailerOpen && (
+          <div className="overflow-hidden rounded-xl" style={{ background: '#000' }}>
+            <div className="aspect-video w-full">
+              <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+                allow="autoplay; fullscreen" allowFullScreen title={`${movie.title} trailer`}
+                className="h-full w-full" style={{ border: 'none' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Where to Watch */}
+        {streamingLinks.length ? (
+          <div style={{ background: '#161616' }} className="rounded-xl p-4">
+            <SectionHeader title="Where to Watch" />
+            <div className="flex flex-wrap gap-2">
+              {streamingLinks.map((l) => {
+                const logo = (l.platform as any)?.logo_url
+                const name = (l.platform as any)?.name ?? l.label
+                return (
+                  <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                    className="group flex items-center gap-2.5 rounded-lg border border-white/8 px-4 py-2.5 hover:border-accent/30 transition-colors"
+                    style={{ background: '#1e1e1e' }}>
+                    {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[60px] object-contain" /> : null}
+                    <div>
+                      <div className="text-xs font-bold">{name}</div>
+                      <div className="text-[10px] text-white/30 group-hover:text-accent transition-colors">Watch now →</div>
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Music */}
+        {musicLinks.length ? (
+          <div style={{ background: '#161616' }} className="rounded-xl p-4">
+            <SectionHeader title="Music" />
+            <div className="flex flex-wrap gap-2">
+              {musicLinks.map((l) => {
+                const logo = (l.platform as any)?.logo_url
+                const name = (l.platform as any)?.name ?? l.label
+                return (
+                  <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                    className="flex items-center gap-2 rounded-lg border border-white/8 px-4 py-2 hover:border-white/15 transition-colors"
+                    style={{ background: '#1e1e1e' }}>
+                    {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[60px] object-contain" /> : <span className="text-xs font-semibold">{name}</span>}
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Studios */}
         {studios.length ? (
           <div className="flex flex-wrap gap-2">
             {studios.map((s) => (
-              <Link key={s.id} to={`/studio/${s.id}`} className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition-colors">
+              <Link key={s.id} to={`/studio/${s.id}`}
+                className="flex items-center gap-1.5 rounded-lg border border-white/8 px-3 py-1.5 hover:border-white/15 transition-colors"
+                style={{ background: '#1a1a1a' }}>
                 {s.logo_url ? <img src={s.logo_url} alt={s.name} className="h-4 w-auto max-w-[40px] object-contain" /> : null}
-                <span className="text-xs font-medium">{s.name}</span>
+                <span className="text-xs font-semibold text-white/60">{s.name}</span>
               </Link>
             ))}
           </div>
         ) : null}
 
-        {movie.overview ? (
-          <Expandable preview={<p className="text-sm leading-relaxed text-white/70 line-clamp-3">{movie.overview}</p>} label="Read more" collapseLabel="Show less">
-            <p className="text-sm leading-relaxed text-white/70">{movie.overview}</p>
-          </Expandable>
+        {/* Budget / Collection */}
+        {(movie.budget || movie.collection) ? (
+          <div className="flex flex-wrap gap-4 rounded-xl border border-white/8 px-4 py-3" style={{ background: '#161616' }}>
+            {movie.budget ? (
+              <div><div className="text-[10px] uppercase tracking-widest text-white/30 mb-0.5">Budget</div><div className="text-sm font-bold">{movie.budget}</div></div>
+            ) : null}
+            {movie.budget && movie.collection ? <div className="w-px bg-white/8" /> : null}
+            {movie.collection ? (
+              <div><div className="text-[10px] uppercase tracking-widest text-white/30 mb-0.5">Collection</div><div className="text-sm font-bold text-green-400">{movie.collection}</div></div>
+            ) : null}
+          </div>
         ) : null}
 
+        {/* Tags */}
         {(movie.tags ?? []).length ? (
           <div className="flex flex-wrap gap-1.5">
             {(movie.tags ?? []).map((tag) => (
-              <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">{tag}</span>
+              <span key={tag} className="rounded-md border border-white/8 px-2.5 py-1 text-xs text-white/40" style={{ background: '#1a1a1a' }}>{tag}</span>
             ))}
           </div>
         ) : null}
 
-        {(movie.budget || movie.collection) ? (
-          <div className="flex flex-wrap gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-            {movie.budget ? <div className="space-y-0.5"><div className="text-[10px] uppercase tracking-wider text-white/40">Budget</div><div className="text-sm font-semibold">{movie.budget}</div></div> : null}
-            {movie.budget && movie.collection ? <div className="w-px bg-white/10" /> : null}
-            {movie.collection ? <div className="space-y-0.5"><div className="text-[10px] uppercase tracking-wider text-white/40">Collection</div><div className="text-sm font-semibold text-green-400">{movie.collection}</div></div> : null}
+        {/* Cast */}
+        {cast.length ? (
+          <div style={{ background: '#161616' }} className="rounded-xl p-4">
+            <SectionHeader title="Cast" />
+            <Expandable preview={<CastScroll credits={cast.slice(0, 10)} />} label={`Show all ${cast.length}`} collapseLabel="Show less">
+              <CastScroll credits={cast} />
+            </Expandable>
           </div>
         ) : null}
-      </section>
 
-      {/* Inline Trailer */}
-      {videoId && trailerOpen && (
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-          <div className="aspect-video w-full">
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              title={`${movie.title} trailer`}
-              className="h-full w-full"
-              style={{ border: 'none' }}
-            />
+        {/* Crew */}
+        {crew.length ? (
+          <div style={{ background: '#161616' }} className="rounded-xl p-4">
+            <SectionHeader title="Crew" />
+            <Expandable preview={<CrewScroll credits={crew.slice(0, 8)} />} label={`Show all ${crew.length}`} collapseLabel="Show less">
+              <CrewScroll credits={crew} />
+            </Expandable>
           </div>
-        </section>
-      )}
+        ) : null}
 
-      {/* Where to Watch */}
-      {streamingLinks.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">📺 Where to Watch</h2>
-          <div className="flex flex-wrap gap-2">
-            {streamingLinks.map((l) => {
-              const logo = (l.platform as any)?.logo_url
-              const name = (l.platform as any)?.name ?? l.label
-              return (
-                <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                  className="group flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 hover:border-white/25 hover:bg-white/10 transition-colors"
-                >
-                  {logo ? <img src={logo} alt={name} className="h-6 w-auto max-w-[60px] object-contain" /> : null}
-                  <div>
-                    <div className="text-xs font-semibold">{name}</div>
-                    <div className="text-[10px] text-white/40 group-hover:text-accent transition-colors">Watch now →</div>
-                  </div>
-                </a>
-              )
-            })}
-          </div>
-        </section>
-      ) : null}
+        {/* Gallery */}
+        <Gallery images={movie.gallery_images ?? []} title={movie.title} />
 
-      {/* Music */}
-      {musicLinks.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">🎵 Music</h2>
-          <div className="flex flex-wrap gap-2">
-            {musicLinks.map((l) => {
-              const logo = (l.platform as any)?.logo_url
-              const name = (l.platform as any)?.name ?? l.label
-              return (
-                <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
-                  {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[60px] object-contain" /> : <span className="text-sm">{name}</span>}
-                </a>
-              )
-            })}
-          </div>
-        </section>
-      ) : null}
+        {/* Similar */}
+        <ContentGrid
+          title="More Like This"
+          items={similarMovies.map((m) => ({ id: m.id, title: m.title, to: `/movie/${m.id}`, imageUrl: m.selected_poster_url, logoUrl: m.selected_logo_url, badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null }))}
+          aspect="poster" showLogo={false}
+        />
 
-      {/* Cast */}
-      {cast.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">Cast</h2>
-          <Expandable
-            preview={<CastRow credits={cast.slice(0, 8)} />}
-            label={`Show all ${cast.length}`} collapseLabel="Show less"
-          >
-            <CastRow credits={cast} />
-          </Expandable>
-        </section>
-      ) : null}
-
-      {/* Crew */}
-      {crew.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">Crew</h2>
-          <Expandable
-            preview={<CrewRow credits={crew.slice(0, 6)} />}
-            label={`Show all ${crew.length}`} collapseLabel="Show less"
-          >
-            <CrewRow credits={crew} />
-          </Expandable>
-        </section>
-      ) : null}
-
-      <Gallery images={movie.gallery_images ?? []} title={movie.title} />
-
-      <ContentGrid
-        title="Similar Movies"
-        items={similarMovies.map((m) => ({ id: m.id, title: m.title, to: `/movie/${m.id}`, imageUrl: m.selected_poster_url, logoUrl: m.selected_logo_url, badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null }))}
-        aspect="poster" showLogo={false}
-      />
-
-      {/* Reviews */}
-      <section className="space-y-3">
-        <h2 className="text-base font-bold tracking-tight">Reviews {avgRating ? <span className="text-sm text-yellow-400 font-normal">★ {avgRating}</span> : null}</h2>
-        {user ? (
-          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-            <StarRating value={reviewRating} onChange={setReviewRating} />
-            <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
-            <div className="flex justify-end">
-              <Button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}>Post review</Button>
-            </div>
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-            <Link to="/login" className="text-accent hover:underline">Log in</Link> to add a review.
-          </div>
-        )}
-        <div className="space-y-3">
-          {reviews.map((r) => (
-            <SpotlightCard key={r.id} className="p-4" spotlightColor="rgba(168,85,247,0.06)">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-medium text-white/70">User {r.user_id.slice(0, 8)}</div>
-                <div className="flex items-center gap-2">
-                  {r.rating ? <span className="text-xs text-yellow-400">{'★'.repeat(r.rating)}</span> : null}
-                  <div className="text-xs text-white/30">{new Date(r.created_at).toLocaleDateString()}</div>
-                </div>
+        {/* Reviews */}
+        <div style={{ background: '#161616' }} className="rounded-xl p-4 space-y-4">
+          <SectionHeader title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`} />
+          {user ? (
+            <div className="space-y-3 rounded-xl border border-white/8 p-4" style={{ background: '#1a1a1a' }}>
+              <StarRating value={reviewRating} onChange={setReviewRating} />
+              <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
+              <div className="flex justify-end">
+                <Button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}>Post review</Button>
               </div>
-              <div className="mt-2 text-sm text-white/80">{r.review_text}</div>
-            </SpotlightCard>
-          ))}
-          {!reviews.length ? <div className="text-sm text-white/40">No reviews yet. Be the first!</div> : null}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-white/8 p-4 text-sm text-white/40" style={{ background: '#1a1a1a' }}>
+              <Link to="/login" className="text-accent hover:underline font-semibold">Log in</Link> to write a review.
+            </div>
+          )}
+          <div className="space-y-3">
+            {reviews.map((r) => (
+              <div key={r.id} className="rounded-xl border border-white/8 p-4" style={{ background: '#1a1a1a' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs font-bold text-white/60">User {r.user_id.slice(0, 8)}</div>
+                  <div className="flex items-center gap-2">
+                    {r.rating ? <span className="text-xs font-bold text-yellow-400">{'★'.repeat(r.rating)}</span> : null}
+                    <span className="text-[10px] text-white/25">{new Date(r.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-white/70 leading-relaxed">{r.review_text}</p>
+              </div>
+            ))}
+            {!reviews.length ? <div className="text-sm text-white/30 text-center py-4">No reviews yet. Be the first!</div> : null}
+          </div>
         </div>
-      </section>
 
-
+      </div>
     </div>
   )
 }
 
-function CastRow({ credits }: { credits: CreditRow[] }) {
+function CastScroll({ credits }: { credits: CreditRow[] }) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
-        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
-          <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-16 shrink-0 flex-col items-center gap-1.5 text-center group">
+          <div className="h-16 w-16 overflow-hidden rounded-xl bg-white/5 border border-white/8 group-hover:border-accent/30 transition-colors">
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
-          {c.character ? <div className="w-full truncate text-[10px] text-white/50">{c.character}</div> : null}
+          <div className="w-full truncate text-[10px] font-bold leading-tight">{c.person.name}</div>
+          {c.character ? <div className="w-full truncate text-[9px] text-white/40">{c.character}</div> : null}
         </Link>
       ))}
     </div>
   )
 }
 
-function CrewRow({ credits }: { credits: CreditRow[] }) {
+function CrewScroll({ credits }: { credits: CreditRow[] }) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
-        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
-          <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-16 shrink-0 flex-col items-center gap-1.5 text-center group">
+          <div className="h-16 w-16 overflow-hidden rounded-xl bg-white/5 border border-white/8 group-hover:border-accent/30 transition-colors">
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
-          {c.job ? <div className="w-full truncate text-[10px] text-white/50">{c.job}</div> : null}
+          <div className="w-full truncate text-[10px] font-bold leading-tight">{c.person.name}</div>
+          {c.job ? <div className="w-full truncate text-[9px] text-white/40">{c.job}</div> : null}
         </Link>
       ))}
     </div>
