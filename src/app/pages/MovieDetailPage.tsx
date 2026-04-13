@@ -146,17 +146,17 @@ export default function MovieDetailPage() {
       {/* ── MAIN CONTENT ── */}
       <div className="px-4 space-y-6">
 
-        {/* Poster + Info row */}
-        <div className="flex gap-4 -mt-10 md:-mt-24 relative z-10">
-          {/* Poster */}
+        {/* Poster + Info row — stacks on mobile, side by side on md+ */}
+        <div className="flex gap-4 md:-mt-24 relative z-10">
+          {/* Poster — hidden on mobile, shown on md+ */}
           {movie.selected_poster_url && (
-            <div className="shrink-0 w-24 md:w-36" style={{ aspectRatio: '2/3' }}>
-              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover rounded-xl shadow-2xl border border-white/10" />
+            <div className="hidden md:block shrink-0 w-36" style={{ aspectRatio: '2/3' }}>
+              <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover rounded-xl shadow-2xl" />
             </div>
           )}
 
           {/* Title + meta */}
-          <div className="flex-1 min-w-0 pt-4 md:pt-20 space-y-2">
+          <div className="flex-1 min-w-0 md:pt-20 space-y-2 pt-3">
             {movie.selected_logo_url ? (
               <img src={movie.selected_logo_url} alt={movie.title} className="max-h-12 md:max-h-16 w-auto max-w-[80%] object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]" />
             ) : (

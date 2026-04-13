@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Search, Shield, User, Repeat2 } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
@@ -20,6 +20,8 @@ export default function FloatingBar() {
   const navigate = useNavigate()
   const [newCount, setNewCount] = useState(0)
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastY = useRef(0)
 
   useEffect(() => {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -30,7 +32,13 @@ export default function FloatingBar() {
   }, [])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 20)
+      if (y > 80) setHidden(y > lastY.current)
+      else setHidden(false)
+      lastY.current = y
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -40,7 +48,7 @@ export default function FloatingBar() {
   return (
     <div className="fixed top-3 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
       <header
-        className="pointer-events-auto flex items-center gap-1 px-2 py-1.5 transition-all duration-300"
+        className="pointer-events-auto flex items-center gap-1 px-2 py-1.5"
         style={{
           background: scrolled ? 'rgba(15,15,15,0.92)' : 'rgba(15,15,15,0.75)',
           backdropFilter: 'blur(20px)',
@@ -49,6 +57,9 @@ export default function FloatingBar() {
           boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.4)' : '0 2px 12px rgba(0,0,0,0.2)',
           maxWidth: 680,
           width: '100%',
+          transform: hidden ? 'translateY(-80px)' : 'translateY(0)',
+          opacity: hidden ? 0 : 1,
+          transition: 'transform 0.3s ease, opacity 0.3s ease, background 0.3s ease, box-shadow 0.3s ease',
         }}
       >
         {/* Logo */}
@@ -64,7 +75,7 @@ export default function FloatingBar() {
           {navLinks.map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
-                `relative px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${isActive ? 'text-white bg-white/10' : 'text-white/50 hover:text-white'}`
+                `px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${isActive ? 'text-white bg-white/10' : 'text-white/50 hover:text-white'}`
               }
             >
               {label}
