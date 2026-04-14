@@ -68,7 +68,7 @@ export default function YouTubeHero({ videoId }: Props) {
         allow="autoplay; fullscreen"
         title="trailer"
         className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ border: 'none', transform: 'scale(1.35)', transformOrigin: 'center center' }}
+        style={{ border: 'none', transform: 'scale(1.35)', transformOrigin: 'center center', filter: 'brightness(1.35) contrast(1.05)' }}
       />
       <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5">
         <button onClick={handlePlay}
