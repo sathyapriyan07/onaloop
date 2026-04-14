@@ -81,7 +81,8 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
             <Link
               key={item.id}
               to={item.to}
-              className={`group relative shrink-0 overflow-hidden rounded-xl bg-[#1c1c1e] ${cardW} ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
+              className={`group relative shrink-0 overflow-hidden rounded-xl ${cardW} ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
+              style={{ background: 'var(--surface)' }}
             >
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt={item.title} loading="lazy"

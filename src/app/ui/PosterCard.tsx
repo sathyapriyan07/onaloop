@@ -19,9 +19,10 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
     <Link
       to={to}
       className={clsx(
-        'group relative block overflow-hidden rounded-xl bg-[#1c1c1e] transition-transform duration-300 hover:scale-[1.04]',
+        'group relative block overflow-hidden rounded-xl transition-transform duration-300 hover:scale-[1.04]',
         aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]',
       )}
+      style={{ background: 'var(--surface)' }}
     >
       {posterUrl ? (
         <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" />

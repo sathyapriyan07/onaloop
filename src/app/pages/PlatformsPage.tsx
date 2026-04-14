@@ -41,7 +41,8 @@ export default function PlatformsPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((p) => (
             <Link key={p.id} to={`/platform/${p.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[16/9] bg-[#1c1c1e]">
+              className="group relative overflow-hidden rounded-xl aspect-[16/9]"
+              style={{ background: 'var(--surface)' }}>
               {p.display_image_url
                 ? <img src={p.display_image_url} alt={p.name} loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />

@@ -4,15 +4,15 @@
   color-scheme: dark;
   --accent: #2997ff;
   --accent-dim: #1a7fd4;
-  --accent-glow: rgba(41, 151, 255, 0.25);
+  --accent-glow: rgba(41, 151, 255, 0.2);
   --bg: #000000;
-  --surface: #1c1c1e;
-  --surface2: #2c2c2e;
-  --surface3: #3a3a3c;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --surface3: #222222;
   --label: #ffffff;
   --label2: rgba(255,255,255,0.55);
-  --label3: rgba(255,255,255,0.30);
-  --separator: rgba(255,255,255,0.08);
+  --label3: rgba(255,255,255,0.28);
+  --separator: rgba(255,255,255,0.07);
 }
 
 html, body { height: 100%; scrollbar-width: none; }
@@ -20,8 +20,8 @@ body::-webkit-scrollbar { display: none; }
 
 body {
   @apply antialiased;
-  background-color: var(--bg);
-  color: var(--label);
+  background-color: #000;
+  color: #fff;
   font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
 }
@@ -39,13 +39,10 @@ body {
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background: linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%);
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;
 }
 
-.snap-x-rail {
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
+.snap-x-rail { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
 .snap-x-rail > * { scroll-snap-align: start; }

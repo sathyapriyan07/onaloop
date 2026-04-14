@@ -16,8 +16,7 @@ export default function CollectionDetailPage() {
       supabase.from('collections').select('id,name,description,cover_image_url').eq('id', id).maybeSingle(),
       supabase.from('collection_items')
         .select('sort_order,movie:movies(id,title,selected_poster_url,tmdb_rating,release_date),series:series(id,title,selected_poster_url,tmdb_rating,first_air_date)')
-        .eq('collection_id', id)
-        .order('sort_order'),
+        .eq('collection_id', id).order('sort_order'),
     ]).then(([c, ci]) => {
       setCollection((c.data ?? null) as Collection | null)
       const mapped: Item[] = ((ci.data ?? []) as any[]).map((r) => {
@@ -31,46 +30,47 @@ export default function CollectionDetailPage() {
     })
   }, [id])
 
-  if (!collection) return <div className="text-white/40 text-sm">Loading…</div>
+  if (!collection) return <div className="text-white/30 text-sm px-4 pt-8">Loading…</div>
 
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-xl" style={{ background: '#161616' }}>
+      <div className="relative overflow-hidden rounded-xl" style={{ background: 'var(--surface)' }}>
         <div className="aspect-[21/6] w-full">
           {collection.cover_image_url
             ? <img src={collection.cover_image_url} alt={collection.name} className="h-full w-full object-cover" />
-            : <div className="h-full w-full" style={{ background: '#1a1a1a' }} />
-          }
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
+            : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         </div>
         <div className="absolute inset-x-0 bottom-0 p-5">
           <h1 className="text-2xl font-black tracking-tight">{collection.name}</h1>
-          {collection.description && <p className="mt-1 text-sm text-white/60 max-w-lg">{collection.description}</p>}
-          <div className="mt-1 text-xs text-white/40">{items.length} title{items.length !== 1 ? 's' : ''}</div>
+          {collection.description && <p className="mt-1 text-sm text-white/50 max-w-lg">{collection.description}</p>}
+          <div className="mt-1 text-xs text-white/30">{items.length} title{items.length !== 1 ? 's' : ''}</div>
         </div>
       </div>
 
-      {/* Grid */}
       {items.length === 0 ? (
-        <div className="text-sm text-white/40">No items in this collection yet.</div>
+        <div className="text-sm text-white/30">No items in this collection yet.</div>
       ) : (
-        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-5">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {items.map((item) => (
             <Link key={item.id} to={item.to}
-              className="group relative overflow-hidden rounded-xl bg-neutral-900 aspect-[2/3]">
+              className="group relative overflow-hidden rounded-xl aspect-[2/3]"
+              style={{ background: 'var(--surface)' }}>
               {item.posterUrl
-                ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                ? <img src={item.posterUrl} alt={item.title} loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
                 : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/30">{item.title}</div>}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               {item.rating && (
-                <div className="absolute left-1.5 top-1.5 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-bold backdrop-blur-sm">
+                <div className="absolute left-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold backdrop-blur-sm"
+                  style={{ background: 'rgba(0,0,0,0.7)' }}>
                   ★ {item.rating}
                 </div>
               )}
               <div className="absolute inset-x-0 bottom-0 p-2">
-                <div className="line-clamp-2 text-xs font-bold leading-tight">{item.title}</div>
-                {item.year ? <div className="mt-0.5 text-[10px] text-white/40">{item.year}</div> : null}
+                <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{item.title}</div>
+                {item.year && <div className="mt-0.5 text-[9px] text-white/35">{item.year}</div>}
               </div>
             </Link>
           ))}

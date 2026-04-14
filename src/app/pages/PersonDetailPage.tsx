@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import clsx from 'clsx'
+import BackButton from '../ui/BackButton'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import PosterCollage from '../ui/PosterCollage'
@@ -119,7 +120,8 @@ export default function PersonDetailPage() {
   , [flatCredits, crewRows])
 
   if (!person) return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4 pt-16">
+      <BackButton />
       <div className="min-h-[200px] rounded-xl skeleton" />
       <div className="h-6 w-40 skeleton rounded-lg" />
       <div className="h-4 w-56 skeleton rounded" />
@@ -127,13 +129,14 @@ export default function PersonDetailPage() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 pb-10 pt-4">
+      <BackButton />
       {/* Poster collage hero — person's movies */}
       <PosterCollage posters={collagePosters} />
 
       {/* Profile card */}
       <section className="flex gap-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
-        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#2c2c2e]">
+        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
           {person.selected_profile_url
             ? <img src={person.selected_profile_url} alt={person.name} className="h-full w-full object-cover" />
             : null}

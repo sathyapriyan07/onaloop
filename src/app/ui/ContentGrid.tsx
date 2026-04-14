@@ -30,7 +30,8 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
       <div className={`grid gap-2 ${gridClass}`}>
         {items.map((item) => (
           <Link key={item.id} to={item.to}
-            className={`group relative overflow-hidden rounded-xl bg-[#1c1c1e] ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}>
+            className={`group relative overflow-hidden rounded-xl ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
+            style={{ background: 'var(--surface)' }}>
             {item.imageUrl ? (
               <img src={item.imageUrl} alt={item.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />

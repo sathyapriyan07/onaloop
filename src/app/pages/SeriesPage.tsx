@@ -80,7 +80,8 @@ export default function SeriesPage() {
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
           {filtered.map((s) => (
             <Link key={s.id} to={`/series/${s.id}`}
-              className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
+              className="group relative overflow-hidden rounded-xl aspect-[2/3]"
+              style={{ background: 'var(--surface)' }}>
               <img src={s.selected_poster_url!} alt={s.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

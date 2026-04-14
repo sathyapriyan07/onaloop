@@ -198,7 +198,8 @@ export default function DiscoverPage() {
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
           {results.map((item) => (
             <Link key={`${item.type}-${item.id}`} to={item.to}
-              className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
+              className="group relative overflow-hidden rounded-xl aspect-[2/3]"
+              style={{ background: 'var(--surface)' }}>
               {item.posterUrl
                 ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
                 : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{item.title}</div>}

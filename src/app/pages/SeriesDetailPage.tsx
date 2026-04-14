@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
+import BackButton from '../ui/BackButton'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
@@ -27,7 +28,7 @@ function extractYouTubeId(url: string) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-[13px] font-semibold uppercase tracking-widest text-white/40">{title}</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-white/35">{title}</h2>
       {children}
     </div>
   )
@@ -93,13 +94,14 @@ export default function SeriesDetailPage() {
   }
 
   if (!series) return (
-    <div className="space-y-0 -mx-4">
+    <>
+      <BackButton />
       <div className="aspect-[16/9] w-full skeleton" />
       <div className="px-4 pt-4 space-y-3">
         <div className="h-8 w-48 skeleton rounded-xl" />
         <div className="h-4 w-32 skeleton rounded-lg" />
       </div>
-    </div>
+    </>
   )
 
   const videoId = series.trailer_url ? extractYouTubeId(series.trailer_url) : null
@@ -107,22 +109,23 @@ export default function SeriesDetailPage() {
   const crew = credits.filter((c) => c.credit_type === 'crew')
 
   return (
-    <div className="space-y-0 -mx-4">
+    <div>
+      <BackButton />
 
       {/* Full-bleed backdrop */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden -mt-16">
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
         {series.selected_backdrop_url
           ? <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
-          : <div className="h-full w-full bg-[#111]" />}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
+          : <div className="h-full w-full" style={{ background: '#0a0a0a' }} />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
-      <div className="px-4 space-y-7">
+      <div className="px-4 space-y-7 pb-10">
 
         {/* Poster + title row */}
-        <div className="flex gap-4 relative z-10 -mt-20 md:-mt-28">
+        <div className="flex gap-4 relative z-10 -mt-24 md:-mt-32">
           {series.selected_poster_url && (
             <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '2/3' }}>
               <img src={series.selected_poster_url} alt={series.title} className="h-full w-full object-cover" />
@@ -135,8 +138,8 @@ export default function SeriesDetailPage() {
               <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">{series.title}</h1>
             )}
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-white/40">
-              {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
-              {series.tmdb_rating ? <><span className="text-white/20">·</span><span className="flex items-center gap-1 text-white font-semibold"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></> : null}
+              {series.first_air_date && <span>{series.first_air_date.slice(0, 4)}</span>}
+              {series.tmdb_rating && <><span className="text-white/15">·</span><span className="flex items-center gap-1 font-semibold text-white"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></>}
             </div>
           </div>
         </div>
@@ -145,7 +148,7 @@ export default function SeriesDetailPage() {
         <div className="flex flex-wrap gap-2">
           {videoId && (
             <button onClick={() => setTrailerOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-80"
               style={{ background: 'var(--accent)' }}>
               <Play size={13} fill="currentColor" />
               {trailerOpen ? 'Hide Trailer' : 'Trailer'}
@@ -153,13 +156,13 @@ export default function SeriesDetailPage() {
             </button>
           )}
           <button onClick={toggleWatchlist}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-white/70 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-white/60 hover:text-white'}`}
             style={{ background: 'var(--surface)' }}>
             {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
             {inWatchlist ? 'Saved' : 'Watchlist'}
           </button>
           <button onClick={toggleWatched}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-white/70 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-white/60 hover:text-white'}`}
             style={{ background: 'var(--surface)' }}>
             {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
             {isWatched ? 'Watched' : 'Mark Watched'}
@@ -171,7 +174,7 @@ export default function SeriesDetailPage() {
           <div className="flex flex-wrap gap-1.5">
             {genres.map((g) => (
               <Link key={g.id} to={`/genre/${g.id}`}
-                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-white/60 hover:text-white transition-colors"
+                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-white/55 hover:text-white transition-colors"
                 style={{ background: 'var(--surface)' }}>
                 {g.name}
               </Link>
@@ -182,9 +185,9 @@ export default function SeriesDetailPage() {
         {/* Overview */}
         {series.overview && (
           <Expandable
-            preview={<p className="text-sm leading-relaxed text-white/60 line-clamp-4">{series.overview}</p>}
+            preview={<p className="text-sm leading-relaxed text-white/55 line-clamp-4">{series.overview}</p>}
             label="Read more" collapseLabel="Show less">
-            <p className="text-sm leading-relaxed text-white/60">{series.overview}</p>
+            <p className="text-sm leading-relaxed text-white/55">{series.overview}</p>
           </Expandable>
         )}
 
@@ -208,9 +211,9 @@ export default function SeriesDetailPage() {
                 const name = (l.platform as any)?.name ?? l.label
                 return (
                   <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-2.5 rounded-2xl px-4 py-2.5 hover:bg-white/8 transition-colors"
+                    className="flex items-center gap-2.5 rounded-2xl px-4 py-2.5 transition-colors hover:brightness-125"
                     style={{ background: 'var(--surface)' }}>
-                    {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain" /> : null}
+                    {logo && <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain" />}
                     <div>
                       <div className="text-xs font-semibold">{name}</div>
                       <div className="text-[10px] text-white/30">Watch now</div>
@@ -255,7 +258,7 @@ export default function SeriesDetailPage() {
                 <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
                 <div className="flex justify-end">
                   <button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}
-                    className="rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-40 transition-opacity hover:opacity-85"
+                    className="rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-40 transition-opacity hover:opacity-80"
                     style={{ background: 'var(--accent)' }}>
                     Post
                   </button>
@@ -269,10 +272,10 @@ export default function SeriesDetailPage() {
             {reviews.map((r) => (
               <div key={r.id} className="rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs font-semibold text-white/40">User {r.user_id.slice(0, 8)}</div>
+                  <div className="text-xs font-semibold text-white/35">User {r.user_id.slice(0, 8)}</div>
                   <span className="text-[10px] text-white/20">{new Date(r.created_at).toLocaleDateString()}</span>
                 </div>
-                <p className="text-sm text-white/60 leading-relaxed">{r.review_text}</p>
+                <p className="text-sm text-white/55 leading-relaxed">{r.review_text}</p>
               </div>
             ))}
             {!reviews.length && <div className="text-sm text-white/25 text-center py-6">No reviews yet.</div>}
@@ -289,14 +292,14 @@ function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; su
     <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
         <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-16 shrink-0 flex-col items-center gap-1.5 text-center group">
-          <div className="h-16 w-16 overflow-hidden rounded-2xl bg-[#1c1c1e]">
+          <div className="h-16 w-16 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
               : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
           </div>
           <div className="w-full truncate text-[10px] font-semibold leading-tight">{c.person.name}</div>
           {(sub === 'character' ? c.character : c.job) && (
-            <div className="w-full truncate text-[9px] text-white/35">{sub === 'character' ? c.character : c.job}</div>
+            <div className="w-full truncate text-[9px] text-white/30">{sub === 'character' ? c.character : c.job}</div>
           )}
         </Link>
       ))}

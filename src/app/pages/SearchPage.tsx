@@ -149,7 +149,7 @@ export default function SearchPage() {
                 {dropdownResults.movies.map((m) => (
                   <Link key={m.id} to={`/movie/${m.id}`} onMouseDown={() => submitSearch(m.title)}
                     className="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-white/5 transition-colors">
-                    <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg bg-white/8">
+                    <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg" style={{ background: 'var(--surface2)' }}>
                       {m.selected_poster_url && <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" />}
                     </div>
                     <div className="min-w-0">
@@ -161,7 +161,7 @@ export default function SearchPage() {
                 {dropdownResults.series.map((s) => (
                   <Link key={s.id} to={`/series/${s.id}`} onMouseDown={() => submitSearch(s.title)}
                     className="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-white/5 transition-colors">
-                    <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg bg-white/8">
+                    <div className="h-10 w-7 shrink-0 overflow-hidden rounded-lg" style={{ background: 'var(--surface2)' }}>
                       {s.selected_poster_url && <img src={s.selected_poster_url} alt={s.title} className="h-full w-full object-cover" />}
                     </div>
                     <div className="min-w-0">
@@ -173,7 +173,7 @@ export default function SearchPage() {
                 {dropdownResults.people.map((p) => (
                   <Link key={p.id} to={`/person/${p.id}`} onMouseDown={() => submitSearch(p.name)}
                     className="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-white/5 transition-colors">
-                    <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-white/8">
+                    <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full" style={{ background: 'var(--surface2)' }}>
                       {p.selected_profile_url && <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" />}
                     </div>
                     <div className="min-w-0">
@@ -197,7 +197,7 @@ export default function SearchPage() {
           <h2 className="text-[17px] font-bold">Movies</h2>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
             {movies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
+              <Link key={m.id} to={`/movie/${m.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
                 {m.selected_poster_url
                   ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{m.title}</div>}
@@ -214,7 +214,7 @@ export default function SearchPage() {
           <h2 className="text-[17px] font-bold">Series</h2>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
             {series.map((s) => (
-              <Link key={s.id} to={`/series/${s.id}`} className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
+              <Link key={s.id} to={`/series/${s.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
                 {s.selected_poster_url
                   ? <img src={s.selected_poster_url} alt={s.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{s.title}</div>}
@@ -234,7 +234,7 @@ export default function SearchPage() {
               <Link key={p.id} to={`/person/${p.id}`}
                 className="flex items-center gap-3 rounded-xl p-3 hover:bg-white/5 transition-colors"
                 style={{ background: 'var(--surface)' }}>
-                <div className="h-10 w-10 overflow-hidden rounded-full bg-white/8 shrink-0">
+                <div className="h-10 w-10 overflow-hidden rounded-full shrink-0" style={{ background: 'var(--surface2)' }}>
                   {p.selected_profile_url && <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" />}
                 </div>
                 <div className="min-w-0 flex-1 truncate text-sm font-medium">{p.name}</div>
