@@ -14,18 +14,7 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
   return value
 }
 
-// Map section title keywords to emojis
-function sectionEmoji(title: string): string {
-  const t = title.toLowerCase()
-  if (t.includes('trend')) return '🔥'
-  if (t.includes('editor') || t.includes('pick')) return '🎯'
-  if (t.includes('loop') || t.includes('rewatch')) return '🔁'
-  if (t.includes('tamil') || t.includes('regional') || t.includes('indian')) return '🇮🇳'
-  if (t.includes('hidden') || t.includes('gem')) return '💎'
-  if (t.includes('new') || t.includes('latest') || t.includes('recent')) return '✨'
-  if (t.includes('top') || t.includes('best')) return '⭐'
-  return '🎬'
-}
+// removed emoji helper
 
 export default function HomePage() {
   const [sections, setSections] = useState<HomeSection[]>([])
@@ -87,7 +76,6 @@ export default function HomePage() {
         </>
       ) : sections.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-          <div className="text-4xl">🎬</div>
           <div className="text-base font-semibold text-white/70">Nothing here yet.</div>
           <div className="text-sm text-white/40">Start exploring movies and series!</div>
         </div>
@@ -107,7 +95,6 @@ export default function HomePage() {
               title={section.title}
               items={sectionItems}
               showLogo={false}
-              emoji={sectionEmoji(section.title)}
               viewAllTo={sectionItems[0]?.type === 'series' ? '/series' : '/movies'}
             />
           )

@@ -15,11 +15,10 @@ type Props = {
   title: string
   items: Item[]
   showLogo?: boolean
-  emoji?: string
   viewAllTo?: string
 }
 
-export default function PosterRail({ title, items, showLogo = true, emoji, viewAllTo }: Props) {
+export default function PosterRail({ title, items, showLogo = true, viewAllTo }: Props) {
   return (
     <ContentRail
       title={title}
@@ -35,7 +34,6 @@ export default function PosterRail({ title, items, showLogo = true, emoji, viewA
       }))}
       aspect="poster"
       showLogo={showLogo}
-      emoji={emoji}
       viewAllTo={viewAllTo}
     />
   )

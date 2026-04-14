@@ -22,10 +22,9 @@ type Props = {
   aspect?: 'poster' | 'backdrop'
   showLogo?: boolean
   viewAllTo?: string
-  emoji?: string
 }
 
-export default function ContentRail({ title, items, aspect = 'poster', showLogo = true, viewAllTo, emoji }: Props) {
+export default function ContentRail({ title, items, aspect = 'poster', showLogo = true, viewAllTo }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', dragFree: true, containScroll: 'trimSnaps' })
   const prevBtnRef = useRef<HTMLButtonElement>(null)
   const nextBtnRef = useRef<HTMLButtonElement>(null)
@@ -53,9 +52,7 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-[17px] font-bold tracking-tight">
-          {emoji && <span className="mr-1.5">{emoji}</span>}{title}
-        </h2>
+        <h2 className="text-[17px] font-bold tracking-tight">{title}</h2>
         <div className="flex items-center gap-1.5">
           {viewAllTo && (
             <Link to={viewAllTo} className="flex items-center gap-0.5 text-[11px] font-semibold text-accent hover:opacity-80 transition-opacity">
