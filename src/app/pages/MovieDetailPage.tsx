@@ -140,11 +140,21 @@ export default function MovieDetailPage() {
     <div>
       <BackButton />
 
-      {/* Full-bleed backdrop — no top margin, bleeds to very top */}
+      {/* Hero — autoplay trailer if available, else backdrop */}
       <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
-        {movie.selected_backdrop_url
-          ? <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
-          : <div className="h-full w-full" style={{ background: '#0a0a0a' }} />}
+        {videoId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0`}
+            allow="autoplay; fullscreen"
+            title={movie.title}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ border: 'none', transform: 'scale(1.35)', transformOrigin: 'center center' }}
+          />
+        ) : movie.selected_backdrop_url ? (
+          <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full" style={{ background: '#0a0a0a' }} />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />

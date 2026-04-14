@@ -22,7 +22,7 @@ body {
   @apply antialiased;
   background-color: #000;
   color: #fff;
-  font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Inter', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
 }
 

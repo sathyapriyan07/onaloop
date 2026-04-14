@@ -112,11 +112,22 @@ export default function SeriesDetailPage() {
     <div>
       <BackButton />
 
-      {/* Full-bleed backdrop */}
+      {/* Hero — autoplay trailer if available, else backdrop */}
       <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
-        {series.selected_backdrop_url
-          ? <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
-          : <div className="h-full w-full" style={{ background: '#0a0a0a' }} />}
+        {videoId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1`}
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            title={series.title}
+            className="absolute inset-0 h-full w-full"
+            style={{ border: 'none', objectFit: 'cover', transform: 'scale(1.01)' }}
+          />
+        ) : series.selected_backdrop_url ? (
+          <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full" style={{ background: '#0a0a0a' }} />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
