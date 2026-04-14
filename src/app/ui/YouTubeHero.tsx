@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward } from 'lucide-react'
 
 type Props = { videoId: string }
 
@@ -35,7 +35,6 @@ export default function YouTubeHero({ videoId }: Props) {
   function handleMute() {
     const next = !muted
     setMuted(next)
-    // postMessage mute/unMute — no src reload, video keeps playing from current position
     setTimeout(() => post(next ? 'mute' : 'unMute'), 50)
   }
 
@@ -43,6 +42,32 @@ export default function YouTubeHero({ videoId }: Props) {
     const next = !playing
     setPlaying(next)
     setTimeout(() => post(next ? 'playVideo' : 'pauseVideo'), 50)
+  }
+
+  function seek(seconds: number) {
+    // getCurrentTime isn't synchronous via postMessage, so we track time ourselves
+    post('seekTo', [seconds, true])
+  }
+
+  // Track elapsed time locally so we can seek relative to current position
+  const startTimeRef = useRef(0)
+  const startWallRef = useRef(Date.now())
+
+  useEffect(() => {
+    if (!playing) return
+    startWallRef.current = Date.now()
+  }, [playing])
+
+  function getCurrentApproxTime() {
+    if (!playing) return startTimeRef.current
+    return startTimeRef.current + (Date.now() - startWallRef.current) / 1000
+  }
+
+  function handleSeek(delta: number) {
+    const t = Math.max(0, getCurrentApproxTime() + delta)
+    startTimeRef.current = t
+    startWallRef.current = Date.now()
+    setTimeout(() => post('seekTo', [t, true]), 50)
   }
 
   const btnStyle: React.CSSProperties = {
@@ -62,10 +87,20 @@ export default function YouTubeHero({ videoId }: Props) {
         style={{ border: 'none', transform: 'scale(1.35)', transformOrigin: 'center center', filter: 'brightness(1.35) contrast(1.05)' }}
       />
       <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5">
+        <button onClick={() => handleSeek(-10)}
+          className="flex h-8 w-8 items-center justify-center rounded-full"
+          style={btnStyle}>
+          <SkipBack size={13} fill="currentColor" />
+        </button>
         <button onClick={handlePlay}
           className="flex h-8 w-8 items-center justify-center rounded-full"
           style={btnStyle}>
           {playing ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
+        </button>
+        <button onClick={() => handleSeek(10)}
+          className="flex h-8 w-8 items-center justify-center rounded-full"
+          style={btnStyle}>
+          <SkipForward size={13} fill="currentColor" />
         </button>
         <button onClick={handleMute}
           className="flex h-8 w-8 items-center justify-center rounded-full"
