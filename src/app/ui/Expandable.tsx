@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 
 type Props = {
   children: React.ReactNode
@@ -17,9 +18,7 @@ export default function Expandable({ children, preview, label = 'Show more', col
         className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-white/50 hover:text-white transition-colors"
       >
         {open ? collapseLabel : label}
-        <span className="material-icons-round" style={{ fontSize: 14 }}>
-          {open ? 'expand_less' : 'expand_more'}
-        </span>
+        <ChevronDown size={13} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
     </div>
   )

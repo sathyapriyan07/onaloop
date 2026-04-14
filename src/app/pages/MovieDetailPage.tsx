@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import BackButton from '../ui/BackButton'
 import TextArea from '../ui/TextArea'
 import Gallery from '../ui/Gallery'
@@ -67,6 +67,15 @@ export default function MovieDetailPage() {
   const [similarMovies, setSimilarMovies] = useState<any[]>([])
   const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
   const [trailerOpen, setTrailerOpen] = useState(false)
+  const [muted, setMuted] = useState(true)
+  const [playing, setPlaying] = useState(true)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  function postToPlayer(action: string) {
+    iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: action, args: [] }), '*')
+  }
+  function toggleMute() { postToPlayer(muted ? 'unMute' : 'mute'); setMuted(v => !v) }
+  function togglePlay() { postToPlayer(playing ? 'pauseVideo' : 'playVideo'); setPlaying(v => !v) }
 
   useEffect(() => {
     if (!id) return
@@ -144,7 +153,8 @@ export default function MovieDetailPage() {
       <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
         {videoId ? (
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0`}
+            ref={iframeRef}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1`}
             allow="autoplay; fullscreen"
             title={movie.title}
             className="absolute inset-0 w-full h-full pointer-events-none"
@@ -158,6 +168,20 @@ export default function MovieDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
+        {videoId && (
+          <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
+            <button onClick={togglePlay}
+              className="flex h-8 w-8 items-center justify-center rounded-full"
+              style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              {playing ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
+            </button>
+            <button onClick={toggleMute}
+              className="flex h-8 w-8 items-center justify-center rounded-full"
+              style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+              {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="px-4 space-y-7 pb-10">
