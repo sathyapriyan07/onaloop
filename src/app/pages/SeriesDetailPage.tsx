@@ -18,7 +18,7 @@ type Series = {
 }
 type Genre = { id: string; name: string }
 type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
-type LinkRow = { id: string; label: string; url: string; platform?: { name: string; logo_url: string | null } | null }
+type LinkRow = { id: string; label: string; url: string; cover_image_url?: string | null; platform?: { name: string; logo_url: string | null } | null }
 type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
 
 function extractYouTubeId(url: string) {

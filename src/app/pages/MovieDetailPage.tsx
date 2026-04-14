@@ -22,7 +22,7 @@ type Movie = {
 }
 type Genre = { id: string; name: string }
 type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
-type LinkRow = { id: string; label: string; url: string; platform?: { name: string; logo_url: string | null } | null }
+type LinkRow = { id: string; label: string; url: string; cover_image_url?: string | null; platform?: { name: string; logo_url: string | null } | null }
 type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
 
 function extractYouTubeId(url: string) {
@@ -78,7 +78,7 @@ export default function MovieDetailPage() {
         supabase.from('movie_genres').select('genre:genres(id,name)').eq('movie_id', id),
         supabase.from('credits').select('id,credit_type,character,job,sort_order,person:people(id,name,selected_profile_url)').eq('movie_id', id).order('sort_order', { ascending: true }),
         supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('movie_id', id).order('created_at', { ascending: false }),
-        supabase.from('movie_music_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order'),
+        supabase.from('movie_music_links').select('id,label,url,cover_image_url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order'),
         supabase.from('movie_streaming_links').select('id,label,url,platform:platforms(name,logo_url)').eq('movie_id', id).order('sort_order'),
         supabase.from('movie_production_houses').select('production_house:production_houses(id,name,logo_url)').eq('movie_id', id),
       ])
@@ -272,9 +272,17 @@ export default function MovieDetailPage() {
                 const name = (l.platform as any)?.name ?? l.label
                 return (
                   <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-2 rounded-2xl px-4 py-2 transition-colors hover:brightness-125"
+                    className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
                     style={{ background: 'var(--surface)' }}>
-                    {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain" /> : <span className="text-xs font-semibold">{name}</span>}
+                    {l.cover_image_url ? (
+                      <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                    ) : logo ? (
+                      <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
+                    ) : null}
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold">{name}</div>
+                      {l.cover_image_url && <div className="text-[10px] text-white/30">Listen now</div>}
+                    </div>
                   </a>
                 )
               })}

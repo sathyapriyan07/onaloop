@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
+import ImageUploader from '../../ui/ImageUploader'
 import AdminBackButton from '../../ui/AdminBackButton'
 import { supabase } from '../../../lib/supabase'
 
@@ -21,12 +22,12 @@ type Series = {
 
 type Platform = { id: string; name: string; logo_url: string | null; category: string }
 type Editing = Partial<Series> & { id: string }
-type LinkRow = { id: string; label: string; url: string; sort_order: number; platform_id: string | null; platform?: { name: string; logo_url: string | null } | null }
-type NewLink = { platform_id: string; url: string }
+type LinkRow = { id: string; label: string; url: string; sort_order: number; platform_id: string | null; cover_image_url: string | null; platform?: { name: string; logo_url: string | null } | null }
+type NewLink = { platform_id: string; url: string; cover_image_url: string }
 type PersonOption = { id: string; name: string; selected_profile_url: string | null }
 type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
 
-function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDelete }: {
+function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDelete, bucket }: {
   title: string
   links: LinkRow[]
   platforms: Platform[]
@@ -34,6 +35,7 @@ function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDe
   onNewLink: (l: NewLink) => void
   onAdd: () => void
   onDelete: (id: string) => void
+  bucket: string
 }) {
   return (
     <div className="space-y-2">
@@ -43,9 +45,13 @@ function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDe
         const name = l.platform?.name ?? l.label
         return (
           <div key={l.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <div className="flex h-7 w-10 shrink-0 items-center justify-center rounded bg-white/10">
-              {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[36px] object-contain" /> : null}
-            </div>
+            {l.cover_image_url ? (
+              <img src={l.cover_image_url} alt={name} className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+            ) : (
+              <div className="flex h-7 w-10 shrink-0 items-center justify-center rounded bg-white/10">
+                {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[36px] object-contain" /> : null}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <div className="truncate text-xs font-medium">{name}</div>
               <div className="truncate text-xs text-white/40">{l.url}</div>
@@ -54,17 +60,23 @@ function LinksSection({ title, links, platforms, newLink, onNewLink, onAdd, onDe
           </div>
         )
       })}
-      <div className="flex gap-2">
-        <select
-          value={newLink.platform_id}
-          onChange={(e) => onNewLink({ ...newLink, platform_id: e.target.value })}
-          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white outline-none focus:border-white/25"
-        >
-          <option value="">Select platform…</option>
-          {platforms.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        <Input value={newLink.url} onChange={(e) => onNewLink({ ...newLink, url: e.target.value })} placeholder="URL" className="flex-1" />
-        <Button disabled={!newLink.platform_id || !newLink.url.trim()} onClick={onAdd} className="shrink-0">Add</Button>
+      <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+        <div className="flex gap-2">
+          <select
+            value={newLink.platform_id}
+            onChange={(e) => onNewLink({ ...newLink, platform_id: e.target.value })}
+            className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white outline-none focus:border-white/25"
+          >
+            <option value="">Select platform…</option>
+            {platforms.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          <Input value={newLink.url} onChange={(e) => onNewLink({ ...newLink, url: e.target.value })} placeholder="URL" className="flex-1" />
+        </div>
+        <div className="flex items-center gap-3">
+          <ImageUploader bucket={bucket} folder="music-covers" label="Cover image" onUploaded={(url) => onNewLink({ ...newLink, cover_image_url: url })} />
+          {newLink.cover_image_url && <img src={newLink.cover_image_url} alt="cover" className="h-10 w-10 rounded-lg object-cover" />}
+          <Button disabled={!newLink.platform_id || !newLink.url.trim()} onClick={onAdd} className="ml-auto shrink-0">Add</Button>
+        </div>
       </div>
     </div>
   )
@@ -77,8 +89,8 @@ export default function AdminSeriesPage() {
   const [editing, setEditing] = useState<Editing | null>(null)
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [musicLinks, setMusicLinks] = useState<LinkRow[]>([])
-  const [newStreaming, setNewStreaming] = useState<NewLink>({ platform_id: '', url: '' })
-  const [newMusic, setNewMusic] = useState<NewLink>({ platform_id: '', url: '' })
+  const [newStreaming, setNewStreaming] = useState<NewLink>({ platform_id: '', url: '', cover_image_url: '' })
+  const [newMusic, setNewMusic] = useState<NewLink>({ platform_id: '', url: '', cover_image_url: '' })
   const [credits, setCredits] = useState<CreditRow[]>([])
   const [allPeople, setAllPeople] = useState<PersonOption[]>([])
   const [peopleSearch, setPeopleSearch] = useState('')
@@ -114,8 +126,8 @@ export default function AdminSeriesPage() {
 
   async function loadLinks(seriesId: string) {
     const [{ data: s }, { data: m }] = await Promise.all([
-      supabase.from('series_streaming_links').select('id,label,url,sort_order,platform_id,platform:platforms(name,logo_url)').eq('series_id', seriesId).order('sort_order'),
-      supabase.from('series_music_links').select('id,label,url,sort_order,platform_id,platform:platforms(name,logo_url)').eq('series_id', seriesId).order('sort_order'),
+      supabase.from('series_streaming_links').select('id,label,url,sort_order,platform_id,cover_image_url,platform:platforms(name,logo_url)').eq('series_id', seriesId).order('sort_order'),
+      supabase.from('series_music_links').select('id,label,url,sort_order,platform_id,cover_image_url,platform:platforms(name,logo_url)').eq('series_id', seriesId).order('sort_order'),
     ])
     setStreamingLinks((s ?? []) as unknown as LinkRow[])
     setMusicLinks((m ?? []) as unknown as LinkRow[])
@@ -128,8 +140,8 @@ export default function AdminSeriesPage() {
 
   async function startEdit(s: Series) {
     setEditing(s)
-    setNewStreaming({ platform_id: '', url: '' })
-    setNewMusic({ platform_id: '', url: '' })
+    setNewStreaming({ platform_id: '', url: '', cover_image_url: '' })
+    setNewMusic({ platform_id: '', url: '', cover_image_url: '' })
     setNewCredit({ person_id: '', credit_type: 'cast', role: '' })
     setPeopleSearch('')
     setAllPeople([])
@@ -157,9 +169,9 @@ export default function AdminSeriesPage() {
   async function addStreaming() {
     if (!editing) return
     const platform = platforms.find((p) => p.id === newStreaming.platform_id)
-    const { error: e } = await supabase.from('series_streaming_links').insert({ series_id: editing.id, platform_id: newStreaming.platform_id, label: platform?.name ?? '', url: newStreaming.url.trim(), sort_order: streamingLinks.length })
+    const { error: e } = await supabase.from('series_streaming_links').insert({ series_id: editing.id, platform_id: newStreaming.platform_id, label: platform?.name ?? '', url: newStreaming.url.trim(), sort_order: streamingLinks.length, cover_image_url: newStreaming.cover_image_url || null })
     if (e) { setError(e.message); return }
-    setNewStreaming({ platform_id: '', url: '' })
+    setNewStreaming({ platform_id: '', url: '', cover_image_url: '' })
     await loadLinks(editing.id)
   }
 
@@ -171,9 +183,9 @@ export default function AdminSeriesPage() {
   async function addMusic() {
     if (!editing) return
     const platform = platforms.find((p) => p.id === newMusic.platform_id)
-    const { error: e } = await supabase.from('series_music_links').insert({ series_id: editing.id, platform_id: newMusic.platform_id, label: platform?.name ?? '', url: newMusic.url.trim(), sort_order: musicLinks.length })
+    const { error: e } = await supabase.from('series_music_links').insert({ series_id: editing.id, platform_id: newMusic.platform_id, label: platform?.name ?? '', url: newMusic.url.trim(), sort_order: musicLinks.length, cover_image_url: newMusic.cover_image_url || null })
     if (e) { setError(e.message); return }
-    setNewMusic({ platform_id: '', url: '' })
+    setNewMusic({ platform_id: '', url: '', cover_image_url: '' })
     await loadLinks(editing.id)
   }
 
@@ -323,8 +335,8 @@ export default function AdminSeriesPage() {
                 </div>
               </div>
             </div>
-            <LinksSection title="Streaming links" links={streamingLinks} platforms={platforms.filter((p) => p.category === 'ott')} newLink={newStreaming} onNewLink={setNewStreaming} onAdd={addStreaming} onDelete={deleteStreaming} />
-            <LinksSection title="Music links" links={musicLinks} platforms={platforms.filter((p) => p.category === 'music')} newLink={newMusic} onNewLink={setNewMusic} onAdd={addMusic} onDelete={deleteMusic} />
+            <LinksSection title="Streaming links" links={streamingLinks} platforms={platforms.filter((p) => p.category === 'ott')} newLink={newStreaming} onNewLink={setNewStreaming} onAdd={addStreaming} onDelete={deleteStreaming} bucket="series-images" />
+            <LinksSection title="Music links" links={musicLinks} platforms={platforms.filter((p) => p.category === 'music')} newLink={newMusic} onNewLink={setNewMusic} onAdd={addMusic} onDelete={deleteMusic} bucket="series-images" />
           </div>
 
           {error ? <div className="text-sm text-red-300">{error}</div> : null}
