@@ -18,37 +18,38 @@ export default function PlatformsPage() {
   const filtered = platforms.filter((p) => p.category === tab)
 
   return (
-    <div className="space-y-5 pt-4">
-      <h1 className="text-xl font-bold tracking-tight">Platforms</h1>
-      <div className="flex gap-2">
+    <div className="space-y-5">
+      <h1 className="text-[28px] font-black tracking-tight">Platforms</h1>
+
+      <div className="flex gap-1.5">
         {(['ott', 'music'] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={['rounded-lg px-4 py-1.5 text-xs font-bold transition-colors', tab === t ? 'bg-white text-neutral-950' : 'text-white/50 hover:text-white'].join(' ')}
-            style={tab !== t ? { background: '#1a1a1a' } : {}}>
-            {t === 'ott' ? 'OTT' : 'Music'}
+            className="rounded-full px-4 py-1.5 text-[11px] font-semibold transition-colors"
+            style={tab === t ? { background: 'var(--surface2)', color: '#fff' } : { background: 'var(--surface)', color: 'rgba(255,255,255,0.5)' }}>
+            {t === 'ott' ? 'Streaming' : 'Music'}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
-          {Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-[16/10] rounded-xl skeleton" />)}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-[16/9] rounded-xl skeleton" />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-sm text-white/40 text-center py-10">None yet.</div>
+        <div className="py-20 text-center text-sm text-white/30">None yet.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((p) => (
             <Link key={p.id} to={`/platform/${p.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[16/10]"
-              style={{ background: '#161616' }}>
+              className="group relative overflow-hidden rounded-xl aspect-[16/9] bg-[#1c1c1e]">
               {p.display_image_url
-                ? <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" loading="lazy" />
-                : <div className="h-full w-full" style={{ background: '#1e1e1e' }} />}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-2.5">
-                <div className="text-xs font-bold truncate">{p.name}</div>
-                {p.logo_url ? <img src={p.logo_url} alt="" className="h-5 w-auto max-w-[40px] object-contain opacity-80 shrink-0" /> : null}
+                ? <img src={p.display_image_url} alt={p.name} loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">
+                <div className="text-sm font-bold truncate">{p.name}</div>
+                {p.logo_url && <img src={p.logo_url} alt="" className="h-5 w-auto max-w-[40px] object-contain opacity-80 shrink-0" />}
               </div>
             </Link>
           ))}

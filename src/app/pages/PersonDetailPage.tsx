@@ -132,8 +132,8 @@ export default function PersonDetailPage() {
       <PosterCollage posters={collagePosters} />
 
       {/* Profile card */}
-      <section className="flex gap-4 rounded-3xl border border-white/10 bg-white/5 p-4">
-        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-white/10">
+      <section className="flex gap-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
+        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#2c2c2e]">
           {person.selected_profile_url
             ? <img src={person.selected_profile_url} alt={person.name} className="h-full w-full object-cover" />
             : null}
@@ -157,7 +157,8 @@ export default function PersonDetailPage() {
                 if (!meta || !lnk.url) return null
                 return (
                   <a key={lnk.platform} href={lnk.url} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium hover:bg-white/10 transition-colors"
+                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium hover:opacity-80 transition-opacity"
+                    style={{ background: 'var(--surface2)' }}
                     title={meta.label}>
                     <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill={meta.color}>
                       <path d={meta.icon} />
@@ -174,12 +175,13 @@ export default function PersonDetailPage() {
       {/* Filmography */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold tracking-tight">Filmography</h2>
-          <div className="inline-flex rounded-xl border border-white/10 bg-white/5 p-1">
+          <h2 className="text-[17px] font-bold tracking-tight">Filmography</h2>
+          <div className="flex gap-1.5">
             {(['cast', 'crew'] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={clsx('rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
-                  tab === t ? 'bg-white text-neutral-950' : 'text-white/60 hover:text-white')}>
+                className={clsx('rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+                  tab === t ? 'text-white' : 'text-white/50 hover:text-white/80')}
+                style={tab === t ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}>
                 {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
               </button>
             ))}

@@ -1,43 +1,31 @@
 import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
-import { Link, useNavigate } from 'react-router-dom'
-import { LayoutGrid, List } from 'lucide-react'
-import PixelCard from '../ui/PixelCard'
+import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { formatRuntime } from '../../lib/format'
 
 type Movie = {
-  id: string
-  title: string
-  release_date: string | null
-  runtime_minutes: number | null
-  show_logo: boolean
-  original_language: string | null
-  selected_poster_url: string | null
-  selected_logo_url: string | null
-  overview: string | null
+  id: string; title: string; release_date: string | null
+  original_language: string | null; selected_poster_url: string | null
+  selected_logo_url: string | null; overview: string | null
 }
 
 const LANG_NAMES: Record<string, string> = {
   en: 'English', ml: 'Malayalam', hi: 'Hindi', ta: 'Tamil', te: 'Telugu',
   kn: 'Kannada', fr: 'French', es: 'Spanish', ja: 'Japanese', ko: 'Korean',
 }
+const langLabel = (code: string) => LANG_NAMES[code] ?? code.toUpperCase()
 
-function langLabel(code: string) {
-  return LANG_NAMES[code] ?? code.toUpperCase()
-}
-
-function Tabs({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
+function FilterRow({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {options.map((o) => (
-        <button
-          key={o}
-          onClick={() => onChange(o)}
+        <button key={o} onClick={() => onChange(o)}
           className={clsx(
-            'shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
-            o === value ? 'bg-white text-neutral-950' : 'bg-white/5 text-white/60 hover:text-white',
+            'shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+            o === value
+              ? 'text-white' : 'text-white/50 hover:text-white/80',
           )}
+          style={o === value ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}
         >
           {o}
         </button>
@@ -47,24 +35,16 @@ function Tabs({ options, value, onChange }: { options: string[]; value: string; 
 }
 
 export default function MoviesPage() {
-  const navigate = useNavigate()
-  const [view, setView] = useState<'grid' | 'list'>('grid')
   const [movies, setMovies] = useState<Movie[]>([])
   const [yearFilter, setYearFilter] = useState('All')
   const [langFilter, setLangFilter] = useState('All')
 
   useEffect(() => {
     let isMounted = true
-    async function run() {
-      const { data } = await supabase
-        .from('movies')
-        .select('id,title,release_date,runtime_minutes,show_logo,original_language,selected_poster_url,selected_logo_url,overview')
-        .order('release_date', { ascending: false })
-        .limit(300)
-      if (!isMounted) return
-      setMovies((data ?? []) as Movie[])
-    }
-    run()
+    supabase.from('movies')
+      .select('id,title,release_date,original_language,selected_poster_url,selected_logo_url,overview')
+      .order('release_date', { ascending: false }).limit(300)
+      .then(({ data }) => { if (isMounted) setMovies((data ?? []) as Movie[]) })
     return () => { isMounted = false }
   }, [])
 
@@ -78,96 +58,40 @@ export default function MoviesPage() {
     return ['All', ...Array.from(s).sort()]
   }, [movies])
 
-  const filtered = useMemo(() => {
-    const result = movies.filter((m) => {
-      if (yearFilter !== 'All' && m.release_date?.slice(0, 4) !== yearFilter) return false
-      if (langFilter !== 'All' && m.original_language !== langFilter) return false
-      return true
-    })
-    if (yearFilter === 'All') result.sort((a, b) => (b.release_date ?? '').localeCompare(a.release_date ?? ''))
-    return result
-  }, [movies, yearFilter, langFilter])
+  const filtered = useMemo(() => movies.filter((m) => {
+    if (yearFilter !== 'All' && m.release_date?.slice(0, 4) !== yearFilter) return false
+    if (langFilter !== 'All' && m.original_language !== langFilter) return false
+    return true
+  }).filter(m => m.selected_poster_url), [movies, yearFilter, langFilter])
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">Movies</h1>
-        <div className="inline-flex rounded-xl border border-white/10 bg-white/5 p-1">
-          <button onClick={() => setView('grid')} className={clsx('inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs', view === 'grid' ? 'bg-white text-neutral-950' : 'text-white/70 hover:text-white')}>
-            <LayoutGrid size={14} /> Grid
-          </button>
-          <button onClick={() => setView('list')} className={clsx('inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs', view === 'list' ? 'bg-white text-neutral-950' : 'text-white/70 hover:text-white')}>
-            <List size={14} /> List
-          </button>
-        </div>
+    <div className="space-y-5">
+      <h1 className="text-[28px] font-black tracking-tight">Movies</h1>
+
+      <FilterRow options={years} value={yearFilter} onChange={setYearFilter} />
+      <FilterRow
+        options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))}
+        value={langFilter === 'All' ? 'All' : langLabel(langFilter)}
+        onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)}
+      />
+
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+        {filtered.map((m) => (
+          <Link key={m.id} to={`/movie/${m.id}`}
+            className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
+            <img src={m.selected_poster_url!} alt={m.title} loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-2">
+              {m.selected_logo_url
+                ? <img src={m.selected_logo_url} alt="" className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" loading="lazy" />
+                : <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{m.title}</div>}
+            </div>
+          </Link>
+        ))}
       </div>
 
-      <Tabs options={years} value={yearFilter} onChange={setYearFilter} />
-      <Tabs options={langs.map((l) => l === 'All' ? 'All' : langLabel(l))} value={langFilter === 'All' ? 'All' : langLabel(langFilter)} onChange={(v) => setLangFilter(v === 'All' ? 'All' : langs.find((l) => langLabel(l) === v) ?? v)} />
-
-      {view === 'grid' ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {filtered
-            .filter(m => m.selected_poster_url)
-            .map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => navigate(`/movie/${m.id}`)}
-                className="group text-left"
-                aria-label={m.title}
-              >
-                <PixelCard
-                  variant="default"
-                  noFocus
-                  className="aspect-[2/3] w-full rounded-2xl border border-white/10 bg-white/5"
-                >
-                  <img
-                    src={m.selected_poster_url!}
-                    alt={m.title}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                    loading="lazy"
-                  />
-                  {m.show_logo && m.selected_logo_url ? (
-                    <div className="absolute bottom-0 left-0 right-0">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
-                      <div className="relative p-3">
-                        <img
-                          src={m.selected_logo_url}
-                          alt=""
-                          aria-hidden="true"
-                          className="max-h-10 max-w-[70%] object-contain object-left drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
-                  ) : null}
-                </PixelCard>
-              </button>
-            ))}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filtered.map((movie) => (
-            <Link key={movie.id} to={`/movie/${movie.id}`} className="flex gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 hover:bg-white/10">
-              <div className="aspect-[2/3] w-16 overflow-hidden rounded-xl bg-white/5">
-                {movie.selected_poster_url ? <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover" /> : null}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold">{movie.title}</div>
-                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/60">
-                  {movie.release_date ? <span>{movie.release_date.slice(0, 4)}</span> : null}
-                  {formatRuntime(movie.runtime_minutes) ? <span>{formatRuntime(movie.runtime_minutes)}</span> : null}
-                  {movie.original_language ? <span>{langLabel(movie.original_language)}</span> : null}
-                </div>
-                {movie.overview ? <p className="mt-2 line-clamp-2 text-xs text-white/60">{movie.overview}</p> : null}
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {!filtered.length ? <div className="text-sm text-white/50">No movies found.</div> : null}
+      {!filtered.length && <div className="py-20 text-center text-sm text-white/30">No movies found.</div>}
     </div>
   )
 }

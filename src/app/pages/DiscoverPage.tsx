@@ -17,15 +17,10 @@ const REGIONAL = ['ta', 'ml', 'hi', 'te', 'kn']
 
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button
-      onClick={onClick}
-      className={clsx(
-        'shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
-        active
-          ? 'border-accent bg-accent/15 text-accent'
-          : 'border-white/10 bg-white/5 text-white/60 hover:text-white hover:border-white/20',
-      )}
-    >
+    <button onClick={onClick}
+      className={clsx('shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+        active ? 'text-white' : 'text-white/50 hover:text-white/80')}
+      style={active ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
       {children}
     </button>
   )
@@ -61,43 +56,25 @@ export default function DiscoverPage() {
       setSeries((s.data ?? []) as Series[])
       setGenres((g.data ?? []) as Genre[])
       setPlatforms((p.data ?? []) as Platform[])
-
       const mgMap = new Map<string, string[]>()
-      for (const r of (mg.data ?? []) as any[]) {
-        if (!mgMap.has(r.movie_id)) mgMap.set(r.movie_id, [])
-        mgMap.get(r.movie_id)!.push(r.genre_id)
-      }
+      for (const r of (mg.data ?? []) as any[]) { if (!mgMap.has(r.movie_id)) mgMap.set(r.movie_id, []); mgMap.get(r.movie_id)!.push(r.genre_id) }
       setMovieGenreMap(mgMap)
-
       const sgMap = new Map<string, string[]>()
-      for (const r of (sg.data ?? []) as any[]) {
-        if (!sgMap.has(r.series_id)) sgMap.set(r.series_id, [])
-        sgMap.get(r.series_id)!.push(r.genre_id)
-      }
+      for (const r of (sg.data ?? []) as any[]) { if (!sgMap.has(r.series_id)) sgMap.set(r.series_id, []); sgMap.get(r.series_id)!.push(r.genre_id) }
       setSeriesGenreMap(sgMap)
-
       const mpMap = new Map<string, string[]>()
-      for (const r of (mp.data ?? []) as any[]) {
-        if (!mpMap.has(r.movie_id)) mpMap.set(r.movie_id, [])
-        mpMap.get(r.movie_id)!.push(r.platform_id)
-      }
+      for (const r of (mp.data ?? []) as any[]) { if (!mpMap.has(r.movie_id)) mpMap.set(r.movie_id, []); mpMap.get(r.movie_id)!.push(r.platform_id) }
       setMoviePlatformMap(mpMap)
     })
   }, [])
 
   const years = useMemo(() => {
-    const s = new Set([
-      ...movies.map((m) => m.release_date?.slice(0, 4)).filter(Boolean),
-      ...series.map((s) => s.first_air_date?.slice(0, 4)).filter(Boolean),
-    ] as string[])
+    const s = new Set([...movies.map((m) => m.release_date?.slice(0, 4)), ...series.map((s) => s.first_air_date?.slice(0, 4))].filter(Boolean) as string[])
     return Array.from(s).sort((a, b) => Number(b) - Number(a))
   }, [movies, series])
 
   const langs = useMemo(() => {
-    const s = new Set([
-      ...movies.map((m) => m.original_language),
-      ...series.map((s) => s.original_language),
-    ].filter(Boolean) as string[])
+    const s = new Set([...movies.map((m) => m.original_language), ...series.map((s) => s.original_language)].filter(Boolean) as string[])
     return Array.from(s).sort()
   }, [movies, series])
 
@@ -105,7 +82,6 @@ export default function DiscoverPage() {
 
   const results = useMemo((): ResultItem[] => {
     const items: ResultItem[] = []
-
     if (typeFilter !== 'series') {
       for (const m of movies) {
         if (langFilter && m.original_language !== langFilter) continue
@@ -123,57 +99,44 @@ export default function DiscoverPage() {
         items.push({ id: s.id, title: s.title, to: `/series/${s.id}`, posterUrl: s.selected_poster_url, rating: s.tmdb_rating, year: s.first_air_date?.slice(0, 4) ?? null, type: 'series' })
       }
     }
-
     return items.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
   }, [movies, series, typeFilter, genreFilter, langFilter, platformFilter, yearFilter, movieGenreMap, seriesGenreMap, moviePlatformMap])
 
   const activeFilterCount = [genreFilter, langFilter, platformFilter, yearFilter].filter(Boolean).length
-
-  function clearAll() {
-    setGenreFilter(null); setLangFilter(null); setPlatformFilter(null); setYearFilter(null); setTypeFilter('all')
-  }
+  function clearAll() { setGenreFilter(null); setLangFilter(null); setPlatformFilter(null); setYearFilter(null); setTypeFilter('all') }
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight">Discover</h1>
-          <p className="text-xs text-white/40 mt-0.5">{results.length} titles</p>
+          <h1 className="text-[28px] font-black tracking-tight">Discover</h1>
+          <p className="text-xs text-white/30 mt-0.5">{results.length} titles</p>
         </div>
         <div className="flex items-center gap-2">
           {activeFilterCount > 0 && (
-            <button onClick={clearAll} className="flex items-center gap-1 text-xs text-white/50 hover:text-white transition-colors">
-              <X size={12} /> Clear all
+            <button onClick={clearAll} className="flex items-center gap-1 text-xs text-white/40 hover:text-white transition-colors">
+              <X size={11} /> Clear
             </button>
           )}
-          <button
-            onClick={() => setShowFilters((v) => !v)}
-            className={clsx(
-              'flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
-              showFilters || activeFilterCount > 0
-                ? 'border-accent bg-accent/15 text-accent'
-                : 'border-white/10 bg-white/5 text-white/60 hover:text-white',
-            )}
-          >
-            <SlidersHorizontal size={13} />
+          <button onClick={() => setShowFilters((v) => !v)}
+            className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+              showFilters || activeFilterCount > 0 ? 'text-white' : 'text-white/50 hover:text-white/80')}
+            style={showFilters || activeFilterCount > 0 ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
+            <SlidersHorizontal size={12} />
             Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
           </button>
         </div>
       </div>
 
-      {/* Type tabs */}
       <div className="flex gap-1.5">
         {(['all', 'movie', 'series'] as const).map((t) => (
           <Pill key={t} active={typeFilter === t} onClick={() => setTypeFilter(t)}>
-            {t === 'all' ? 'All' : t === 'movie' ? '🎬 Movies' : '📺 Series'}
+            {t === 'all' ? 'All' : t === 'movie' ? 'Movies' : 'Series'}
           </Pill>
         ))}
       </div>
 
-      {/* Regional quick filters */}
       <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <span className="shrink-0 text-xs text-white/30 self-center pr-1">Regional:</span>
         {REGIONAL.filter((l) => langs.includes(l)).map((l) => (
           <Pill key={l} active={langFilter === l} onClick={() => setLangFilter(langFilter === l ? null : l)}>
             {LANG_NAMES[l] ?? l}
@@ -181,98 +144,73 @@ export default function DiscoverPage() {
         ))}
       </div>
 
-      {/* Expanded filters */}
       {showFilters && (
-        <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-          {/* Genre */}
+        <div className="space-y-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/40">Genre</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/30">Genre</div>
             <div className="flex flex-wrap gap-1.5">
               {genres.map((g) => (
-                <Pill key={g.id} active={genreFilter === g.id} onClick={() => setGenreFilter(genreFilter === g.id ? null : g.id)}>
-                  {g.name}
-                </Pill>
+                <Pill key={g.id} active={genreFilter === g.id} onClick={() => setGenreFilter(genreFilter === g.id ? null : g.id)}>{g.name}</Pill>
               ))}
             </div>
           </div>
-
-          {/* Language */}
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/40">Language</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/30">Language</div>
             <div className="flex flex-wrap gap-1.5">
               {langs.map((l) => (
-                <Pill key={l} active={langFilter === l} onClick={() => setLangFilter(langFilter === l ? null : l)}>
-                  {LANG_NAMES[l] ?? l.toUpperCase()}
-                </Pill>
+                <Pill key={l} active={langFilter === l} onClick={() => setLangFilter(langFilter === l ? null : l)}>{LANG_NAMES[l] ?? l.toUpperCase()}</Pill>
               ))}
             </div>
           </div>
-
-          {/* Platform */}
           {platforms.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[10px] uppercase tracking-wider text-white/40">Platform</div>
+              <div className="text-[10px] uppercase tracking-wider text-white/30">Platform</div>
               <div className="flex flex-wrap gap-1.5">
                 {platforms.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setPlatformFilter(platformFilter === p.id ? null : p.id)}
-                    className={clsx(
-                      'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
-                      platformFilter === p.id
-                        ? 'border-accent bg-accent/15 text-accent'
-                        : 'border-white/10 bg-white/5 text-white/60 hover:text-white',
-                    )}
-                  >
-                    {p.logo_url && <img src={p.logo_url} alt={p.name} className="h-3.5 w-auto max-w-[40px] object-contain" />}
+                  <button key={p.id} onClick={() => setPlatformFilter(platformFilter === p.id ? null : p.id)}
+                    className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+                      platformFilter === p.id ? 'text-white' : 'text-white/50 hover:text-white/80')}
+                    style={platformFilter === p.id ? { background: 'var(--accent)' } : { background: 'var(--surface2)' }}>
+                    {p.logo_url && <img src={p.logo_url} alt={p.name} className="h-3 w-auto max-w-[32px] object-contain" />}
                     {p.name}
                   </button>
                 ))}
               </div>
             </div>
           )}
-
-          {/* Year */}
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/40">Year</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/30">Year</div>
             <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
               {years.map((y) => (
-                <Pill key={y} active={yearFilter === y} onClick={() => setYearFilter(yearFilter === y ? null : y)}>
-                  {y}
-                </Pill>
+                <Pill key={y} active={yearFilter === y} onClick={() => setYearFilter(yearFilter === y ? null : y)}>{y}</Pill>
               ))}
             </div>
           </div>
         </div>
       )}
 
-      {/* Results grid */}
       {results.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 py-20 text-center">
-          <div className="text-4xl">🔍</div>
-          <div className="text-sm font-semibold text-white/60">No results match your filters.</div>
-          <button onClick={clearAll} className="text-xs text-accent hover:underline">Clear filters</button>
+        <div className="flex flex-col items-center gap-2 py-20 text-center">
+          <div className="text-sm text-white/40">No results match your filters.</div>
+          <button onClick={clearAll} className="text-xs text-accent hover:opacity-80">Clear filters</button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
           {results.map((item) => (
-            <Link
-              key={`${item.type}-${item.id}`}
-              to={item.to}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 aspect-[2/3] hover:border-white/25 transition-colors"
-            >
+            <Link key={`${item.type}-${item.id}`} to={item.to}
+              className="group relative overflow-hidden rounded-xl bg-[#1c1c1e] aspect-[2/3]">
               {item.posterUrl
                 ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                : <div className="flex h-full w-full items-center justify-center p-3 text-center text-xs text-white/40">{item.title}</div>
-              }
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-2 space-y-0.5">
-                <div className="line-clamp-2 text-xs font-semibold leading-tight">{item.title}</div>
-                <div className="flex items-center gap-1.5 text-[10px] text-white/50">
-                  {item.rating ? <span>★ {item.rating}</span> : null}
-                  {item.year ? <span>{item.year}</span> : null}
-                  <span className="ml-auto rounded bg-white/10 px-1 py-0.5 text-[9px]">{item.type === 'movie' ? 'Film' : 'Series'}</span>
-                </div>
+                : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{item.title}</div>}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-2">
+                <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{item.title}</div>
+                {(item.rating || item.year) && (
+                  <div className="mt-0.5 flex items-center gap-1.5 text-[9px] text-white/40">
+                    {item.rating ? <span>★ {item.rating}</span> : null}
+                    {item.year ? <span>{item.year}</span> : null}
+                  </div>
+                )}
               </div>
             </Link>
           ))}

@@ -13,80 +13,56 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   async function login() {
-    setError(null)
-    setIsLoading(true)
+    setError(null); setIsLoading(true)
     try {
       const { error: e } = await supabase.auth.signInWithPassword({ email, password })
       if (e) throw e
       navigate('/', { replace: true })
     } catch (e: any) {
       setError(e?.message ?? 'Login failed')
-    } finally {
-      setIsLoading(false)
-    }
+    } finally { setIsLoading(false) }
   }
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-sm space-y-7">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back</h1>
-          <p className="mt-1 text-sm text-white/60">Sign in to continue to OnTheLoop</p>
+          <h1 className="text-[28px] font-black tracking-tight">Welcome back</h1>
+          <p className="mt-1 text-sm text-white/40">Sign in to OnTheLoop</p>
         </div>
 
-        <div className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Email address</label>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
-              <Mail size={16} className="shrink-0 text-white/40" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
-              />
-            </div>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 rounded-2xl px-4 py-3.5" style={{ background: 'var(--surface)' }}>
+            <Mail size={15} className="shrink-0 text-white/30" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none" />
           </div>
 
-          <div className="space-y-1">
-            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Password</label>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
-              <Lock size={16} className="shrink-0 text-white/40" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && login()}
-                placeholder="Enter your password"
-                className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
-              />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} className="shrink-0 text-white/40 hover:text-white/70">
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
+          <div className="flex items-center gap-3 rounded-2xl px-4 py-3.5" style={{ background: 'var(--surface)' }}>
+            <Lock size={15} className="shrink-0 text-white/30" />
+            <input type={showPassword ? 'text' : 'password'} value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && login()}
+              placeholder="Password"
+              className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none" />
+            <button type="button" onClick={() => setShowPassword((v) => !v)} className="shrink-0 text-white/30 hover:text-white/60 transition-colors">
+              {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
           </div>
 
-          {error ? <div className="rounded-xl bg-red-500/20 px-4 py-2 text-sm text-red-300">{error}</div> : null}
+          {error && <div className="rounded-xl px-4 py-2.5 text-sm text-red-300" style={{ background: 'rgba(239,68,68,0.15)' }}>{error}</div>}
 
-          <button
-            disabled={isLoading || !email || !password}
-            onClick={login}
-            className="w-full rounded-2xl bg-indigo-500 py-3.5 text-sm font-bold text-white transition-opacity hover:bg-indigo-400 disabled:opacity-50"
-          >
-            {isLoading ? 'Signing in…' : 'Sign In →'}
+          <button disabled={isLoading || !email || !password} onClick={login}
+            className="w-full rounded-2xl py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-40"
+            style={{ background: 'var(--accent)' }}>
+            {isLoading ? 'Signing in…' : 'Sign In'}
           </button>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-white/30">
-          <div className="h-px flex-1 bg-white/10" />
-          OR
-          <div className="h-px flex-1 bg-white/10" />
-        </div>
-
-        <p className="text-center text-sm text-white/60">
-          Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-indigo-400 hover:text-indigo-300">Create one</Link>
+        <p className="text-center text-sm text-white/40">
+          No account?{' '}
+          <Link to="/signup" className="font-semibold text-accent hover:opacity-80">Create one</Link>
         </p>
       </div>
     </AuthLayout>

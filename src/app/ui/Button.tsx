@@ -9,10 +9,10 @@ export default function Button({
     <button
       {...props}
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40',
         className,
       )}
+      style={{ background: 'var(--accent)', ...(props.style ?? {}) }}
     />
   )
 }
-

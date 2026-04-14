@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff } from 'lucide-react'
-import Button from '../ui/Button'
+import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
-import ContentRail from '../ui/ContentRail'
+import ContentGrid from '../ui/ContentGrid'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
@@ -19,11 +18,19 @@ type Genre = { id: string; name: string }
 type Review = { id: string; user_id: string; rating: number | null; review_text: string; created_at: string }
 type LinkRow = { id: string; label: string; url: string; platform?: { name: string; logo_url: string | null } | null }
 type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string | null; job: string | null; sort_order: number; person: { id: string; name: string; selected_profile_url: string | null } | null }
-type SimilarSeries = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null; tmdb_rating: number | null }
 
 function extractYouTubeId(url: string) {
   const m = url.match(/[?&]v=([^&]+)/) ?? url.match(/youtu\.be\/([^?]+)/)
   return m?.[1] ?? null
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <h2 className="text-[13px] font-semibold uppercase tracking-widest text-white/40">{title}</h2>
+      {children}
+    </div>
+  )
 }
 
 export default function SeriesDetailPage() {
@@ -38,7 +45,7 @@ export default function SeriesDetailPage() {
   const [reviewText, setReviewText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [trailerOpen, setTrailerOpen] = useState(false)
-  const [similarSeries, setSimilarSeries] = useState<SimilarSeries[]>([])
+  const [similarSeries, setSimilarSeries] = useState<any[]>([])
 
   useEffect(() => {
     if (!id) return
@@ -58,7 +65,6 @@ export default function SeriesDetailPage() {
       setCredits((creditRows ?? []) as unknown as CreditRow[])
       setReviews((reviewRows ?? []) as unknown as Review[])
       setStreamingLinks((streamingRows ?? []) as unknown as LinkRow[])
-
       if (fetchedGenres.length >= 1) {
         const { data: simRows } = await supabase.from('series_genres').select('series_id,genre_id,series:series(id,title,selected_poster_url,selected_logo_url,tmdb_rating)').in('genre_id', fetchedGenres.map((g) => g.id)).neq('series_id', id)
         if (isMounted) {
@@ -90,8 +96,8 @@ export default function SeriesDetailPage() {
     <div className="space-y-0 -mx-4">
       <div className="aspect-[16/9] w-full skeleton" />
       <div className="px-4 pt-4 space-y-3">
-        <div className="h-8 w-48 skeleton rounded-lg" />
-        <div className="h-4 w-32 skeleton rounded" />
+        <div className="h-8 w-48 skeleton rounded-xl" />
+        <div className="h-4 w-32 skeleton rounded-lg" />
       </div>
     </div>
   )
@@ -101,164 +107,197 @@ export default function SeriesDetailPage() {
   const crew = credits.filter((c) => c.credit_type === 'crew')
 
   return (
-    <div className="space-y-6">
-      {/* Backdrop hero */}
-      <section className="relative overflow-hidden rounded-none border-0 bg-black -mt-16">
-        <div className="relative aspect-[16/9] md:aspect-[21/9] w-full">
-          {series.selected_backdrop_url
-            ? <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
-            : <div className="h-full w-full bg-gradient-to-br from-accent/20 via-white/5 to-transparent" />
-          }
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/60 via-transparent to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 space-y-3">
-            {series.selected_logo_url
-              ? <img src={series.selected_logo_url} alt={series.title} className="max-h-16 w-auto max-w-[60%] object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]" />
-              : <h1 className="text-2xl font-black tracking-tight">{series.title}</h1>
-            }
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/60">
-              {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
-              {series.tmdb_rating ? <span>★ {series.tmdb_rating}</span> : null}
+    <div className="space-y-0 -mx-4">
+
+      {/* Full-bleed backdrop */}
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden -mt-16">
+        {series.selected_backdrop_url
+          ? <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
+          : <div className="h-full w-full bg-[#111]" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
+      </div>
+
+      <div className="px-4 space-y-7">
+
+        {/* Poster + title row */}
+        <div className="flex gap-4 relative z-10 -mt-20 md:-mt-28">
+          {series.selected_poster_url && (
+            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '2/3' }}>
+              <img src={series.selected_poster_url} alt={series.title} className="h-full w-full object-cover" />
             </div>
-            <div className="flex items-center gap-2">
-              {videoId && (
-                <button onClick={() => setTrailerOpen((v) => !v)} className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-neutral-950 transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
-                  <Play size={12} fill="currentColor" /> {trailerOpen ? 'Hide Trailer' : 'Trailer'}
-                  <ChevronDown size={12} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
-                </button>
-              )}
-              <button onClick={toggleWatchlist} title={inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${inWatchlist ? 'border-accent bg-accent/15 text-accent' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {inWatchlist ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
-              </button>
-              <button onClick={toggleWatched} title={isWatched ? 'Mark as Unwatched' : 'Mark as Watched'} className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${isWatched ? 'border-green-500 bg-green-500/15 text-green-400' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}>
-                {isWatched ? <Eye size={15} /> : <EyeOff size={15} />}
-              </button>
+          )}
+          <div className="flex-1 min-w-0 flex flex-col justify-end pb-1 space-y-2">
+            {series.selected_logo_url ? (
+              <img src={series.selected_logo_url} alt={series.title} className="max-h-14 md:max-h-20 w-auto max-w-full object-contain object-left drop-shadow-2xl" />
+            ) : (
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">{series.title}</h1>
+            )}
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-white/40">
+              {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
+              {series.tmdb_rating ? <><span className="text-white/20">·</span><span className="flex items-center gap-1 text-white font-semibold"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></> : null}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Inline Trailer */}
-      {videoId && trailerOpen && (
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-          <div className="aspect-video w-full">
-            <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`} allow="autoplay; fullscreen" allowFullScreen title={`${series.title} trailer`} className="h-full w-full" style={{ border: 'none' }} />
-          </div>
-        </section>
-      )}
+        {/* Action buttons */}
+        <div className="flex flex-wrap gap-2">
+          {videoId && (
+            <button onClick={() => setTrailerOpen((v) => !v)}
+              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              style={{ background: 'var(--accent)' }}>
+              <Play size={13} fill="currentColor" />
+              {trailerOpen ? 'Hide Trailer' : 'Trailer'}
+              <ChevronDown size={13} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
+            </button>
+          )}
+          <button onClick={toggleWatchlist}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-white/70 hover:text-white'}`}
+            style={{ background: 'var(--surface)' }}>
+            {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            {inWatchlist ? 'Saved' : 'Watchlist'}
+          </button>
+          <button onClick={toggleWatched}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-white/70 hover:text-white'}`}
+            style={{ background: 'var(--surface)' }}>
+            {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
+            {isWatched ? 'Watched' : 'Mark Watched'}
+          </button>
+        </div>
 
-      {/* Meta */}
-      <section className="space-y-3">
-        {genres.length ? (
+        {/* Genre pills */}
+        {genres.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {genres.map((g) => (
-              <Link key={g.id} to={`/genre/${g.id}`} className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 hover:border-accent/50 hover:text-accent transition-colors">
+              <Link key={g.id} to={`/genre/${g.id}`}
+                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-white/60 hover:text-white transition-colors"
+                style={{ background: 'var(--surface)' }}>
                 {g.name}
               </Link>
             ))}
           </div>
-        ) : null}
-        {series.overview ? (
-          <Expandable preview={<p className="text-sm leading-relaxed text-white/70 line-clamp-3">{series.overview}</p>} label="Read more" collapseLabel="Show less">
-            <p className="text-sm leading-relaxed text-white/70">{series.overview}</p>
+        )}
+
+        {/* Overview */}
+        {series.overview && (
+          <Expandable
+            preview={<p className="text-sm leading-relaxed text-white/60 line-clamp-4">{series.overview}</p>}
+            label="Read more" collapseLabel="Show less">
+            <p className="text-sm leading-relaxed text-white/60">{series.overview}</p>
           </Expandable>
-        ) : null}
-      </section>
+        )}
 
-      {/* Where to Watch */}
-      {streamingLinks.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">📺 Where to Watch</h2>
-          <div className="flex flex-wrap gap-2">
-            {streamingLinks.map((l) => {
-              const logo = (l.platform as any)?.logo_url
-              const name = (l.platform as any)?.name ?? l.label
-              return (
-                <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                  className="group flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 hover:border-white/25 hover:bg-white/10 transition-colors">
-                  {logo ? <img src={logo} alt={name} className="h-6 w-auto max-w-[60px] object-contain" /> : null}
-                  <div>
-                    <div className="text-xs font-semibold">{name}</div>
-                    <div className="text-[10px] text-white/40 group-hover:text-accent transition-colors">Watch now →</div>
-                  </div>
-                </a>
-              )
-            })}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Cast */}
-      {cast.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">Cast</h2>
-          <Expandable preview={<PersonRow credits={cast.slice(0, 8)} />} label={`Show all ${cast.length}`} collapseLabel="Show less">
-            <PersonRow credits={cast} />
-          </Expandable>
-        </section>
-      ) : null}
-
-      {/* Crew */}
-      {crew.length ? (
-        <section className="space-y-3">
-          <h2 className="text-base font-bold tracking-tight">Crew</h2>
-          <Expandable preview={<PersonRow credits={crew.slice(0, 6)} showJob />} label={`Show all ${crew.length}`} collapseLabel="Show less">
-            <PersonRow credits={crew} showJob />
-          </Expandable>
-        </section>
-      ) : null}
-
-      <ContentRail
-        title="Similar Series"
-        items={similarSeries.map((s) => ({ id: s.id, title: s.title, to: `/series/${s.id}`, imageUrl: s.selected_poster_url, logoUrl: s.selected_logo_url, badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null }))}
-        aspect="poster" showLogo={false}
-      />
-
-      {/* Reviews */}
-      <section className="space-y-3">
-        <h2 className="text-base font-bold tracking-tight">Reviews</h2>
-        {user ? (
-          <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4">
-            <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
-            <div className="flex justify-end">
-              <Button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}>Post review</Button>
+        {/* Inline Trailer */}
+        {videoId && trailerOpen && (
+          <div className="overflow-hidden rounded-2xl bg-black">
+            <div className="aspect-video w-full">
+              <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+                allow="autoplay; fullscreen" allowFullScreen title={`${series.title} trailer`}
+                className="h-full w-full" style={{ border: 'none' }} />
             </div>
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-            <Link to="/login" className="text-accent hover:underline">Log in</Link> to add a review.
           </div>
         )}
-        <div className="space-y-3">
-          {reviews.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-medium text-white/60">User {r.user_id.slice(0, 8)}</div>
-                <div className="text-xs text-white/30">{new Date(r.created_at).toLocaleDateString()}</div>
-              </div>
-              <div className="mt-2 text-sm text-white/80">{r.review_text}</div>
+
+        {/* Where to Watch */}
+        {streamingLinks.length > 0 && (
+          <Section title="Where to Watch">
+            <div className="flex flex-wrap gap-2">
+              {streamingLinks.map((l) => {
+                const logo = (l.platform as any)?.logo_url
+                const name = (l.platform as any)?.name ?? l.label
+                return (
+                  <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                    className="flex items-center gap-2.5 rounded-2xl px-4 py-2.5 hover:bg-white/8 transition-colors"
+                    style={{ background: 'var(--surface)' }}>
+                    {logo ? <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain" /> : null}
+                    <div>
+                      <div className="text-xs font-semibold">{name}</div>
+                      <div className="text-[10px] text-white/30">Watch now</div>
+                    </div>
+                  </a>
+                )
+              })}
             </div>
-          ))}
-          {!reviews.length ? <div className="text-sm text-white/40">No reviews yet. Be the first!</div> : null}
-        </div>
-      </section>
+          </Section>
+        )}
+
+        {/* Cast */}
+        {cast.length > 0 && (
+          <Section title="Cast">
+            <Expandable preview={<PersonScroll credits={cast.slice(0, 10)} />} label={`All ${cast.length}`} collapseLabel="Show less">
+              <PersonScroll credits={cast} />
+            </Expandable>
+          </Section>
+        )}
+
+        {/* Crew */}
+        {crew.length > 0 && (
+          <Section title="Crew">
+            <Expandable preview={<PersonScroll credits={crew.slice(0, 8)} sub="job" />} label={`All ${crew.length}`} collapseLabel="Show less">
+              <PersonScroll credits={crew} sub="job" />
+            </Expandable>
+          </Section>
+        )}
+
+        {/* Similar */}
+        <ContentGrid
+          title="More Like This"
+          items={similarSeries.map((s) => ({ id: s.id, title: s.title, to: `/series/${s.id}`, imageUrl: s.selected_poster_url, logoUrl: s.selected_logo_url, badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null }))}
+          aspect="poster" showLogo={false}
+        />
+
+        {/* Reviews */}
+        <Section title="Reviews">
+          <div className="space-y-3">
+            {user ? (
+              <div className="space-y-3 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
+                <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
+                <div className="flex justify-end">
+                  <button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}
+                    className="rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-40 transition-opacity hover:opacity-85"
+                    style={{ background: 'var(--accent)' }}>
+                    Post
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl p-4 text-sm text-white/35" style={{ background: 'var(--surface)' }}>
+                <Link to="/login" className="text-accent hover:opacity-80 font-semibold">Log in</Link> to write a review.
+              </div>
+            )}
+            {reviews.map((r) => (
+              <div key={r.id} className="rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs font-semibold text-white/40">User {r.user_id.slice(0, 8)}</div>
+                  <span className="text-[10px] text-white/20">{new Date(r.created_at).toLocaleDateString()}</span>
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">{r.review_text}</p>
+              </div>
+            ))}
+            {!reviews.length && <div className="text-sm text-white/25 text-center py-6">No reviews yet.</div>}
+          </div>
+        </Section>
+
+      </div>
     </div>
   )
 }
 
-function PersonRow({ credits, showJob = false }: { credits: CreditRow[]; showJob?: boolean }) {
+function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; sub?: 'character' | 'job' }) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
-        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-20 shrink-0 flex-col items-center gap-1 text-center">
-          <div className="h-16 w-16 overflow-hidden rounded-full bg-white/10">
+        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-16 shrink-0 flex-col items-center gap-1.5 text-center group">
+          <div className="h-16 w-16 overflow-hidden rounded-2xl bg-[#1c1c1e]">
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg text-white/30">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-xs font-medium">{c.person.name}</div>
-          {!showJob && c.character ? <div className="w-full truncate text-[10px] text-white/50">{c.character}</div> : null}
-          {showJob && c.job ? <div className="w-full truncate text-[10px] text-white/50">{c.job}</div> : null}
+          <div className="w-full truncate text-[10px] font-semibold leading-tight">{c.person.name}</div>
+          {(sub === 'character' ? c.character : c.job) && (
+            <div className="w-full truncate text-[9px] text-white/35">{sub === 'character' ? c.character : c.job}</div>
+          )}
         </Link>
       ))}
     </div>
