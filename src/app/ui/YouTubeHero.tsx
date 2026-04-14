@@ -44,12 +44,6 @@ export default function YouTubeHero({ videoId }: Props) {
     setTimeout(() => post(next ? 'playVideo' : 'pauseVideo'), 50)
   }
 
-  function seek(seconds: number) {
-    // getCurrentTime isn't synchronous via postMessage, so we track time ourselves
-    post('seekTo', [seconds, true])
-  }
-
-  // Track elapsed time locally so we can seek relative to current position
   const startTimeRef = useRef(0)
   const startWallRef = useRef(Date.now())
 
