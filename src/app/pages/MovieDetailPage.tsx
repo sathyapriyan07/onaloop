@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import BackButton from '../ui/BackButton'
-import YouTubeHero from '../ui/YouTubeHero'
+import YouTubeHero, { YouTubeHeroControls } from '../ui/YouTubeHero'
 import TextArea from '../ui/TextArea'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
@@ -166,7 +166,7 @@ export default function MovieDetailPage() {
           )}
           <div className="flex-1 min-w-0 flex flex-col justify-end pb-1 space-y-2">
             {movie.selected_logo_url ? (
-              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-14 md:max-h-20 w-auto max-w-full object-contain object-left drop-shadow-2xl" />
+              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left drop-shadow-2xl" />
             ) : (
               <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">{movie.title}</h1>
             )}
@@ -184,6 +184,7 @@ export default function MovieDetailPage() {
 
         {/* Action buttons */}
         <div className="flex flex-wrap gap-2">
+          {videoId && <YouTubeHeroControls videoId={videoId} />}
           {videoId && (
             <button onClick={() => setTrailerOpen((v) => !v)}
               className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-80"
