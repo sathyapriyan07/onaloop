@@ -44,7 +44,7 @@ export default function HomeBanner(_props: Props) {
         </div>
       )}
 
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, var(--bg), rgba(var(--bg-rgb, 0,0,0), 0.8) 60%, rgba(var(--bg-rgb, 0,0,0), 0.2))' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, var(--bg), var(--overlay-strong) 60%, var(--overlay-medium))' }} />
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), transparent 60%)' }} />
 
       <div className="relative flex flex-col justify-end gap-4 p-6 md:p-10 min-h-[300px] md:min-h-[380px]">

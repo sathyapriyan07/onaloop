@@ -90,7 +90,13 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
                 <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{item.title}</div>
               )}
 
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top, var(--overlay-strong), transparent 60%, transparent 100%)',
+                }}
+              />
 
               <div className="absolute inset-x-0 bottom-0 p-2">
                 {showLogo && item.logoUrl ? (

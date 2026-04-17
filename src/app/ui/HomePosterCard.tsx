@@ -20,7 +20,13 @@ export default function HomePosterCard({ to, title, posterUrl }: Props) {
           <span className="px-2 text-center text-xs font-medium text-[var(--label2)]">{title}</span>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to top, var(--overlay-strong), var(--overlay-medium) 60%, transparent 100%)',
+        }}
+      />
       <div className="absolute bottom-0 left-0 right-0 p-2">
         <div className="line-clamp-2 text-xs font-semibold tracking-tight text-[var(--label)]">{title}</div>
       </div>

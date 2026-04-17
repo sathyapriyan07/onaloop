@@ -15,6 +15,9 @@
   --separator: rgba(255,255,255,0.07);
   --skeleton-base: #111;
   --skeleton-highlight: #1a1a1a;
+  --overlay-strong: rgba(0,0,0,0.80);
+  --overlay-medium: rgba(0,0,0,0.30);
+  --overlay-light: rgba(0,0,0,0.10);
 }
 
 .light {
@@ -32,6 +35,9 @@
   --separator: rgba(0,0,0,0.07);
   --skeleton-base: #e8e8e8;
   --skeleton-highlight: #f0f0f0;
+  --overlay-strong: rgba(255,255,255,0.80);
+  --overlay-medium: rgba(255,255,255,0.30);
+  --overlay-light: rgba(255,255,255,0.10);
 }
 
 html, body { height: 100%; scrollbar-width: none; }

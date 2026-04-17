@@ -30,7 +30,13 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
         <div className="flex h-full w-full items-center justify-center p-3 text-center text-xs font-medium text-[var(--label3)]">{title}</div>
       )}
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to top, var(--overlay-strong), transparent 60%, transparent 100%)',
+        }}
+      />
 
       <div className="absolute inset-x-0 bottom-0 p-2.5">
         {logoUrl ? (

@@ -38,7 +38,13 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
             ) : (
               <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label2)]">{item.title}</div>
             )}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(to top, var(--overlay-strong), transparent 60%, transparent 100%)',
+              }}
+            />
             <div className="absolute inset-x-0 bottom-0 p-2">
               {showLogo && item.logoUrl ? (
                 <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[80%] object-contain object-left drop-shadow-md" />
