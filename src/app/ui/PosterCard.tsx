@@ -26,17 +26,7 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
     >
       {posterUrl ? (
         <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center p-3 text-center text-xs font-medium text-[var(--label3)]">{title}</div>
-      )}
-
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(to top, var(--overlay-strong), transparent 60%, transparent 100%)',
-        }}
-      />
+      ) : null}
 
       <div className="absolute inset-x-0 bottom-0 p-2.5">
         {logoUrl ? (
