@@ -17,7 +17,7 @@ type Props = {
   showLogo?: boolean
 }
 
-export default function ContentGrid({ title, items, aspect = 'poster', showLogo = true }: Props) {
+export default function ContentGrid({ title, items, aspect = 'poster' }: Props) {
   if (!items.length) return null
 
   const gridClass = aspect === 'poster'

@@ -24,7 +24,7 @@ type Props = {
   viewAllTo?: string
 }
 
-export default function ContentRail({ title, items, aspect = 'poster', showLogo = true, viewAllTo }: Props) {
+export default function ContentRail({ title, items, aspect = 'poster', viewAllTo }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', dragFree: true, containScroll: 'trimSnaps' })
   const prevBtnRef = useRef<HTMLButtonElement>(null)
   const nextBtnRef = useRef<HTMLButtonElement>(null)
