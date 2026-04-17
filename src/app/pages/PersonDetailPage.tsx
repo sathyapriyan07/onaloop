@@ -5,9 +5,7 @@ import BackButton from '../ui/BackButton'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import PosterCollage from '../ui/PosterCollage'
-import WikipediaAboutSection from '../ui/WikipediaAboutSection'
 import { supabase } from '../../lib/supabase'
-import { getWikipediaTitle, useWikipedia } from '../../lib/wikipedia'
 
 type Person = {
   id: string
@@ -51,9 +49,6 @@ export default function PersonDetailPage() {
   const [person, setPerson] = useState<Person | null>(null)
   const [credits, setCredits] = useState<Credit[]>([])
   const [tab, setTab] = useState<'cast' | 'crew'>('cast')
-
-  const wikiTitle = person ? getWikipediaTitle({ name: person.name, media_type: "person" }) : undefined
-  const { data: wikiData, loading: wikiLoading } = useWikipedia(wikiTitle)
 
   useEffect(() => {
     if (!id) return
@@ -179,8 +174,6 @@ export default function PersonDetailPage() {
           ) : null}
         </div>
       </section>
-
-      <WikipediaAboutSection data={wikiData} loading={wikiLoading} />
 
       {/* Filmography */}
       <section className="space-y-4">

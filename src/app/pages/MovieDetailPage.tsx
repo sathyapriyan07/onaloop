@@ -7,12 +7,10 @@ import TextArea from '../ui/TextArea'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
-import WikipediaInsights from '../ui/WikipediaInsights'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
-import { getWikipediaTitle, useWikipedia } from '../../lib/wikipedia'
 
 type Movie = {
   id: string; title: string; overview: string | null; release_date: string | null
@@ -70,9 +68,6 @@ export default function MovieDetailPage() {
   const [similarMovies, setSimilarMovies] = useState<any[]>([])
   const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
   const [trailerOpen, setTrailerOpen] = useState(false)
-
-  const wikiTitle = movie ? getWikipediaTitle({ title: movie.title, media_type: "movie" }) : undefined
-  const { data: wikiData, loading: wikiLoading } = useWikipedia(wikiTitle)
 
   useEffect(() => {
     if (!id) return
@@ -234,8 +229,6 @@ export default function MovieDetailPage() {
             <p className="text-sm leading-relaxed text-white/55">{movie.overview}</p>
           </Expandable>
         )}
-
-        <WikipediaInsights data={wikiData} loading={wikiLoading} />
 
         {/* Inline Trailer */}
         {videoId && trailerOpen && (

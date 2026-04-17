@@ -6,11 +6,9 @@ import YouTubeHero, { YouTubeHeroControls } from '../ui/YouTubeHero'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
-import WikipediaInsights from '../ui/WikipediaInsights'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
-import { getWikipediaTitle, useWikipedia } from '../../lib/wikipedia'
 
 type Series = {
   id: string; title: string; overview: string | null; first_air_date: string | null
@@ -50,9 +48,6 @@ export default function SeriesDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [trailerOpen, setTrailerOpen] = useState(false)
   const [similarSeries, setSimilarSeries] = useState<any[]>([])
-
-  const wikiTitle = series ? getWikipediaTitle({ title: series.title, media_type: "tv" }) : undefined
-  const { data: wikiData, loading: wikiLoading } = useWikipedia(wikiTitle)
 
   useEffect(() => {
     if (!id) return
@@ -201,8 +196,6 @@ export default function SeriesDetailPage() {
             <p className="text-sm leading-relaxed text-white/55">{series.overview}</p>
           </Expandable>
         )}
-
-        <WikipediaInsights data={wikiData} loading={wikiLoading} />
 
         {/* Inline Trailer */}
         {videoId && trailerOpen && (
