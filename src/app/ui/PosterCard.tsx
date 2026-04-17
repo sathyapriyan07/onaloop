@@ -45,9 +45,16 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
           <div className="line-clamp-2 text-xs font-semibold leading-tight text-[var(--label)]">{title}</div>
         )}
         {(rating || year) && (
-          <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-[var(--label2)]">
-            {rating ? <span className="flex items-center gap-0.5"><Star size={8} className="text-yellow-400" fill="currentColor" />{rating}</span> : null}
-            {year ? <span>{year}</span> : null}
+          <div className="mt-0.5 flex items-center gap-1.5 text-[10px]">
+            {rating ? (
+              <span
+                className="flex items-center gap-0.5 rounded px-1 py-0.5 font-semibold backdrop-blur-sm"
+                style={{ background: 'var(--overlay-strong)', color: 'var(--label)' }}
+              >
+                <Star size={8} className="text-yellow-400" fill="currentColor" />{rating}
+              </span>
+            ) : null}
+            {year ? <span className="text-[var(--label2)]">{year}</span> : null}
           </div>
         )}
       </div>

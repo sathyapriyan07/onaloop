@@ -54,7 +54,10 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
               {item.sub && <div className="mt-0.5 line-clamp-1 text-[9px] text-[var(--label2)]">{item.sub}</div>}
             </div>
             {item.badge && (
-              <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold backdrop-blur-sm text-[var(--label)]">
+              <div
+                className="absolute right-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-semibold backdrop-blur-sm text-[var(--label)]"
+                style={{ background: 'var(--overlay-strong)', color: 'var(--label)' }}
+              >
                 {item.badge}
               </div>
             )}
