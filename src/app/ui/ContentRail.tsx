@@ -86,28 +86,8 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt={item.title} loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{item.title}</div>
-              )}
-
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(to top, var(--overlay-strong), transparent 60%, transparent 100%)',
-                }}
-              />
-
-              <div className="absolute inset-x-0 bottom-0 p-2">
-                {showLogo && item.logoUrl ? (
-                  <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" />
-                ) : (
-                  <div className="line-clamp-2 text-[11px] font-semibold leading-tight text-[var(--label)]">{item.title}</div>
-                )}
-                {(item.sub || item.year) && (
-                  <div className="mt-0.5 text-[10px] text-[var(--label2)] truncate">{item.sub ?? item.year}</div>
-                )}
-              </div>
+              ) : null}
+              {/* Title, overlay, and fallback removed as requested */}
             </Link>
           ))}
         </div>

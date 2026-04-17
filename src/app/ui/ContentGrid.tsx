@@ -36,14 +36,7 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
               <img src={item.imageUrl} alt={item.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
             ) : null}
-            <div className="absolute inset-x-0 bottom-0 p-2">
-              {showLogo && item.logoUrl ? (
-                <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[80%] object-contain object-left drop-shadow-md" />
-              ) : (
-                <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{item.title}</div>
-              )}
-              {item.sub && <div className="mt-0.5 line-clamp-1 text-[9px] text-[var(--label2)]">{item.sub}</div>}
-            </div>
+            {/* Title and logo removed as requested */}
             {item.badge && (
               <div
                 className="absolute right-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-semibold backdrop-blur-sm text-[var(--label)]"
