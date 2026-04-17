@@ -6,12 +6,12 @@ export default function BackButton() {
   return (
     <button
       onClick={() => navigate(-1)}
-      className="fixed top-4 left-4 z-50 flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
+      className="fixed top-4 left-4 z-50 flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-[var(--label)] transition-colors"
       style={{
-        background: 'rgba(0,0,0,0.55)',
+        background: 'rgba(var(--bg-rgb, 0,0,0), 0.55)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid var(--separator)',
       }}
     >
       <ChevronLeft size={16} strokeWidth={2.5} />

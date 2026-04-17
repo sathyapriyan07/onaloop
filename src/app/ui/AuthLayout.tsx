@@ -20,8 +20,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   }, [])
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-neutral-950">
-      {/* Static background with movie posters */}
+    <div className="relative min-h-dvh overflow-hidden" style={{ background: 'var(--bg)' }}>
       <div className="absolute inset-0">
         <div className="grid grid-cols-6 gap-2 h-full opacity-20">
           {images.slice(0, 24).map((image, index) => (
@@ -36,7 +35,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           ))}
         </div>
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80" />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.6), rgba(0,0,0,0.8))' }} />
       <div className="relative z-10 flex min-h-dvh items-end justify-center p-6 pb-12">
         {children}
       </div>

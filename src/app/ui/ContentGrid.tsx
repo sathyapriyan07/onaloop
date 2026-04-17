@@ -26,7 +26,7 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
 
   return (
     <section className="space-y-3">
-      {title && <h2 className="text-[17px] font-bold tracking-tight">{title}</h2>}
+      {title && <h2 className="text-[17px] font-bold tracking-tight text-[var(--label)]">{title}</h2>}
       <div className={`grid gap-2 ${gridClass}`}>
         {items.map((item) => (
           <Link key={item.id} to={item.to}
@@ -36,19 +36,19 @@ export default function ContentGrid({ title, items, aspect = 'poster', showLogo 
               <img src={item.imageUrl} alt={item.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/40">{item.title}</div>
+              <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label2)]">{item.title}</div>
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-2">
               {showLogo && item.logoUrl ? (
                 <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[80%] object-contain object-left drop-shadow-md" />
               ) : (
-                <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{item.title}</div>
+                <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{item.title}</div>
               )}
-              {item.sub && <div className="mt-0.5 line-clamp-1 text-[9px] text-white/40">{item.sub}</div>}
+              {item.sub && <div className="mt-0.5 line-clamp-1 text-[9px] text-[var(--label2)]">{item.sub}</div>}
             </div>
             {item.badge && (
-              <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold backdrop-blur-sm">
+              <div className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold backdrop-blur-sm text-[var(--label)]">
                 {item.badge}
               </div>
             )}

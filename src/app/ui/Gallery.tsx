@@ -16,7 +16,7 @@ export default function Gallery({ images, title }: Props) {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-white/35">Gallery</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--label2)]">Gallery</h2>
 
       <div className="columns-2 sm:columns-3 gap-2">
         {shown.map((url, i) => (
@@ -35,7 +35,7 @@ export default function Gallery({ images, title }: Props) {
       {images.length > 4 && (
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-1 text-xs font-semibold text-white/50 hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
         >
           {expanded ? `Show less` : `Show all ${images.length} photos`}
           <ChevronDown size={13} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />

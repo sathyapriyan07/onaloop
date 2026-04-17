@@ -13,7 +13,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
   const isDetailPage = isMovieDetail || isSeriesDetail || isPersonDetail
 
   return (
-    <div className="min-h-dvh" style={{ background: '#000' }}>
+    <div className="min-h-dvh" style={{ background: 'var(--bg)' }}>
       {!isDetailPage && <FloatingBar />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.main

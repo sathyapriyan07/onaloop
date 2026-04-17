@@ -5,6 +5,7 @@ import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
 import { useAdminGuard } from '../../lib/useAdminGuard'
 import { useKeyboardShortcut } from '../../lib/useKeyboardShortcut'
+import ThemeToggle from './ThemeToggle'
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -31,9 +32,8 @@ export default function TopBar() {
   useKeyboardShortcut('/', () => navigate('/search'))
 
   return (
-    <header className="sticky top-0 z-40 bg-neutral-950/95 backdrop-blur-xl border-b border-white/5">
+    <header className="sticky top-0 z-40" style={{ background: 'var(--surface)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--separator)' }}>
       <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 h-14 gap-4">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <Repeat2 size={18} className="text-accent" strokeWidth={2.5} />
           <span className="text-sm font-black tracking-tight uppercase">
@@ -41,7 +41,6 @@ export default function TopBar() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-0">
           {navLinks.map(({ to, label, end }) => (
             <NavLink
@@ -50,7 +49,7 @@ export default function TopBar() {
               end={end}
               className={({ isActive }) =>
                 `relative px-4 h-14 flex items-center text-sm font-medium transition-colors ${
-                  isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
+                  isActive ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]'
                 }`
               }
             >
@@ -66,11 +65,10 @@ export default function TopBar() {
           ))}
         </nav>
 
-        {/* Right actions */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => navigate('/search')}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors"
             aria-label="Search"
           >
             <Search size={17} />
@@ -81,20 +79,22 @@ export default function TopBar() {
             )}
           </button>
 
+          <ThemeToggle />
+
           {isAdmin && (
-            <NavLink to="/admin" className="flex items-center gap-1.5 rounded-lg px-3 h-9 text-xs font-medium text-white/50 hover:text-white hover:bg-white/5 transition-colors">
+            <NavLink to="/admin" className="flex items-center gap-1.5 rounded-lg px-3 h-9 text-xs font-medium text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors">
               <Shield size={14} />
               <span className="hidden sm:inline">Admin</span>
             </NavLink>
           )}
 
           {user ? (
-            <Link to="/profile" className="flex h-9 w-9 items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors">
+            <Link to="/profile" className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors">
               <User size={17} />
             </Link>
           ) : (
             <>
-              <NavLink to="/login" className="flex items-center h-9 px-3 text-xs font-medium text-white/50 hover:text-white transition-colors">
+              <NavLink to="/login" className="flex items-center h-9 px-3 text-xs font-medium text-[var(--label2)] hover:text-[var(--label)] transition-colors">
                 <LogIn size={14} className="mr-1.5" />
                 <span className="hidden sm:inline">Log in</span>
               </NavLink>

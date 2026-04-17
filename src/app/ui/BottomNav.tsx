@@ -17,13 +17,18 @@ export default function BottomNav() {
 
   return (
     <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 md:hidden"
-      style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      style={{ 
+        background: 'var(--surface)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid var(--separator)'
+      }}>
       <div className="mx-auto flex w-full max-w-screen-2xl">
         {userLinks.map(({ to, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end}
             className={({ isActive }) => clsx(
               'flex flex-1 flex-col items-center justify-center py-3 gap-1 transition-colors',
-              isActive ? 'text-white' : 'text-white/35 hover:text-white/60'
+              isActive ? 'text-[var(--label)]' : 'text-[var(--label3)] hover:text-[var(--label2)]'
             )}
           >
             {({ isActive }) => (
@@ -36,7 +41,7 @@ export default function BottomNav() {
         ))}
         {isAdmin && (
           <button onClick={() => navigate('/admin')}
-            className="flex flex-1 flex-col items-center justify-center py-3 text-white/35 hover:text-white/60 transition-colors">
+            className="flex flex-1 flex-col items-center justify-center py-3 text-[var(--label3)] hover:text-[var(--label2)] transition-colors">
             <Shield size={22} strokeWidth={1.5} />
           </button>
         )}

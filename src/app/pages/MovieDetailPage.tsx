@@ -36,7 +36,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((n) => (
         <button key={n} onClick={() => onChange(n)} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)}>
-          <Star size={18} className={n <= (hover || value) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20'} />
+          <Star size={18} className={n <= (hover || value) ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--label3)]'} />
         </button>
       ))}
     </div>
@@ -46,7 +46,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-white/35">{title}</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--label2)]">{title}</h2>
       {children}
     </div>
   )
@@ -141,48 +141,45 @@ export default function MovieDetailPage() {
     <div>
       <BackButton />
 
-      {/* Hero — autoplay trailer if available, else backdrop */}
       <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
         {videoId ? (
           <YouTubeHero videoId={videoId} />
         ) : movie.selected_backdrop_url ? (
           <img src={movie.selected_backdrop_url} alt={movie.title} className="h-full w-full object-cover" />
         ) : (
-          <div className="h-full w-full" style={{ background: '#0a0a0a' }} />
+          <div className="h-full w-full" style={{ background: 'var(--surface)' }} />
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), rgba(0,0,0,0.25), transparent)' }} />
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.3), transparent)' }} />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40" style={{ background: 'linear-gradient(to top, var(--bg), transparent)' }} />
       </div>
 
       <div className="px-4 space-y-7 pb-10">
 
-        {/* Poster + title row — overlaps backdrop */}
         <div className="flex gap-4 relative z-10 -mt-24 md:-mt-32">
           {movie.selected_poster_url && (
-            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '2/3' }}>
+            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.5)' }}>
               <img src={movie.selected_poster_url} alt={movie.title} className="h-full w-full object-cover" />
             </div>
           )}
           <div className="flex-1 min-w-0 flex flex-col justify-end pb-1 space-y-2">
             {movie.selected_logo_url ? (
-              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left drop-shadow-2xl" />
+              <img src={movie.selected_logo_url} alt={movie.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left" style={{ filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))' }} />
             ) : (
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">{movie.title}</h1>
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-[var(--label)]">{movie.title}</h1>
             )}
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-white/40">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-[var(--label2)]">
               {movie.release_date && <span>{movie.release_date.slice(0, 4)}</span>}
-              {formatRuntime(movie.runtime_minutes) && <><span className="text-white/15">·</span><span>{formatRuntime(movie.runtime_minutes)}</span></>}
+              {formatRuntime(movie.runtime_minutes) && <><span className="text-[var(--label3)]">·</span><span>{formatRuntime(movie.runtime_minutes)}</span></>}
             </div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
               {movie.tmdb_rating ? <span className="flex items-center gap-1 font-semibold"><Star size={11} className="text-yellow-400" fill="currentColor" />{movie.tmdb_rating}</span> : null}
-              {movie.imdb_rating ? <span className="flex items-center gap-1 text-white/45"><img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-2.5 w-auto" />{movie.imdb_rating}</span> : null}
-              {movie.rotten_tomatoes_rating ? <span className="flex items-center gap-1 text-white/45"><img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-2.5 w-auto" />{movie.rotten_tomatoes_rating}%</span> : null}
+              {movie.imdb_rating ? <span className="flex items-center gap-1 text-[var(--label2)]"><img src="/IMDB_Logo_2016.svg.png" alt="IMDb" className="h-2.5 w-auto" />{movie.imdb_rating}</span> : null}
+              {movie.rotten_tomatoes_rating ? <span className="flex items-center gap-1 text-[var(--label2)]"><img src="/Rotten_Tomatoes.svg.png" alt="RT" className="h-2.5 w-auto" />{movie.rotten_tomatoes_rating}%</span> : null}
             </div>
           </div>
         </div>
 
-        {/* Action buttons */}
         <div className="flex flex-wrap gap-2">
           {videoId && <YouTubeHeroControls videoId={videoId} />}
           {videoId && (
@@ -195,25 +192,24 @@ export default function MovieDetailPage() {
             </button>
           )}
           <button onClick={toggleWatchlist}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-white/60 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
             style={{ background: 'var(--surface)' }}>
             {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
             {inWatchlist ? 'Saved' : 'Watchlist'}
           </button>
           <button onClick={toggleWatched}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-white/60 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
             style={{ background: 'var(--surface)' }}>
             {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
             {isWatched ? 'Watched' : 'Mark Watched'}
           </button>
         </div>
 
-        {/* Genre pills */}
         {genres.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {genres.map((g) => (
               <Link key={g.id} to={`/genre/${g.id}`}
-                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-white/55 hover:text-white transition-colors"
+                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
                 style={{ background: 'var(--surface)' }}>
                 {g.name}
               </Link>
@@ -221,18 +217,16 @@ export default function MovieDetailPage() {
           </div>
         )}
 
-        {/* Overview */}
         {movie.overview && (
           <Expandable
-            preview={<p className="text-sm leading-relaxed text-white/55 line-clamp-4">{movie.overview}</p>}
+            preview={<p className="text-sm leading-relaxed text-[var(--label2)] line-clamp-4">{movie.overview}</p>}
             label="Read more" collapseLabel="Show less">
-            <p className="text-sm leading-relaxed text-white/55">{movie.overview}</p>
+            <p className="text-sm leading-relaxed text-[var(--label2)]">{movie.overview}</p>
           </Expandable>
         )}
 
-        {/* Inline Trailer */}
         {videoId && trailerOpen && (
-          <div className="overflow-hidden rounded-2xl bg-black">
+          <div className="overflow-hidden rounded-2xl" style={{ background: 'var(--surface)' }}>
             <div className="aspect-video w-full">
               <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
                 allow="autoplay; fullscreen" allowFullScreen title={`${movie.title} trailer`}
@@ -241,7 +235,6 @@ export default function MovieDetailPage() {
           </div>
         )}
 
-        {/* Where to Watch */}
         {streamingLinks.length > 0 && (
           <Section title="Where to Watch">
             <div className="flex flex-wrap gap-2">
@@ -258,8 +251,8 @@ export default function MovieDetailPage() {
                       <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
                     ) : null}
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold">{name}</div>
-                      {l.cover_image_url && <div className="text-[10px] text-white/30">Watch now</div>}
+                      <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                      {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Watch now</div>}
                     </div>
                   </a>
                 )
@@ -268,7 +261,6 @@ export default function MovieDetailPage() {
           </Section>
         )}
 
-        {/* Music */}
         {musicLinks.length > 0 && (
           <Section title="Music">
             <div className="flex flex-wrap gap-2">
@@ -285,8 +277,8 @@ export default function MovieDetailPage() {
                       <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
                     ) : null}
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold">{name}</div>
-                      {l.cover_image_url && <div className="text-[10px] text-white/30">Listen now</div>}
+                      <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                      {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Listen now</div>}
                     </div>
                   </a>
                 )
@@ -295,7 +287,6 @@ export default function MovieDetailPage() {
           </Section>
         )}
 
-        {/* Studios */}
         {studios.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {studios.map((s) => (
@@ -303,41 +294,38 @@ export default function MovieDetailPage() {
                 className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-colors hover:brightness-125"
                 style={{ background: 'var(--surface)' }}>
                 {s.logo_url && <img src={s.logo_url} alt={s.name} className="h-4 w-auto max-w-[36px] object-contain" />}
-                <span className="text-xs font-medium text-white/50">{s.name}</span>
+                <span className="text-xs font-medium text-[var(--label2)]">{s.name}</span>
               </Link>
             ))}
           </div>
         )}
 
-        {/* Budget / Collection */}
         {(movie.budget || movie.collection) && (
           <div className="flex flex-wrap gap-6 rounded-2xl px-5 py-4" style={{ background: 'var(--surface)' }}>
             {movie.budget && (
               <div>
-                <div className="text-[10px] uppercase tracking-widest text-white/30 mb-0.5">Budget</div>
-                <div className="text-sm font-bold">{movie.budget}</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--label3)] mb-0.5">Budget</div>
+                <div className="text-sm font-bold text-[var(--label)]">{movie.budget}</div>
               </div>
             )}
             {movie.collection && (
               <div>
-                <div className="text-[10px] uppercase tracking-widest text-white/30 mb-0.5">Collection</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--label3)] mb-0.5">Collection</div>
                 <div className="text-sm font-bold text-green-400">{movie.collection}</div>
               </div>
             )}
           </div>
         )}
 
-        {/* Tags */}
         {(movie.tags ?? []).length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {(movie.tags ?? []).map((tag) => (
-              <span key={tag} className="rounded-full px-3 py-1 text-[11px] text-white/35"
+              <span key={tag} className="rounded-full px-3 py-1 text-[11px] text-[var(--label3)]"
                 style={{ background: 'var(--surface)' }}>{tag}</span>
             ))}
           </div>
         )}
 
-        {/* Cast */}
         {cast.length > 0 && (
           <Section title="Cast">
             <Expandable preview={<PersonScroll credits={cast.slice(0, 10)} />} label={`All ${cast.length}`} collapseLabel="Show less">
@@ -346,7 +334,6 @@ export default function MovieDetailPage() {
           </Section>
         )}
 
-        {/* Crew */}
         {crew.length > 0 && (
           <Section title="Crew">
             <Expandable preview={<PersonScroll credits={crew.slice(0, 8)} sub="job" />} label={`All ${crew.length}`} collapseLabel="Show less">
@@ -355,17 +342,14 @@ export default function MovieDetailPage() {
           </Section>
         )}
 
-        {/* Gallery */}
         <Gallery images={movie.gallery_images ?? []} title={movie.title} />
 
-        {/* Similar */}
         <ContentGrid
           title="More Like This"
           items={similarMovies.map((m) => ({ id: m.id, title: m.title, to: `/movie/${m.id}`, imageUrl: m.selected_poster_url, logoUrl: m.selected_logo_url, badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null }))}
           aspect="poster" showLogo={false}
         />
 
-        {/* Reviews */}
         <Section title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>
           <div className="space-y-3">
             {user ? (
@@ -381,23 +365,23 @@ export default function MovieDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl p-4 text-sm text-white/35" style={{ background: 'var(--surface)' }}>
+              <div className="rounded-2xl p-4 text-sm text-[var(--label2)]" style={{ background: 'var(--surface)' }}>
                 <Link to="/login" className="text-accent hover:opacity-80 font-semibold">Log in</Link> to write a review.
               </div>
             )}
             {reviews.map((r) => (
               <div key={r.id} className="rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs font-semibold text-white/35">User {r.user_id.slice(0, 8)}</div>
+                  <div className="text-xs font-semibold text-[var(--label2)]">User {r.user_id.slice(0, 8)}</div>
                   <div className="flex items-center gap-2">
                     {r.rating ? <span className="text-xs font-bold text-yellow-400">{'★'.repeat(r.rating)}</span> : null}
-                    <span className="text-[10px] text-white/20">{new Date(r.created_at).toLocaleDateString()}</span>
+                    <span className="text-[10px] text-[var(--label3)]">{new Date(r.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <p className="text-sm text-white/55 leading-relaxed">{r.review_text}</p>
+                <p className="text-sm text-[var(--label2)] leading-relaxed">{r.review_text}</p>
               </div>
             ))}
-            {!reviews.length && <div className="text-sm text-white/25 text-center py-6">No reviews yet.</div>}
+            {!reviews.length && <div className="text-sm text-[var(--label3)] text-center py-6">No reviews yet.</div>}
           </div>
         </Section>
 
@@ -414,11 +398,11 @@ function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; su
           <div className="h-16 w-16 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-[var(--label3)]">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-[10px] font-semibold leading-tight">{c.person.name}</div>
+          <div className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--label)]">{c.person.name}</div>
           {(sub === 'character' ? c.character : c.job) && (
-            <div className="w-full truncate text-[9px] text-white/30">{sub === 'character' ? c.character : c.job}</div>
+            <div className="w-full truncate text-[9px] text-[var(--label2)]">{sub === 'character' ? c.character : c.job}</div>
           )}
         </Link>
       ))}

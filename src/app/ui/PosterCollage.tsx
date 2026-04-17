@@ -11,8 +11,7 @@ export default function PosterCollage({ posters }: Props) {
   )
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-neutral-950 border border-white/8" style={{ minHeight: 200 }}>
-      {/* Full-bleed staggered poster grid */}
+    <section className="relative overflow-hidden rounded-3xl border" style={{ background: 'var(--surface)', borderColor: 'var(--separator)', minHeight: 200 }}>
       <div className="absolute inset-0 flex gap-1.5 p-1.5 overflow-hidden">
         {columns.map((col, ci) => (
           <div
@@ -32,9 +31,8 @@ export default function PosterCollage({ posters }: Props) {
           </div>
         ))}
       </div>
-      {/* Subtle vignette so edges blend into page */}
-      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 via-transparent to-neutral-950/30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/30 via-transparent to-neutral-950/60" />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), transparent 60%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, var(--bg), transparent 60%)' }} />
     </section>
   )
 }

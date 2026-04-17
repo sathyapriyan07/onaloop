@@ -6,7 +6,6 @@ type Props = { videoId: string }
 const BASE = (id: string) =>
   `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
 
-// Shared ref store keyed by videoId so iframe and controls can share state
 const stores = new Map<string, {
   iframeRef: React.RefObject<HTMLIFrameElement | null>
   listeners: Set<() => void>
@@ -42,7 +41,6 @@ export default function YouTubeHero({ videoId }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   store.iframeRef = iframeRef
 
-  // Clean up store on unmount
   useEffect(() => () => { stores.delete(videoId) }, [videoId])
 
   return (
@@ -62,7 +60,6 @@ export function YouTubeHeroControls({ videoId }: Props) {
   const [muted, setMuted] = useState(store.muted)
   const [playing, setPlaying] = useState(store.playing)
 
-  // Subscribe to store changes
   const rerender = useCallback(() => {
     setMuted(store.muted)
     setPlaying(store.playing)
@@ -98,8 +95,8 @@ export function YouTubeHeroControls({ videoId }: Props) {
 
   const btn = 'flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:brightness-125'
   const btnStyle: React.CSSProperties = {
-    background: 'var(--surface2)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'var(--surface)',
+    border: '1px solid var(--separator)',
   }
 
   return (

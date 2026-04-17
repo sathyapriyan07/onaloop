@@ -23,7 +23,7 @@ function FilterRow({ options, value, onChange }: { options: string[]; value: str
         <button key={o} onClick={() => onChange(o)}
           className={clsx(
             'shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-            o === value ? 'text-white' : 'text-white/50 hover:text-white/80',
+            o === value ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]',
           )}
           style={o === value ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}
         >
@@ -67,7 +67,7 @@ export default function SeriesPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight">Series</h1>
+      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Series</h1>
 
       <FilterRow options={years} value={yearFilter} onChange={setYearFilter} />
       <FilterRow
@@ -88,14 +88,14 @@ export default function SeriesPage() {
               <div className="absolute inset-x-0 bottom-0 p-2">
                 {s.selected_logo_url
                   ? <img src={s.selected_logo_url} alt="" className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" loading="lazy" />
-                  : <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{s.title}</div>}
+                  : <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{s.title}</div>}
               </div>
             </Link>
           ))}
         </div>
       )}
 
-      {!loading && !filtered.length && <div className="py-20 text-center text-sm text-white/30">No series found.</div>}
+      {!loading && !filtered.length && <div className="py-20 text-center text-sm text-[var(--label3)]">No series found.</div>}
     </div>
   )
 }

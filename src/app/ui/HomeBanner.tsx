@@ -29,7 +29,7 @@ export default function HomeBanner(_props: Props) {
   )
 
   return (
-    <section className="relative overflow-hidden rounded-2xl" style={{ background: '#111', minHeight: 300 }}>
+    <section className="relative overflow-hidden rounded-2xl" style={{ background: 'var(--surface)', minHeight: 300 }}>
       {posters.length > 0 && (
         <div className="absolute inset-0 flex gap-1 p-1 overflow-hidden opacity-60">
           {columns.map((col, ci) => (
@@ -44,14 +44,13 @@ export default function HomeBanner(_props: Props) {
         </div>
       )}
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, var(--bg), rgba(var(--bg-rgb, 0,0,0), 0.8) 60%, rgba(var(--bg-rgb, 0,0,0), 0.2))' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), transparent 60%)' }} />
 
       <div className="relative flex flex-col justify-end gap-4 p-6 md:p-10 min-h-[300px] md:min-h-[380px]">
         <div className="space-y-1">
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-white/40">Your personal cinema</div>
-          <div className="text-3xl md:text-5xl font-black tracking-tight max-w-sm leading-[1.1]">
+          <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--label2)]">Your personal cinema</div>
+          <div className="text-3xl md:text-5xl font-black tracking-tight max-w-sm leading-[1.1] text-[var(--label)]">
             Discover. Track. <span className="text-accent">Loop.</span>
           </div>
         </div>
@@ -62,8 +61,8 @@ export default function HomeBanner(_props: Props) {
             <Play size={13} fill="currentColor" /> Explore Movies
           </Link>
           <button onClick={() => navigate('/discover')}
-            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/15"
-            style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--label)] transition-colors"
+            style={{ background: 'var(--separator)', backdropFilter: 'blur(10px)' }}>
             <Compass size={13} /> Discover
           </button>
         </div>

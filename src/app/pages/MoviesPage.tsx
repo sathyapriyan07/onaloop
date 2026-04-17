@@ -23,7 +23,7 @@ function FilterRow({ options, value, onChange }: { options: string[]; value: str
           className={clsx(
             'shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
             o === value
-              ? 'text-white' : 'text-white/50 hover:text-white/80',
+              ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]',
           )}
           style={o === value ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}
         >
@@ -66,7 +66,7 @@ export default function MoviesPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight">Movies</h1>
+      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Movies</h1>
 
       <FilterRow options={years} value={yearFilter} onChange={setYearFilter} />
       <FilterRow
@@ -86,13 +86,13 @@ export default function MoviesPage() {
             <div className="absolute inset-x-0 bottom-0 p-2">
               {m.selected_logo_url
                 ? <img src={m.selected_logo_url} alt="" className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" loading="lazy" />
-                : <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{m.title}</div>}
+                : <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{m.title}</div>}
             </div>
           </Link>
         ))}
       </div>
 
-      {!filtered.length && <div className="py-20 text-center text-sm text-white/30">No movies found.</div>}
+      {!filtered.length && <div className="py-20 text-center text-sm text-[var(--label3)]">No movies found.</div>}
     </div>
   )
 }

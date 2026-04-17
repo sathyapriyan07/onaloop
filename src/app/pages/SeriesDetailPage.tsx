@@ -29,7 +29,7 @@ function extractYouTubeId(url: string) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-white/35">{title}</h2>
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--label2)]">{title}</h2>
       {children}
     </div>
   )
@@ -113,43 +113,40 @@ export default function SeriesDetailPage() {
     <div>
       <BackButton />
 
-      {/* Hero — autoplay trailer if available, else backdrop */}
       <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
         {videoId ? (
           <YouTubeHero videoId={videoId} />
         ) : series.selected_backdrop_url ? (
           <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
         ) : (
-          <div className="h-full w-full" style={{ background: '#0a0a0a' }} />
+          <div className="h-full w-full" style={{ background: 'var(--surface)' }} />
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), rgba(0,0,0,0.25), transparent)' }} />
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.3), transparent)' }} />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40" style={{ background: 'linear-gradient(to top, var(--bg), transparent)' }} />
       </div>
 
       <div className="px-4 space-y-7 pb-10">
 
-        {/* Poster + title row */}
         <div className="flex gap-4 relative z-10 -mt-24 md:-mt-32">
           {series.selected_poster_url && (
-            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '2/3' }}>
+            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden" style={{ aspectRatio: '2/3', boxShadow: '0 8px 40px rgba(0,0,0,0.5)' }}>
               <img src={series.selected_poster_url} alt={series.title} className="h-full w-full object-cover" />
             </div>
           )}
           <div className="flex-1 min-w-0 flex flex-col justify-end pb-1 space-y-2">
             {series.selected_logo_url ? (
-              <img src={series.selected_logo_url} alt={series.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left drop-shadow-2xl" />
+              <img src={series.selected_logo_url} alt={series.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left" style={{ filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))' }} />
             ) : (
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">{series.title}</h1>
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-[var(--label)]">{series.title}</h1>
             )}
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-white/40">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-[var(--label2)]">
               {series.first_air_date && <span>{series.first_air_date.slice(0, 4)}</span>}
-              {series.tmdb_rating && <><span className="text-white/15">·</span><span className="flex items-center gap-1 font-semibold text-white"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></>}
+              {series.tmdb_rating && <><span className="text-[var(--label3)]">·</span><span className="flex items-center gap-1 font-semibold text-[var(--label)]"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></>}
             </div>
           </div>
         </div>
 
-        {/* Action buttons */}
         <div className="flex flex-wrap gap-2">
           {videoId && <YouTubeHeroControls videoId={videoId} />}
           {videoId && (
@@ -162,25 +159,24 @@ export default function SeriesDetailPage() {
             </button>
           )}
           <button onClick={toggleWatchlist}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-white/60 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
             style={{ background: 'var(--surface)' }}>
             {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
             {inWatchlist ? 'Saved' : 'Watchlist'}
           </button>
           <button onClick={toggleWatched}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-white/60 hover:text-white'}`}
+            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
             style={{ background: 'var(--surface)' }}>
             {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
             {isWatched ? 'Watched' : 'Mark Watched'}
           </button>
         </div>
 
-        {/* Genre pills */}
         {genres.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {genres.map((g) => (
               <Link key={g.id} to={`/genre/${g.id}`}
-                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-white/55 hover:text-white transition-colors"
+                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
                 style={{ background: 'var(--surface)' }}>
                 {g.name}
               </Link>
@@ -188,18 +184,16 @@ export default function SeriesDetailPage() {
           </div>
         )}
 
-        {/* Overview */}
         {series.overview && (
           <Expandable
-            preview={<p className="text-sm leading-relaxed text-white/55 line-clamp-4">{series.overview}</p>}
+            preview={<p className="text-sm leading-relaxed text-[var(--label2)] line-clamp-4">{series.overview}</p>}
             label="Read more" collapseLabel="Show less">
-            <p className="text-sm leading-relaxed text-white/55">{series.overview}</p>
+            <p className="text-sm leading-relaxed text-[var(--label2)]">{series.overview}</p>
           </Expandable>
         )}
 
-        {/* Inline Trailer */}
         {videoId && trailerOpen && (
-          <div className="overflow-hidden rounded-2xl bg-black">
+          <div className="overflow-hidden rounded-2xl" style={{ background: 'var(--surface)' }}>
             <div className="aspect-video w-full">
               <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
                 allow="autoplay; fullscreen" allowFullScreen title={`${series.title} trailer`}
@@ -208,7 +202,6 @@ export default function SeriesDetailPage() {
           </div>
         )}
 
-        {/* Where to Watch */}
         {streamingLinks.length > 0 && (
           <Section title="Where to Watch">
             <div className="flex flex-wrap gap-2">
@@ -225,8 +218,8 @@ export default function SeriesDetailPage() {
                       <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
                     ) : null}
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold">{name}</div>
-                      {l.cover_image_url && <div className="text-[10px] text-white/30">Watch now</div>}
+                      <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                      {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Watch now</div>}
                     </div>
                   </a>
                 )
@@ -235,7 +228,6 @@ export default function SeriesDetailPage() {
           </Section>
         )}
 
-        {/* Cast */}
         {cast.length > 0 && (
           <Section title="Cast">
             <Expandable preview={<PersonScroll credits={cast.slice(0, 10)} />} label={`All ${cast.length}`} collapseLabel="Show less">
@@ -244,7 +236,6 @@ export default function SeriesDetailPage() {
           </Section>
         )}
 
-        {/* Crew */}
         {crew.length > 0 && (
           <Section title="Crew">
             <Expandable preview={<PersonScroll credits={crew.slice(0, 8)} sub="job" />} label={`All ${crew.length}`} collapseLabel="Show less">
@@ -253,14 +244,12 @@ export default function SeriesDetailPage() {
           </Section>
         )}
 
-        {/* Similar */}
         <ContentGrid
           title="More Like This"
           items={similarSeries.map((s) => ({ id: s.id, title: s.title, to: `/series/${s.id}`, imageUrl: s.selected_poster_url, logoUrl: s.selected_logo_url, badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null }))}
           aspect="poster" showLogo={false}
         />
 
-        {/* Reviews */}
         <Section title="Reviews">
           <div className="space-y-3">
             {user ? (
@@ -275,20 +264,20 @@ export default function SeriesDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl p-4 text-sm text-white/35" style={{ background: 'var(--surface)' }}>
+              <div className="rounded-2xl p-4 text-sm text-[var(--label2)]" style={{ background: 'var(--surface)' }}>
                 <Link to="/login" className="text-accent hover:opacity-80 font-semibold">Log in</Link> to write a review.
               </div>
             )}
             {reviews.map((r) => (
               <div key={r.id} className="rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs font-semibold text-white/35">User {r.user_id.slice(0, 8)}</div>
-                  <span className="text-[10px] text-white/20">{new Date(r.created_at).toLocaleDateString()}</span>
+                  <div className="text-xs font-semibold text-[var(--label2)]">User {r.user_id.slice(0, 8)}</div>
+                  <span className="text-[10px] text-[var(--label3)]">{new Date(r.created_at).toLocaleDateString()}</span>
                 </div>
-                <p className="text-sm text-white/55 leading-relaxed">{r.review_text}</p>
+                <p className="text-sm text-[var(--label2)] leading-relaxed">{r.review_text}</p>
               </div>
             ))}
-            {!reviews.length && <div className="text-sm text-white/25 text-center py-6">No reviews yet.</div>}
+            {!reviews.length && <div className="text-sm text-[var(--label3)] text-center py-6">No reviews yet.</div>}
           </div>
         </Section>
 
@@ -305,11 +294,11 @@ function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; su
           <div className="h-16 w-16 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-white/20">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-[var(--label3)]">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-[10px] font-semibold leading-tight">{c.person.name}</div>
+          <div className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--label)]">{c.person.name}</div>
           {(sub === 'character' ? c.character : c.job) && (
-            <div className="w-full truncate text-[9px] text-white/30">{sub === 'character' ? c.character : c.job}</div>
+            <div className="w-full truncate text-[9px] text-[var(--label2)]">{sub === 'character' ? c.character : c.job}</div>
           )}
         </Link>
       ))}

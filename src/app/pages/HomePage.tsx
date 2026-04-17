@@ -76,8 +76,8 @@ export default function HomePage() {
         </>
       ) : sections.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-          <div className="text-base font-semibold text-white/70">Nothing here yet.</div>
-          <div className="text-sm text-white/40">Start exploring movies and series!</div>
+          <div className="text-base font-semibold text-[var(--label2)]">Nothing here yet.</div>
+          <div className="text-sm text-[var(--label3)]">Start exploring movies and series!</div>
         </div>
       ) : (
         sections.map((section) => {

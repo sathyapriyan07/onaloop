@@ -19,7 +19,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
   return (
     <button onClick={onClick}
       className={clsx('shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-        active ? 'text-white' : 'text-white/50 hover:text-white/80')}
+        active ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
       style={active ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
       {children}
     </button>
@@ -109,18 +109,18 @@ export default function DiscoverPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-black tracking-tight">Discover</h1>
-          <p className="text-xs text-white/30 mt-0.5">{results.length} titles</p>
+          <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Discover</h1>
+          <p className="text-xs text-[var(--label3)] mt-0.5">{results.length} titles</p>
         </div>
         <div className="flex items-center gap-2">
           {activeFilterCount > 0 && (
-            <button onClick={clearAll} className="flex items-center gap-1 text-xs text-white/40 hover:text-white transition-colors">
+            <button onClick={clearAll} className="flex items-center gap-1 text-xs text-[var(--label2)] hover:text-[var(--label)] transition-colors">
               <X size={11} /> Clear
             </button>
           )}
           <button onClick={() => setShowFilters((v) => !v)}
             className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-              showFilters || activeFilterCount > 0 ? 'text-white' : 'text-white/50 hover:text-white/80')}
+              showFilters || activeFilterCount > 0 ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
             style={showFilters || activeFilterCount > 0 ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
             <SlidersHorizontal size={12} />
             Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
@@ -147,7 +147,7 @@ export default function DiscoverPage() {
       {showFilters && (
         <div className="space-y-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/30">Genre</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--label3)]">Genre</div>
             <div className="flex flex-wrap gap-1.5">
               {genres.map((g) => (
                 <Pill key={g.id} active={genreFilter === g.id} onClick={() => setGenreFilter(genreFilter === g.id ? null : g.id)}>{g.name}</Pill>
@@ -155,7 +155,7 @@ export default function DiscoverPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/30">Language</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--label3)]">Language</div>
             <div className="flex flex-wrap gap-1.5">
               {langs.map((l) => (
                 <Pill key={l} active={langFilter === l} onClick={() => setLangFilter(langFilter === l ? null : l)}>{LANG_NAMES[l] ?? l.toUpperCase()}</Pill>
@@ -164,12 +164,12 @@ export default function DiscoverPage() {
           </div>
           {platforms.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[10px] uppercase tracking-wider text-white/30">Platform</div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--label3)]">Platform</div>
               <div className="flex flex-wrap gap-1.5">
                 {platforms.map((p) => (
                   <button key={p.id} onClick={() => setPlatformFilter(platformFilter === p.id ? null : p.id)}
                     className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-                      platformFilter === p.id ? 'text-white' : 'text-white/50 hover:text-white/80')}
+                      platformFilter === p.id ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
                     style={platformFilter === p.id ? { background: 'var(--accent)' } : { background: 'var(--surface2)' }}>
                     {p.logo_url && <img src={p.logo_url} alt={p.name} className="h-3 w-auto max-w-[32px] object-contain" />}
                     {p.name}
@@ -179,7 +179,7 @@ export default function DiscoverPage() {
             </div>
           )}
           <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-wider text-white/30">Year</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--label3)]">Year</div>
             <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
               {years.map((y) => (
                 <Pill key={y} active={yearFilter === y} onClick={() => setYearFilter(yearFilter === y ? null : y)}>{y}</Pill>
@@ -191,7 +191,7 @@ export default function DiscoverPage() {
 
       {results.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-20 text-center">
-          <div className="text-sm text-white/40">No results match your filters.</div>
+          <div className="text-sm text-[var(--label2)]">No results match your filters.</div>
           <button onClick={clearAll} className="text-xs text-accent hover:opacity-80">Clear filters</button>
         </div>
       ) : (
@@ -202,12 +202,12 @@ export default function DiscoverPage() {
               style={{ background: 'var(--surface)' }}>
               {item.posterUrl
                 ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{item.title}</div>}
+                : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{item.title}</div>}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-2">
-                <div className="line-clamp-2 text-[10px] font-semibold leading-tight">{item.title}</div>
+                <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{item.title}</div>
                 {(item.rating || item.year) && (
-                  <div className="mt-0.5 flex items-center gap-1.5 text-[9px] text-white/40">
+                  <div className="mt-0.5 flex items-center gap-1.5 text-[9px] text-[var(--label2)]">
                     {item.rating ? <span>★ {item.rating}</span> : null}
                     {item.year ? <span>{item.year}</span> : null}
                   </div>

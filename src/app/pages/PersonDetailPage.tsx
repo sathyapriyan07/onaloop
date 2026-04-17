@@ -142,15 +142,15 @@ export default function PersonDetailPage() {
             : null}
         </div>
         <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-semibold tracking-tight">{person.name}</h1>
-          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-white/50">
+          <h1 className="text-xl font-semibold tracking-tight text-[var(--label)]">{person.name}</h1>
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--label2)]">
             {person.known_for_department ? <span>{person.known_for_department}</span> : null}
             {person.birthday ? <span>Born {new Date(person.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span> : null}
             {person.place_of_birth ? <span>{person.place_of_birth}</span> : null}
           </div>
           {person.bio ? (
-            <Expandable preview={<p className="mt-2 line-clamp-3 text-sm text-white/70">{person.bio}</p>} label="Read more" collapseLabel="Show less">
-              <p className="mt-2 text-sm text-white/70">{person.bio}</p>
+            <Expandable preview={<p className="mt-2 line-clamp-3 text-sm text-[var(--label2)]">{person.bio}</p>} label="Read more" collapseLabel="Show less">
+              <p className="mt-2 text-sm text-[var(--label2)]">{person.bio}</p>
             </Expandable>
           ) : null}
           {person.social_links?.length ? (
@@ -183,7 +183,7 @@ export default function PersonDetailPage() {
             {(['cast', 'crew'] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
                 className={clsx('rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-                  tab === t ? 'text-white' : 'text-white/50 hover:text-white/80')}
+                  tab === t ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]')}
                 style={tab === t ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}>
                 {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
               </button>
@@ -192,13 +192,13 @@ export default function PersonDetailPage() {
         </div>
 
         {tab === 'crew' ? (
-          crewItems.length === 0 ? <div className="text-sm text-white/50">No crew credits.</div>
+          crewItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No crew credits.</div>
           : crewItems.length > PREVIEW_COUNT ? (
             <Expandable preview={<ContentGrid title="" items={crewItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${crewItems.length}`} collapseLabel="Show less">
               <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
             </Expandable>
           ) : <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
-        ) : castItems.length === 0 ? <div className="text-sm text-white/50">No acting credits.</div>
+        ) : castItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No acting credits.</div>
         : castItems.length > PREVIEW_COUNT ? (
           <Expandable preview={<ContentGrid title="" items={castItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${castItems.length}`} collapseLabel="Show less">
             <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />

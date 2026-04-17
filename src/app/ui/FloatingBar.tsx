@@ -5,6 +5,7 @@ import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
 import { useAdminGuard } from '../../lib/useAdminGuard'
 import { useKeyboardShortcut } from '../../lib/useKeyboardShortcut'
+import ThemeToggle from './ThemeToggle'
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -49,17 +50,17 @@ export default function FloatingBar() {
       <header
         className="pointer-events-auto flex items-center gap-0.5 px-1.5 py-1"
         style={{
-          background: scrolled ? 'rgba(0,0,0,0.88)' : 'rgba(0,0,0,0.65)',
+          background: scrolled ? 'rgba(var(--bg-rgb, 0,0,0), 0.88)' : 'rgba(var(--bg-rgb, 0,0,0), 0.65)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
           borderRadius: 999,
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: scrolled ? '0 8px 40px rgba(0,0,0,0.6)' : 'none',
+          border: '1px solid var(--separator)',
+          boxShadow: scrolled ? '0 8px 40px rgba(0,0,0,0.4)' : 'none',
           maxWidth: 700,
           width: '100%',
           transform: hidden ? 'translateY(-72px)' : 'translateY(0)',
           opacity: hidden ? 0 : 1,
-          transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease, background 0.3s ease',
+          transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease, background 0.3s ease, border-color 0.3s ease',
         }}
       >
         <Link to="/" className="flex items-center gap-1.5 px-2.5 py-1 shrink-0">
@@ -74,7 +75,7 @@ export default function FloatingBar() {
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
                 `px-3 py-1.5 text-[11px] font-medium rounded-full transition-all duration-200 ${
-                  isActive ? 'text-white bg-white/12' : 'text-white/50 hover:text-white/80'
+                  isActive ? 'text-[var(--label)] bg-[var(--surface)]' : 'text-[var(--label2)] hover:text-[var(--label)]'
                 }`
               }
             >
@@ -85,7 +86,7 @@ export default function FloatingBar() {
 
         <div className="flex items-center gap-0.5 ml-auto">
           <button onClick={() => navigate('/search')}
-            className="relative flex h-7 w-7 items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+            className="relative flex h-7 w-7 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface)] transition-colors">
             <Search size={13} />
             {newCount > 0 && (
               <span className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full text-[6px] font-black text-white" style={{ background: 'var(--accent)' }}>
@@ -94,19 +95,21 @@ export default function FloatingBar() {
             )}
           </button>
 
+          <ThemeToggle />
+
           {isAdmin && (
-            <NavLink to="/admin" className="flex h-7 w-7 items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+            <NavLink to="/admin" className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface)] transition-colors">
               <Shield size={13} />
             </NavLink>
           )}
 
           {user ? (
-            <Link to="/profile" className="flex h-7 w-7 items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+            <Link to="/profile" className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface)] transition-colors">
               <User size={13} />
             </Link>
           ) : (
             <>
-              <NavLink to="/login" className="px-2.5 py-1 text-[11px] font-medium text-white/50 hover:text-white transition-colors rounded-full hover:bg-white/10">
+              <NavLink to="/login" className="px-2.5 py-1 text-[11px] font-medium text-[var(--label2)] hover:text-[var(--label)] transition-colors rounded-full hover:bg-[var(--surface)]">
                 Log in
               </NavLink>
               <NavLink to="/signup" className="px-3 py-1 text-[11px] font-semibold text-white rounded-full transition-opacity hover:opacity-85" style={{ background: 'var(--accent)' }}>

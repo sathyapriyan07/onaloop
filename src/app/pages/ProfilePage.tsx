@@ -12,12 +12,12 @@ function ContentRow({ items }: { items: ContentItem[] }) {
     <div className="flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {items.map((item) => (
         <Link key={item.id} to={item.to} className="group shrink-0 w-24">
-          <div className="aspect-[2/3] overflow-hidden rounded-xl bg-[#1c1c1e]">
+          <div className="aspect-[2/3] overflow-hidden rounded-xl" style={{ background: 'var(--surface2)' }}>
             {item.posterUrl
               ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
-              : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[9px] text-white/30">{item.title}</div>}
+              : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[9px] text-[var(--label3)]">{item.title}</div>}
           </div>
-          <div className="mt-1.5 line-clamp-2 text-[10px] font-medium leading-tight text-white/60">{item.title}</div>
+          <div className="mt-1.5 line-clamp-2 text-[10px] font-medium leading-tight text-[var(--label2)]">{item.title}</div>
         </Link>
       ))}
     </div>
@@ -27,7 +27,7 @@ function ContentRow({ items }: { items: ContentItem[] }) {
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="flex flex-col items-center gap-2 rounded-2xl py-8 text-center" style={{ background: 'var(--surface)' }}>
-      <div className="text-sm text-white/30">{text}</div>
+      <div className="text-sm text-[var(--label3)]">{text}</div>
       <Link to="/movies" className="mt-1 rounded-full px-4 py-1.5 text-xs font-semibold text-white" style={{ background: 'var(--accent)' }}>
         Explore
       </Link>
@@ -67,11 +67,11 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center justify-center gap-5 py-24 text-center">
         <Repeat2 size={44} className="text-accent" />
         <div>
-          <div className="text-2xl font-black">Join OnTheLoop</div>
-          <p className="mt-1 text-sm text-white/40 max-w-xs">Track your watchlist, mark watched, and more.</p>
+          <div className="text-2xl font-black text-[var(--label)]">Join OnTheLoop</div>
+          <p className="mt-1 text-sm text-[var(--label2)] max-w-xs">Track your watchlist, mark watched, and more.</p>
         </div>
         <div className="flex gap-2.5">
-          <Link to="/login" className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white/80 hover:text-white transition-colors"
+          <Link to="/login" className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
             style={{ background: 'var(--surface)' }}>
             <LogIn size={14} /> Log in
           </Link>
@@ -87,28 +87,28 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-black text-white"
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-black text-[var(--label)]"
           style={{ background: 'var(--surface2)' }}>
           {user.email?.[0]?.toUpperCase() ?? '?'}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-base font-bold">{user.email}</div>
-          <div className="flex gap-3 text-xs text-white/35 mt-0.5">
+          <div className="truncate text-base font-bold text-[var(--label)]">{user.email}</div>
+          <div className="flex gap-3 text-xs text-[var(--label2)] mt-0.5">
             <span>{watchlist.length} watchlist</span>
             <span>{watched.length} watched</span>
           </div>
         </div>
         <button onClick={() => supabase.auth.signOut()}
-          className="shrink-0 rounded-full px-4 py-2 text-xs font-medium text-white/40 hover:text-white transition-colors"
+          className="shrink-0 rounded-full px-4 py-2 text-xs font-medium text-[var(--label2)] hover:text-[var(--label)] transition-colors"
           style={{ background: 'var(--surface)' }}>
           Sign out
         </button>
       </div>
 
       <section className="space-y-3">
-        <h2 className="flex items-center gap-2 text-[17px] font-bold">
+        <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--label)]">
           <Bookmark size={15} className="text-accent" /> Watchlist
-          {watchlist.length > 0 && <span className="text-xs text-white/30 font-normal">{watchlist.length}</span>}
+          {watchlist.length > 0 && <span className="text-xs text-[var(--label3)] font-normal">{watchlist.length}</span>}
         </h2>
         {loading ? <div className="h-36 skeleton rounded-2xl" /> : watchlist.length
           ? <ContentRow items={watchlist} />
@@ -116,9 +116,9 @@ export default function ProfilePage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="flex items-center gap-2 text-[17px] font-bold">
+        <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--label)]">
           <Eye size={15} className="text-green-400" /> Watched
-          {watched.length > 0 && <span className="text-xs text-white/30 font-normal">{watched.length}</span>}
+          {watched.length > 0 && <span className="text-xs text-[var(--label3)] font-normal">{watched.length}</span>}
         </h2>
         {loading ? <div className="h-36 skeleton rounded-2xl" /> : watched.length
           ? <ContentRow items={watched} />

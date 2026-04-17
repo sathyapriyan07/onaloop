@@ -52,7 +52,7 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-[17px] font-bold tracking-tight">{title}</h2>
+        <h2 className="text-[17px] font-bold tracking-tight text-[var(--label)]">{title}</h2>
         <div className="flex items-center gap-1.5">
           {viewAllTo && (
             <Link to={viewAllTo} className="flex items-center gap-0.5 text-[11px] font-semibold text-accent hover:opacity-80 transition-opacity">
@@ -61,11 +61,13 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
           )}
           <div className="hidden md:flex gap-0.5">
             <button ref={prevBtnRef} onClick={() => emblaApi?.scrollPrev()}
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-white/50 hover:bg-white/15 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+              className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'var(--surface2)' }}>
               <ChevronLeft size={13} />
             </button>
             <button ref={nextBtnRef} onClick={() => emblaApi?.scrollNext()}
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-white/50 hover:bg-white/15 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+              className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'var(--surface2)' }}>
               <ChevronRight size={13} />
             </button>
           </div>
@@ -85,7 +87,7 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
                 <img src={item.imageUrl} alt={item.title} loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{item.title}</div>
+                <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{item.title}</div>
               )}
 
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -94,10 +96,10 @@ export default function ContentRail({ title, items, aspect = 'poster', showLogo 
                 {showLogo && item.logoUrl ? (
                   <img src={item.logoUrl} alt={item.title} className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" />
                 ) : (
-                  <div className="line-clamp-2 text-[11px] font-semibold leading-tight">{item.title}</div>
+                  <div className="line-clamp-2 text-[11px] font-semibold leading-tight text-[var(--label)]">{item.title}</div>
                 )}
                 {(item.sub || item.year) && (
-                  <div className="mt-0.5 text-[10px] text-white/40 truncate">{item.sub ?? item.year}</div>
+                  <div className="mt-0.5 text-[10px] text-[var(--label2)] truncate">{item.sub ?? item.year}</div>
                 )}
               </div>
             </Link>
