@@ -56,6 +56,11 @@ body {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 html {
   background-color: var(--bg);
 }

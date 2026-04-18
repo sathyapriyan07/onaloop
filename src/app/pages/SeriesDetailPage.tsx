@@ -6,6 +6,8 @@ import YouTubeHero, { YouTubeHeroControls } from '../ui/YouTubeHero'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
+import StarRating from '../ui/StarRating'
+import RatingSummary from '../ui/RatingSummary'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
@@ -45,6 +47,7 @@ export default function SeriesDetailPage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
   const [reviewText, setReviewText] = useState('')
+  const [reviewRating, setReviewRating] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [trailerOpen, setTrailerOpen] = useState(false)
   const [similarSeries, setSimilarSeries] = useState<any[]>([])
@@ -87,8 +90,14 @@ export default function SeriesDetailPage() {
     if (!id || !user || !reviewText.trim()) return
     setIsSubmitting(true)
     try {
-      await supabase.from('reviews').insert({ user_id: user.id, series_id: id, review_text: reviewText.trim() })
+      await supabase.from('reviews').insert({
+        user_id: user.id,
+        series_id: id,
+        review_text: reviewText.trim(),
+        rating: reviewRating || null,
+      })
       setReviewText('')
+      setReviewRating(0)
       const { data } = await supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('series_id', id).order('created_at', { ascending: false })
       setReviews((data ?? []) as unknown as Review[])
     } finally { setIsSubmitting(false) }
@@ -108,6 +117,8 @@ export default function SeriesDetailPage() {
   const videoId = series.trailer_url ? extractYouTubeId(series.trailer_url) : null
   const cast = credits.filter((c) => c.credit_type === 'cast')
   const crew = credits.filter((c) => c.credit_type === 'crew')
+  const ratingCount = reviews.filter((r) => r.rating).length
+  const avgRating = ratingCount ? (reviews.reduce((s, r) => s + (r.rating ?? 0), 0) / ratingCount).toFixed(1) : null
 
   return (
     <div>
@@ -250,10 +261,12 @@ export default function SeriesDetailPage() {
           aspect="poster" showLogo={false}
         />
 
-        <Section title="Reviews">
+        <Section title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>
           <div className="space-y-3">
+            <RatingSummary ratings={reviews.map((r) => r.rating)} />
             {user ? (
               <div className="space-y-3 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
+                <StarRating value={reviewRating} onChange={setReviewRating} />
                 <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
                 <div className="flex justify-end">
                   <button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}
@@ -272,7 +285,10 @@ export default function SeriesDetailPage() {
               <div key={r.id} className="rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-xs font-semibold text-[var(--label2)]">User {r.user_id.slice(0, 8)}</div>
-                  <span className="text-[10px] text-[var(--label3)]">{new Date(r.created_at).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-2">
+                    {r.rating ? <span className="text-xs font-bold text-yellow-400">{'★'.repeat(r.rating)}</span> : null}
+                    <span className="text-[10px] text-[var(--label3)]">{new Date(r.created_at).toLocaleDateString()}</span>
+                  </div>
                 </div>
                 <p className="text-sm text-[var(--label2)] leading-relaxed">{r.review_text}</p>
               </div>

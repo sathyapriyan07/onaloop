@@ -7,6 +7,8 @@ import TextArea from '../ui/TextArea'
 import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
+import StarRating from '../ui/StarRating'
+import RatingSummary from '../ui/RatingSummary'
 import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
@@ -28,19 +30,6 @@ type CreditRow = { id: string; credit_type: 'cast' | 'crew'; character: string |
 function extractYouTubeId(url: string) {
   const m = url.match(/[?&]v=([^&]+)/) ?? url.match(/youtu\.be\/([^?]+)/)
   return m?.[1] ?? null
-}
-
-function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const [hover, setHover] = useState(0)
-  return (
-    <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button key={n} onClick={() => onChange(n)} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)}>
-          <Star size={18} className={n <= (hover || value) ? 'text-yellow-400 fill-yellow-400' : 'text-[var(--label3)]'} />
-        </button>
-      ))}
-    </div>
-  )
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -133,9 +122,8 @@ export default function MovieDetailPage() {
   const videoId = movie.trailer_url ? extractYouTubeId(movie.trailer_url) : null
   const cast = credits.filter((c) => c.credit_type === 'cast')
   const crew = credits.filter((c) => c.credit_type === 'crew')
-  const avgRating = reviews.filter((r) => r.rating).length
-    ? (reviews.reduce((s, r) => s + (r.rating ?? 0), 0) / reviews.filter((r) => r.rating).length).toFixed(1)
-    : null
+  const ratingCount = reviews.filter((r) => r.rating).length
+  const avgRating = ratingCount ? (reviews.reduce((s, r) => s + (r.rating ?? 0), 0) / ratingCount).toFixed(1) : null
 
   return (
     <div>
@@ -352,6 +340,7 @@ export default function MovieDetailPage() {
 
         <Section title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>
           <div className="space-y-3">
+            <RatingSummary ratings={reviews.map((r) => r.rating)} />
             {user ? (
               <div className="space-y-3 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                 <StarRating value={reviewRating} onChange={setReviewRating} />
