@@ -21,7 +21,7 @@ export default function ContentGrid({ title, items, aspect = 'poster' }: Props) 
   if (!items.length) return null
 
   const gridClass = aspect === 'poster'
-    ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'
+    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
     : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
 
   return (

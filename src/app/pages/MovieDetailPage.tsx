@@ -183,7 +183,7 @@ export default function MovieDetailPage() {
 
       <div className="mx-auto w-full max-w-screen-xl px-4 pb-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-          <main className="space-y-6">
+          <main className="min-w-0 space-y-6">
             {genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {genres.map((g) => (
@@ -209,7 +209,7 @@ export default function MovieDetailPage() {
                 <div className="aspect-video w-full">
                   <iframe src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
                     allow="autoplay; fullscreen" allowFullScreen title={`${movie.title} trailer`}
-                    className="h-full w-full" style={{ border: 'none' }} />
+                    className="h-full w-full max-w-full" style={{ border: 'none' }} />
                 </div>
               </div>
             )}
@@ -267,7 +267,7 @@ export default function MovieDetailPage() {
                         <span className="text-[10px] text-[var(--label3)]">{new Date(r.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-[var(--label2)] leading-relaxed">{r.review_text}</p>
+                    <p className="break-words text-sm text-[var(--label2)] leading-relaxed">{r.review_text}</p>
                   </div>
                 ))}
                 {!reviews.length && <div className="text-sm text-[var(--label3)] text-center py-6">No reviews yet.</div>}
@@ -275,7 +275,7 @@ export default function MovieDetailPage() {
             </DetailSection>
           </main>
 
-          <aside className="space-y-4 lg:sticky lg:top-4 self-start">
+          <aside className="min-w-0 space-y-4 lg:sticky lg:top-4 self-start">
             <div className="rounded-2xl border p-4 space-y-3" style={{ background: 'var(--surface)', borderColor: 'var(--separator)' }}>
               <div className="text-[10px] uppercase tracking-widest text-[var(--label3)]">Details</div>
               <div className="space-y-2">
@@ -390,4 +390,3 @@ function FactRow({ label, value, valueClassName }: { label: string; value: strin
     </div>
   )
 }
-

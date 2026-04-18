@@ -24,7 +24,7 @@ export default function DetailHero({ title, backdropUrl, posterUrl, logoUrl, met
 
       <div className="relative -mt-16 md:-mt-20">
         <div className="mx-auto w-full max-w-screen-xl px-4 pb-6">
-          <div className="grid gap-4 md:gap-6 lg:grid-cols-[180px_1fr_320px] lg:items-start">
+          <div className="grid min-w-0 gap-4 md:gap-6 lg:grid-cols-[180px_1fr_320px] lg:items-start">
             <div className="flex items-start gap-4 lg:block">
               {posterUrl ? (
                 <div className="shrink-0 w-24 overflow-hidden rounded-[18px] lg:w-full" style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.18)', aspectRatio: '2/3' }}>
@@ -43,7 +43,7 @@ export default function DetailHero({ title, backdropUrl, posterUrl, logoUrl, met
               </div>
             </div>
 
-            <div className="hidden lg:block">
+            <div className="hidden min-w-0 lg:block">
               {logoUrl ? (
                 <img src={logoUrl} alt={title} className="max-h-12 w-auto max-w-[70%] object-contain object-left" style={{ filter: 'drop-shadow(0 12px 26px rgba(0,0,0,0.5))' }} />
               ) : (
@@ -53,11 +53,10 @@ export default function DetailHero({ title, backdropUrl, posterUrl, logoUrl, met
               {actions ? <div className="mt-4 flex flex-wrap gap-2">{actions}</div> : null}
             </div>
 
-            {right ? <div className="lg:justify-self-end">{right}</div> : null}
+            {right ? <div className="min-w-0 lg:justify-self-end">{right}</div> : null}
           </div>
         </div>
       </div>
     </section>
   )
 }
-

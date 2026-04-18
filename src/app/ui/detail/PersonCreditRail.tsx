@@ -11,9 +11,9 @@ export type PersonCreditRailItem = {
 
 export default function PersonCreditRail({ credits, sub = 'character' }: { credits: PersonCreditRailItem[]; sub?: 'character' | 'job' }) {
   return (
-    <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="snap-x-rail touch-pan-x flex gap-3 overflow-x-auto overscroll-x-contain pb-1 pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
-        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-14 shrink-0 flex-col items-center gap-1 text-center group">
+        <Link key={c.id} to={`/person/${c.person.id}`} className="snap-start flex w-14 shrink-0 flex-col items-center gap-1 text-center group">
           <div className="h-14 w-14 overflow-hidden rounded-full" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
@@ -28,4 +28,3 @@ export default function PersonCreditRail({ credits, sub = 'character' }: { credi
     </div>
   )
 }
-
