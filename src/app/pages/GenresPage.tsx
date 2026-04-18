@@ -17,7 +17,7 @@ export default function GenresPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Genres</h1>
+      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Genres</h1>
       {loading ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/2] rounded-xl skeleton" />)}

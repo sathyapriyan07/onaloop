@@ -27,7 +27,7 @@ export default function SignupPage() {
     <AuthLayout>
       <div className="w-full max-w-sm space-y-7">
         <div>
-          <h1 className="text-[28px] font-black tracking-tight">Create account</h1>
+          <h1 className="text-[28px] font-bold tracking-tight">Create account</h1>
           <p className="mt-1 text-sm text-white/40">Join OnTheLoop to discover movies & series</p>
         </div>
 

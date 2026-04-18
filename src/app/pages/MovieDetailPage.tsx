@@ -157,7 +157,7 @@ export default function MovieDetailPage() {
             {movie.selected_logo_url ? (
               <img src={movie.selected_logo_url} alt={movie.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left" style={{ filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))' }} />
             ) : (
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-[var(--label)]">{movie.title}</h1>
+              <h1 className="text-2xl md:text-4xl font-bold tracking-tight leading-tight text-[var(--label)]">{movie.title}</h1>
             )}
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-[var(--label2)]">
               {movie.release_date && <span>{movie.release_date.slice(0, 4)}</span>}
@@ -390,7 +390,7 @@ function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; su
           <div className="h-16 w-16 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center text-lg font-black text-[var(--label3)]">{c.person.name[0]}</div>}
+              : <div className="flex h-full w-full items-center justify-center text-lg font-bold text-[var(--label3)]">{c.person.name[0]}</div>}
           </div>
           <div className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--label)]">{c.person.name}</div>
           {(sub === 'character' ? c.character : c.job) && (

@@ -115,7 +115,7 @@ export default function FloatingBar() {
           >
             <Search size={13} />
             {newCount > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full text-[6px] font-black text-white" style={{ background: 'var(--accent)' }}>
+              <span className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full text-[6px] font-bold text-white" style={{ background: 'var(--accent)' }}>
                 {newCount > 9 ? '9+' : newCount}
               </span>
             )}

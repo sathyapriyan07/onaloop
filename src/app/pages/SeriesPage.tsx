@@ -69,7 +69,7 @@ export default function SeriesPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Series</h1>
+      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Series</h1>
 
       <FilterRow options={years} value={yearFilter} onChange={setYearFilter} />
       <FilterRow

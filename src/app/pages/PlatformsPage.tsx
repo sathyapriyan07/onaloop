@@ -19,7 +19,7 @@ export default function PlatformsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Platforms</h1>
+      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Platforms</h1>
 
       <div className="flex gap-1.5">
         {(['ott', 'music'] as Tab[]).map((t) => (

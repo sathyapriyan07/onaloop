@@ -86,7 +86,7 @@ export default function SearchPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Search</h1>
+      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Search</h1>
 
       <div className="relative z-50">
         <div className="relative flex items-center">

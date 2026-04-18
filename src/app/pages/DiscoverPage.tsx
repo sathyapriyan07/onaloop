@@ -111,7 +111,7 @@ export default function DiscoverPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-black tracking-tight text-[var(--label)]">Discover</h1>
+          <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Discover</h1>
           <p className="text-xs text-[var(--label3)] mt-0.5">{results.length} titles</p>
         </div>
         <div className="flex items-center gap-2">

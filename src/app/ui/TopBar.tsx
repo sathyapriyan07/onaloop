@@ -36,7 +36,7 @@ export default function TopBar() {
       <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 h-14 gap-4">
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <Repeat2 size={18} className="text-accent" strokeWidth={2.5} />
-          <span className="text-sm font-black tracking-tight uppercase">
+          <span className="text-sm font-bold tracking-tight uppercase">
             On<span className="text-accent">The</span>Loop
           </span>
         </Link>
@@ -73,7 +73,7 @@ export default function TopBar() {
           >
             <Search size={17} />
             {newCount > 0 && (
-              <span className="absolute right-1 top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-black text-white" style={{ background: 'var(--accent)' }}>
+              <span className="absolute right-1 top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold text-white" style={{ background: 'var(--accent)' }}>
                 {newCount > 9 ? '9+' : newCount}
               </span>
             )}

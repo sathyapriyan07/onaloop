@@ -69,7 +69,7 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center justify-center gap-5 py-24 text-center">
         <Repeat2 size={44} className="text-accent" />
         <div>
-          <div className="text-2xl font-black text-[var(--label)]">Join OnTheLoop</div>
+          <div className="text-2xl font-bold text-[var(--label)]">Join OnTheLoop</div>
           <p className="mt-1 text-sm text-[var(--label2)] max-w-xs">Track your watchlist, mark watched, and more.</p>
         </div>
         <div className="flex gap-2.5">
@@ -89,7 +89,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-black text-[var(--label)]"
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-bold text-[var(--label)]"
           style={{ background: 'var(--surface2)' }}>
           {user.email?.[0]?.toUpperCase() ?? '?'}
         </div>

@@ -28,7 +28,7 @@ export default function RatingSummary({ ratings }: Props) {
   return (
     <div className="grid gap-4 rounded-2xl p-4 sm:grid-cols-[180px_1fr]" style={{ background: 'var(--surface)' }}>
       <div className="flex items-center gap-3">
-        <div className="text-4xl font-black tracking-tight text-[var(--label)]">{avg}</div>
+        <div className="text-4xl font-bold tracking-tight text-[var(--label)]">{avg}</div>
         <div className="space-y-1">
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -57,4 +57,3 @@ export default function RatingSummary({ ratings }: Props) {
     </div>
   )
 }
-

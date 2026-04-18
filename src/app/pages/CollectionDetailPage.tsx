@@ -46,7 +46,7 @@ export default function CollectionDetailPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         </div>
         <div className="absolute inset-x-0 bottom-0 p-5">
-          <h1 className="text-2xl font-black tracking-tight">{collection.name}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{collection.name}</h1>
           {collection.description && <p className="mt-1 text-sm text-white/50 max-w-lg">{collection.description}</p>}
           <div className="mt-1 text-xs text-white/30">{items.length} title{items.length !== 1 ? 's' : ''}</div>
         </div>

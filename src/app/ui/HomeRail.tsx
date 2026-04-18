@@ -20,7 +20,7 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3 px-4">
-        <h2 className="text-[26px] font-black tracking-tight text-[var(--label)]">{title}</h2>
+        <h2 className="text-[26px] font-bold tracking-tight text-[var(--label)]">{title}</h2>
         {viewAllTo ? (
           <Link to={viewAllTo} className="flex items-center gap-1 text-[13px] font-semibold text-accent hover:opacity-80 transition-opacity pb-1">
             See All <ArrowRight size={14} />

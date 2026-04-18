@@ -27,7 +27,7 @@ export default function LoginPage() {
     <AuthLayout>
       <div className="w-full max-w-sm space-y-7">
         <div>
-          <h1 className="text-[28px] font-black tracking-tight">Welcome back</h1>
+          <h1 className="text-[28px] font-bold tracking-tight">Welcome back</h1>
           <p className="mt-1 text-sm text-white/40">Sign in to OnTheLoop</p>
         </div>
 

@@ -46,7 +46,7 @@ export default function GenreDetailPage() {
         <div className="absolute inset-x-0 bottom-0 p-4">
           {loading
             ? <div className="h-7 w-32 skeleton rounded-lg" />
-            : <h1 className="text-2xl font-black tracking-tight">{genre?.name}</h1>}
+            : <h1 className="text-2xl font-bold tracking-tight">{genre?.name}</h1>}
         </div>
       </div>
 

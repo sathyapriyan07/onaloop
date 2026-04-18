@@ -26,7 +26,7 @@ export default function CollectionsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-black tracking-tight">Collections</h1>
+      <h1 className="text-[28px] font-bold tracking-tight">Collections</h1>
       {collections.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-20 text-center">
           <div className="text-sm text-white/30">No collections yet.</div>
