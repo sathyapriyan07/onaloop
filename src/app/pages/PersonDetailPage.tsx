@@ -5,6 +5,7 @@ import BackButton from '../ui/BackButton'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import PosterCollage from '../ui/PosterCollage'
+import DetailSection from '../ui/detail/DetailSection'
 import { supabase } from '../../lib/supabase'
 import { usePageMeta } from '../../lib/usePageMeta'
 
@@ -93,29 +94,71 @@ export default function PersonDetailPage() {
       if (!item) continue
       const year = movie ? (movie as any).release_date?.slice(0, 4) ?? null : (series as any).first_air_date?.slice(0, 4) ?? null
       const to = movie ? `/movie/${item.id}` : `/series/${item.id}`
-      if (map.has(item.id)) { if (c.job) map.get(item.id)!.jobs.push(c.job) }
-      else map.set(item.id, { contentId: item.id, content: { ...item, year }, to, jobs: c.job ? [c.job] : [], type: movie ? 'movie' : 'series' })
+      if (map.has(item.id)) {
+        if (c.job) map.get(item.id)!.jobs.push(c.job)
+      } else {
+        map.set(item.id, { contentId: item.id, content: { ...item, year }, to, jobs: c.job ? [c.job] : [], type: movie ? 'movie' : 'series' })
+      }
     }
     return [...map.values()].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0))
   }, [credits])
 
-  const sorted = useMemo(() => [...flatCredits].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0)), [flatCredits])
+  const sortedCast = useMemo(() => [...flatCredits].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0)), [flatCredits])
   const castCount = credits.filter((c) => c.credit_type === 'cast').length
   const PREVIEW_COUNT = 24
 
-  const castItems = useMemo(() => sorted.map(({ creditId, content, to, role }) => ({
-    id: creditId, title: content.title, to, imageUrl: content.selected_poster_url, logoUrl: content.selected_logo_url,
+  const castItems = useMemo(() => sortedCast.map(({ creditId, content, to, role }) => ({
+    id: creditId,
+    title: content.title,
+    to,
+    imageUrl: content.selected_poster_url,
+    logoUrl: content.selected_logo_url,
     badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
     sub: [role, content.year].filter(Boolean).join(' · ') || null,
-  })), [sorted])
+  })), [sortedCast])
 
   const crewItems = useMemo(() => crewRows.map(({ contentId, content, to, jobs }) => ({
-    id: contentId, title: content.title, to, imageUrl: content.selected_poster_url, logoUrl: content.selected_logo_url,
+    id: contentId,
+    title: content.title,
+    to,
+    imageUrl: content.selected_poster_url,
+    logoUrl: content.selected_logo_url,
     badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
     sub: [content.year, jobs.length ? jobs.join(' · ') : null].filter(Boolean).join(' · ') || null,
   })), [crewRows])
 
-  // All posters from credits for the collage
+  const knownForItems = useMemo(() => {
+    const map = new Map<string, { id: string; title: string; to: string; imageUrl: string | null; logoUrl: string | null; badge: string | null; sub: string | null; rating: number }>()
+    for (const c of sortedCast) {
+      if (!c.content.id) continue
+      if (map.has(c.content.id)) continue
+      map.set(c.content.id, {
+        id: c.content.id,
+        title: c.content.title,
+        to: c.to,
+        imageUrl: c.content.selected_poster_url,
+        logoUrl: c.content.selected_logo_url,
+        badge: c.content.tmdb_rating ? `★ ${c.content.tmdb_rating}` : null,
+        sub: c.content.year ?? null,
+        rating: c.content.tmdb_rating ?? 0,
+      })
+    }
+    for (const r of crewRows) {
+      if (map.has(r.contentId)) continue
+      map.set(r.contentId, {
+        id: r.contentId,
+        title: r.content.title,
+        to: r.to,
+        imageUrl: r.content.selected_poster_url,
+        logoUrl: r.content.selected_logo_url,
+        badge: r.content.tmdb_rating ? `★ ${r.content.tmdb_rating}` : null,
+        sub: r.content.year ?? null,
+        rating: r.content.tmdb_rating ?? 0,
+      })
+    }
+    return [...map.values()].sort((a, b) => b.rating - a.rating).slice(0, 12).map(({ rating: _r, ...item }) => item)
+  }, [sortedCast, crewRows])
+
   const collagePosters = useMemo(() =>
     [...flatCredits, ...crewRows.map((r) => ({ content: r.content }))]
       .map((c) => c.content.selected_poster_url)
@@ -123,91 +166,133 @@ export default function PersonDetailPage() {
   , [flatCredits, crewRows])
 
   if (!person) return (
-    <div className="space-y-4 px-4 pt-16">
-      <BackButton />
-      <div className="min-h-[200px] rounded-xl skeleton" />
-      <div className="h-6 w-40 skeleton rounded-lg" />
-      <div className="h-4 w-56 skeleton rounded" />
+    <div className="space-y-4">
+      <div className="mx-auto w-full max-w-screen-xl px-4 pt-16">
+        <BackButton />
+        <div className="mt-4 min-h-[200px] rounded-xl skeleton" />
+        <div className="mt-4 h-6 w-40 skeleton rounded-lg" />
+        <div className="mt-2 h-4 w-56 skeleton rounded" />
+      </div>
     </div>
   )
 
+  const bornLabel = person.birthday
+    ? new Date(person.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null
+
   return (
-    <div className="space-y-6 px-4 pb-10 pt-4">
-      <BackButton />
-      {/* Poster collage hero — person's movies */}
-      <PosterCollage posters={collagePosters} />
+    <div className="pb-10">
+      <div className="mx-auto w-full max-w-screen-xl px-4 pt-4">
+        <BackButton />
+      </div>
 
-      {/* Profile card */}
-      <section className="flex gap-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
-        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
-          {person.selected_profile_url
-            ? <img src={person.selected_profile_url} alt={person.name} className="h-full w-full object-cover" />
-            : null}
-        </div>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-semibold tracking-tight text-[var(--label)]">{person.name}</h1>
-          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--label2)]">
-            {person.known_for_department ? <span>{person.known_for_department}</span> : null}
-            {person.birthday ? <span>Born {new Date(person.birthday).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span> : null}
-            {person.place_of_birth ? <span>{person.place_of_birth}</span> : null}
-          </div>
-          {person.bio ? (
-            <Expandable preview={<p className="mt-2 line-clamp-3 text-sm text-[var(--label2)]">{person.bio}</p>} label="Read more" collapseLabel="Show less">
-              <p className="mt-2 text-sm text-[var(--label2)]">{person.bio}</p>
-            </Expandable>
-          ) : null}
-          {person.social_links?.length ? (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {(person.social_links as { platform: string; url: string }[]).map((lnk) => {
-                const meta = PLATFORM_META[lnk.platform]
-                if (!meta || !lnk.url) return null
-                return (
-                  <a key={lnk.platform} href={lnk.url} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium hover:opacity-80 transition-opacity"
-                    style={{ background: 'var(--surface2)' }}
-                    title={meta.label}>
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill={meta.color}>
-                      <path d={meta.icon} />
-                    </svg>
-                    {meta.label}
-                  </a>
-                )
-              })}
-            </div>
-          ) : null}
-        </div>
-      </section>
+      <div className="mt-4">
+        <PosterCollage posters={collagePosters} />
+      </div>
 
-      {/* Filmography */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[17px] font-bold tracking-tight">Filmography</h2>
-          <div className="flex gap-1.5">
-            {(['cast', 'crew'] as const).map((t) => (
-              <button key={t} onClick={() => setTab(t)}
-                className={clsx('rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-                  tab === t ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]')}
-                style={tab === t ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}>
-                {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
-              </button>
-            ))}
-          </div>
-        </div>
+      <div className="mx-auto w-full max-w-screen-xl px-4 pt-6">
+        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+          <aside className="space-y-4 lg:sticky lg:top-4 self-start">
+            <section className="rounded-2xl border p-4" style={{ background: 'var(--surface)', borderColor: 'var(--separator)' }}>
+              <div className="flex gap-4">
+                <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
+                  {person.selected_profile_url ? (
+                    <img src={person.selected_profile_url} alt={person.name} className="h-full w-full object-cover" />
+                  ) : null}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl font-semibold tracking-tight text-[var(--label)]">{person.name}</h1>
+                  <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--label2)]">
+                    {person.known_for_department ? <span>{person.known_for_department}</span> : null}
+                  </div>
+                </div>
+              </div>
 
-        {tab === 'crew' ? (
-          crewItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No crew credits.</div>
-          : crewItems.length > PREVIEW_COUNT ? (
-            <Expandable preview={<ContentGrid title="" items={crewItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${crewItems.length}`} collapseLabel="Show less">
-              <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
-            </Expandable>
-          ) : <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
-        ) : castItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No acting credits.</div>
-        : castItems.length > PREVIEW_COUNT ? (
-          <Expandable preview={<ContentGrid title="" items={castItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${castItems.length}`} collapseLabel="Show less">
-            <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />
-          </Expandable>
-        ) : <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />}
-      </section>
+              {person.social_links?.length ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {(person.social_links as { platform: string; url: string }[]).map((lnk) => {
+                    const meta = PLATFORM_META[lnk.platform]
+                    if (!meta || !lnk.url) return null
+                    return (
+                      <a key={lnk.platform} href={lnk.url} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium hover:opacity-80 transition-opacity"
+                        style={{ background: 'var(--surface2)' }}
+                        title={meta.label}>
+                        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill={meta.color}>
+                          <path d={meta.icon} />
+                        </svg>
+                        {meta.label}
+                      </a>
+                    )
+                  })}
+                </div>
+              ) : null}
+            </section>
+
+            {(bornLabel || person.place_of_birth) ? (
+              <section className="rounded-2xl border p-4 space-y-2" style={{ background: 'var(--surface)', borderColor: 'var(--separator)' }}>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--label3)]">Personal details</div>
+                {bornLabel ? <FactRow label="Born" value={bornLabel} /> : null}
+                {person.place_of_birth ? <FactRow label="Place" value={person.place_of_birth} /> : null}
+              </section>
+            ) : null}
+          </aside>
+
+          <main className="space-y-8">
+            {person.bio ? (
+              <DetailSection title="Biography">
+                <Expandable preview={<p className="text-sm leading-relaxed text-[var(--label2)] line-clamp-5">{person.bio}</p>} label="Read more" collapseLabel="Show less">
+                  <p className="text-sm leading-relaxed text-[var(--label2)]">{person.bio}</p>
+                </Expandable>
+              </DetailSection>
+            ) : null}
+
+            {knownForItems.length > 0 ? (
+              <ContentGrid title="Known for" items={knownForItems} aspect="poster" showLogo={false} />
+            ) : null}
+
+            <section className="space-y-4">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <h2 className="text-[17px] font-bold tracking-tight">Filmography</h2>
+                <div className="flex gap-1.5">
+                  {(['cast', 'crew'] as const).map((t) => (
+                    <button key={t} onClick={() => setTab(t)}
+                      className={clsx('rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
+                        tab === t ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]')}
+                      style={tab === t ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}>
+                      {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {tab === 'crew' ? (
+                crewItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No crew credits.</div>
+                : crewItems.length > PREVIEW_COUNT ? (
+                  <Expandable preview={<ContentGrid title="" items={crewItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${crewItems.length}`} collapseLabel="Show less">
+                    <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
+                  </Expandable>
+                ) : <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
+              ) : castItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No acting credits.</div>
+              : castItems.length > PREVIEW_COUNT ? (
+                <Expandable preview={<ContentGrid title="" items={castItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${castItems.length}`} collapseLabel="Show less">
+                  <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />
+                </Expandable>
+              ) : <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />}
+            </section>
+          </main>
+        </div>
+      </div>
     </div>
   )
 }
+
+function FactRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="text-xs text-[var(--label3)]">{label}</div>
+      <div className="text-xs font-semibold text-[var(--label)] text-right">{value}</div>
+    </div>
+  )
+}
+
