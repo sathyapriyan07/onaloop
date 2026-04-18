@@ -11,6 +11,7 @@ import RatingSummary from '../ui/RatingSummary'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Series = {
   id: string; title: string; overview: string | null; first_air_date: string | null
@@ -51,6 +52,8 @@ export default function SeriesDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [trailerOpen, setTrailerOpen] = useState(false)
   const [similarSeries, setSimilarSeries] = useState<any[]>([])
+
+  usePageMeta({ title: series?.title ?? 'Series', description: series?.overview ?? null })
 
   useEffect(() => {
     if (!id) return

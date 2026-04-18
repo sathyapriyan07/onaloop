@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Movie = {
   id: string; title: string; release_date: string | null
@@ -35,6 +36,7 @@ function FilterRow({ options, value, onChange }: { options: string[]; value: str
 }
 
 export default function MoviesPage() {
+  usePageMeta({ title: 'Movies' })
   const [movies, setMovies] = useState<Movie[]>([])
   const [yearFilter, setYearFilter] = useState('All')
   const [langFilter, setLangFilter] = useState('All')

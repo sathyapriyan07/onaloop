@@ -53,7 +53,7 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Homepage with footer */}
-          <Route element={<AppShell />}>
+          <Route element={<AppShell noFooter />}>
             <Route index element={<HomePage />} />
           </Route>
 

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Collection = { id: string; name: string; description: string | null; cover_image_url: string | null }
 
 export default function CollectionsPage() {
+  usePageMeta({ title: 'Collections' })
   const [collections, setCollections] = useState<Collection[]>([])
   const [loading, setLoading] = useState(true)
 

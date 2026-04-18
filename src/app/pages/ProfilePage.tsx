@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { LogIn, Repeat2, Bookmark, Eye } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type ContentItem = { id: string; title: string; to: string; posterUrl: string | null }
 
@@ -36,6 +37,7 @@ function EmptyState({ text }: { text: string }) {
 }
 
 export default function ProfilePage() {
+  usePageMeta({ title: 'Profile' })
   const { user } = useSession()
   const [watchlist, setWatchlist] = useState<ContentItem[]>([])
   const [watched, setWatched] = useState<ContentItem[]>([])

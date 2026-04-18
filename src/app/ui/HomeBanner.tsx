@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Play, Compass } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
 type Props = { items: unknown[] }
@@ -23,15 +22,18 @@ export default function HomeBanner(_props: Props) {
   }, [])
 
   const cols = 7
-  const perCol = 5
+  const perCol = 6
   const columns = Array.from({ length: cols }, (_, c) =>
     Array.from({ length: perCol }, (_, r) => posters[(c * perCol + r) % (posters.length || 1)])
   )
 
+  const resolvedPosters = useMemo(() => posters.filter(Boolean), [posters])
+  const show = resolvedPosters.length > 0
+
   return (
-    <section className="relative overflow-hidden rounded-2xl" style={{ background: 'var(--surface)', minHeight: 300 }}>
-      {posters.length > 0 && (
-        <div className="absolute inset-0 flex gap-1 p-1 overflow-hidden opacity-60">
+    <section className="relative overflow-hidden" style={{ background: 'var(--surface)', minHeight: 440 }}>
+      {show && (
+        <div className="absolute inset-0 flex gap-1 p-1 overflow-hidden opacity-70">
           {columns.map((col, ci) => (
             <div key={ci} className="flex flex-1 flex-col gap-1"
               style={{ marginTop: ci % 2 === 1 ? '-24px' : ci % 3 === 2 ? '-12px' : '0px' }}>
@@ -44,29 +46,18 @@ export default function HomeBanner(_props: Props) {
         </div>
       )}
 
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, var(--bg), var(--overlay-strong) 60%, var(--overlay-medium))' }} />
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), transparent 60%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 35%, var(--bg) 96%)' }} />
 
-      <div className="relative flex flex-col justify-end gap-4 p-6 md:p-10 min-h-[300px] md:min-h-[380px]">
-        <div className="space-y-1">
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--label2)]">Your personal cinema</div>
-          <div className="text-3xl md:text-5xl font-black tracking-tight max-w-sm leading-[1.1] text-[var(--label)]">
-            Discover. Track. <span className="text-accent">Loop.</span>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2.5">
-          <Link to="/movies"
-            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
-            style={{ background: 'var(--accent)' }}>
-            <Play size={13} fill="currentColor" /> Explore Movies
-          </Link>
-          <button onClick={() => navigate('/discover')}
-            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[var(--label)] transition-colors"
-            style={{ background: 'var(--separator)', backdropFilter: 'blur(10px)' }}>
-            <Compass size={13} /> Discover
-          </button>
-        </div>
-      </div>
+      <div className="absolute inset-x-0 bottom-0 h-28 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg))' }} />
+
+      <button
+        type="button"
+        onClick={() => navigate('/discover')}
+        className="absolute left-1/2 -translate-x-1/2 bottom-16 rounded-full px-14 py-3.5 text-[18px] font-black tracking-tight shadow-[0_18px_70px_rgba(0,0,0,0.35)] hover:opacity-90 transition-opacity"
+        style={{ background: 'var(--label)', color: 'var(--bg)' }}
+      >
+        Explore
+      </button>
     </section>
   )
 }

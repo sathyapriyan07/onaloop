@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import PosterRail from '../ui/PosterRail'
 import HomeBanner from '../ui/HomeBanner'
 import SkeletonRail from '../ui/SkeletonRail'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
+import HomeRail from '../ui/HomeRail'
 
 type HomeSection = { id: string; title: string }
 type HomeCard = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
@@ -17,6 +18,7 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
 // removed emoji helper
 
 export default function HomePage() {
+  usePageMeta({ title: null })
   const [sections, setSections] = useState<HomeSection[]>([])
   const [itemsBySection, setItemsBySection] = useState<Record<string, any[]>>({})
   const [banners, setBanners] = useState<BannerItem[]>([])
@@ -65,41 +67,50 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="space-y-8 pt-4">
+    <div className="space-y-10">
       <HomeBanner items={banners} />
 
-      {loading ? (
-        <>
-          <SkeletonRail count={6} />
-          <SkeletonRail count={6} />
-          <SkeletonRail count={6} />
-        </>
-      ) : sections.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-          <div className="text-base font-semibold text-[var(--label2)]">Nothing here yet.</div>
-          <div className="text-sm text-[var(--label3)]">Start exploring movies and series!</div>
-        </div>
-      ) : (
-        sections.map((section) => {
-          const sectionItems = (itemsBySection[section.id] ?? []).map((row: any) => {
-            const movie = asOne<HomeCard>(row.movie)
-            const series = asOne<HomeCard>(row.series)
-            if (movie) return { id: movie.id, type: 'movie' as const, title: movie.title, posterUrl: movie.selected_poster_url, logoUrl: movie.selected_logo_url }
-            if (series) return { id: series.id, type: 'series' as const, title: series.title, posterUrl: series.selected_poster_url, logoUrl: series.selected_logo_url }
-            return null
-          }).filter(Boolean) as Array<{ id: string; type: 'movie' | 'series'; title: string; posterUrl?: string | null; logoUrl?: string | null }>
+      <div className="space-y-10">
+        {loading ? (
+          <div className="px-4 space-y-8">
+            <SkeletonRail count={5} />
+            <SkeletonRail count={5} />
+          </div>
+        ) : sections.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-20 text-center px-4">
+            <div className="text-base font-semibold text-[var(--label2)]">Nothing here yet.</div>
+            <div className="text-sm text-[var(--label3)]">Start exploring movies and series!</div>
+          </div>
+        ) : (
+          <div className="space-y-10">
+            {sections.map((section) => {
+              const sectionItems = (itemsBySection[section.id] ?? [])
+                .map((row: any) => {
+                  const movie = asOne<HomeCard>(row.movie)
+                  const series = asOne<HomeCard>(row.series)
+                  if (movie) return { id: movie.id, type: 'movie' as const, title: movie.title, posterUrl: movie.selected_poster_url }
+                  if (series) return { id: series.id, type: 'series' as const, title: series.title, posterUrl: series.selected_poster_url }
+                  return null
+                })
+                .filter(Boolean) as Array<{ id: string; type: 'movie' | 'series'; title: string; posterUrl: string | null }>
 
-          return (
-            <PosterRail
-              key={section.id}
-              title={section.title}
-              items={sectionItems}
-              showLogo={false}
-              viewAllTo={sectionItems[0]?.type === 'series' ? '/series' : '/movies'}
-            />
-          )
-        })
-      )}
+              return (
+                <HomeRail
+                  key={section.id}
+                  title={section.title}
+                  items={sectionItems.map((it) => ({
+                    id: it.id,
+                    title: it.title,
+                    to: it.type === 'movie' ? `/movie/${it.id}` : `/series/${it.id}`,
+                    posterUrl: it.posterUrl,
+                  }))}
+                  viewAllTo={sectionItems[0]?.type === 'series' ? '/series' : '/movies'}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

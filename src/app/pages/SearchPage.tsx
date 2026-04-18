@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Search, X, Clock } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Movie = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
 type Series = { id: string; title: string; selected_poster_url: string | null; selected_logo_url: string | null }
@@ -25,6 +26,7 @@ function removeFromHistory(term: string) {
 export default function SearchPage() {
   const [params, setParams] = useSearchParams()
   const q = (params.get('q') ?? '').trim()
+  usePageMeta({ title: q ? `Search: ${q}` : 'Search' })
   const [value, setValue] = useState(q)
   const [movies, setMovies] = useState<Movie[]>([])
   const [series, setSeries] = useState<Series[]>([])

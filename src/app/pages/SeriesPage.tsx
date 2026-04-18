@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import PosterGridSkeleton from '../ui/PosterGridSkeleton'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Series = {
   id: string; title: string; first_air_date: string | null
@@ -35,6 +36,7 @@ function FilterRow({ options, value, onChange }: { options: string[]; value: str
 }
 
 export default function SeriesPage() {
+  usePageMeta({ title: 'Series' })
   const [series, setSeries] = useState<Series[]>([])
   const [loading, setLoading] = useState(true)
   const [yearFilter, setYearFilter] = useState('All')

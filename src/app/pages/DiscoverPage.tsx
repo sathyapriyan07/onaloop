@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { SlidersHorizontal, X } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import clsx from 'clsx'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Movie = { id: string; title: string; release_date: string | null; original_language: string | null; selected_poster_url: string | null; tmdb_rating: number | null }
 type Series = { id: string; title: string; first_air_date: string | null; original_language: string | null; selected_poster_url: string | null; tmdb_rating: number | null }
@@ -27,6 +28,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 export default function DiscoverPage() {
+  usePageMeta({ title: 'Discover' })
   const [movies, setMovies] = useState<Movie[]>([])
   const [series, setSeries] = useState<Series[]>([])
   const [genres, setGenres] = useState<Genre[]>([])

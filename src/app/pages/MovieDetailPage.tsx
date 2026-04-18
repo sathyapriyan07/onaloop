@@ -13,6 +13,7 @@ import { supabase } from '../../lib/supabase'
 import { formatRuntime } from '../../lib/format'
 import { useSession } from '../../lib/useSession'
 import { useUserContent } from '../../lib/useUserContent'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Movie = {
   id: string; title: string; overview: string | null; release_date: string | null
@@ -57,6 +58,8 @@ export default function MovieDetailPage() {
   const [similarMovies, setSimilarMovies] = useState<any[]>([])
   const [studios, setStudios] = useState<{ id: string; name: string; logo_url: string | null }[]>([])
   const [trailerOpen, setTrailerOpen] = useState(false)
+
+  usePageMeta({ title: movie?.title ?? 'Movie', description: movie?.overview ?? null })
 
   useEffect(() => {
     if (!id) return

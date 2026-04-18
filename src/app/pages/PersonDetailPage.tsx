@@ -6,6 +6,7 @@ import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import PosterCollage from '../ui/PosterCollage'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Person = {
   id: string
@@ -49,6 +50,8 @@ export default function PersonDetailPage() {
   const [person, setPerson] = useState<Person | null>(null)
   const [credits, setCredits] = useState<Credit[]>([])
   const [tab, setTab] = useState<'cast' | 'crew'>('cast')
+
+  usePageMeta({ title: person?.name ?? 'Person', description: person?.bio ?? null })
 
   useEffect(() => {
     if (!id) return

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { usePageMeta } from '../../lib/usePageMeta'
 
 type Collection = { id: string; name: string; description: string | null; cover_image_url: string | null }
 type Item = { id: string; title: string; to: string; posterUrl: string | null; rating: number | null; year: string | null; type: 'movie' | 'series' }
@@ -9,6 +10,8 @@ export default function CollectionDetailPage() {
   const { id } = useParams()
   const [collection, setCollection] = useState<Collection | null>(null)
   const [items, setItems] = useState<Item[]>([])
+
+  usePageMeta({ title: collection?.name ? `Collection: ${collection.name}` : 'Collection' })
 
   useEffect(() => {
     if (!id) return
