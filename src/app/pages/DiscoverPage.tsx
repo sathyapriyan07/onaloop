@@ -138,7 +138,7 @@ export default function DiscoverPage() {
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="snap-x-rail touch-pan-x flex gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {REGIONAL.filter((l) => langs.includes(l)).map((l) => (
           <Pill key={l} active={langFilter === l} onClick={() => setLangFilter(langFilter === l ? null : l)}>
             {LANG_NAMES[l] ?? l}
@@ -197,7 +197,7 @@ export default function DiscoverPage() {
           <button onClick={clearAll} className="text-xs text-accent hover:opacity-80">Clear filters</button>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {results.map((item) => (
             <Link key={`${item.type}-${item.id}`} to={item.to}
               className="group relative overflow-hidden rounded-xl aspect-[2/3]"

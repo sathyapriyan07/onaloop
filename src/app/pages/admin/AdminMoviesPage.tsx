@@ -302,7 +302,7 @@ export default function AdminMoviesPage() {
               <Input type="number" value={m.runtime_minutes ?? ''} onChange={(e) => set('runtime_minutes', e.target.value ? Number(e.target.value) : null)} />
             </label>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <label className="block space-y-1">
               <span className="text-xs text-white/50">TMDb rating</span>
               <Input type="number" step="0.1" value={m.tmdb_rating ?? ''} onChange={(e) => set('tmdb_rating', e.target.value ? Number(e.target.value) : null)} />
@@ -548,7 +548,7 @@ export default function AdminMoviesPage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search movies…" />
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {movies.filter((m) => m.title.toLowerCase().includes(search.toLowerCase())).map((m) => (
           <div key={m.id} className="group relative">
             <button onClick={() => startEdit(m)} className="w-full text-left">

@@ -99,8 +99,8 @@ export default function SearchPage() {
             onBlur={() => setTimeout(() => setFocused(false), 150)}
             onKeyDown={(e) => e.key === 'Enter' && submitSearch(value)}
             placeholder="Movies, series, people…"
-            className="w-full rounded-2xl py-3.5 pl-11 pr-10 text-sm font-medium outline-none transition-colors"
-            style={{ background: 'var(--surface)', color: 'var(--label)', border: '1px solid transparent' }}
+            className="w-full min-w-0 rounded-2xl border py-3.5 pl-11 pr-10 text-sm font-medium outline-none transition-colors focus:border-[var(--accent)]"
+            style={{ background: 'var(--surface)', color: 'var(--label)', borderColor: 'var(--separator)' }}
           />
           {value && (
             <button onClick={() => { setValue(''); setParams({}); setMovies([]); setSeries([]); setPeople([]) }}
@@ -197,7 +197,7 @@ export default function SearchPage() {
       {movies.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-[17px] font-bold text-[var(--label)]">Movies</h2>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {movies.map((m) => (
               <Link key={m.id} to={`/movie/${m.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
                 {m.selected_poster_url
@@ -214,7 +214,7 @@ export default function SearchPage() {
       {series.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-[17px] font-bold text-[var(--label)]">Series</h2>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {series.map((s) => (
               <Link key={s.id} to={`/series/${s.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
                 {s.selected_poster_url

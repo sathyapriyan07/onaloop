@@ -37,7 +37,7 @@ export default function GenreDetailPage() {
     <div className="space-y-6">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-xl" style={{ background: '#161616' }}>
-        <div className="aspect-[21/6] w-full">
+        <div className="aspect-[16/9] w-full md:aspect-[21/6]">
           {genre?.display_image_url
             ? <img src={genre.display_image_url} alt={genre.name} className="h-full w-full object-cover" />
             : <div className="h-full w-full" style={{ background: '#1a1a1a' }} />}

@@ -215,6 +215,7 @@ export default function SeriesDetailPage() {
               title="More Like This"
               items={similarSeries.map((s) => ({ id: s.id, title: s.title, to: `/series/${s.id}`, imageUrl: s.selected_poster_url, logoUrl: s.selected_logo_url, badge: s.tmdb_rating ? `★ ${s.tmdb_rating}` : null }))}
               aspect="poster" showLogo={false}
+              colsClassName="grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
             />
 
             <DetailSection title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>

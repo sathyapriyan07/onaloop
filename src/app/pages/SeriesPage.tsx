@@ -19,7 +19,7 @@ const langLabel = (code: string) => LANG_NAMES[code] ?? code.toUpperCase()
 
 function FilterRow({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="snap-x-rail touch-pan-x flex gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {options.map((o) => (
         <button key={o} onClick={() => onChange(o)}
           className={clsx(
@@ -79,7 +79,7 @@ export default function SeriesPage() {
       />
 
       {loading ? <PosterGridSkeleton count={18} /> : (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {filtered.map((s) => (
             <Link key={s.id} to={`/series/${s.id}`}
               className="group relative overflow-hidden rounded-xl aspect-[2/3]"

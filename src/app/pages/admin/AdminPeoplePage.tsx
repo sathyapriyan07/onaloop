@@ -219,7 +219,7 @@ export default function AdminPeoplePage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search people…" />
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {people.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).map((p) => (
           <div key={p.id} className="group relative">
             <button onClick={() => setEditing(p)} className="w-full text-left">

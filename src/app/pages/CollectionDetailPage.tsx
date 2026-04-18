@@ -39,7 +39,7 @@ export default function CollectionDetailPage() {
     <div className="space-y-6">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-xl" style={{ background: 'var(--surface)' }}>
-        <div className="aspect-[21/6] w-full">
+        <div className="aspect-[16/9] w-full md:aspect-[21/6]">
           {collection.cover_image_url
             ? <img src={collection.cover_image_url} alt={collection.name} className="h-full w-full object-cover" />
             : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
@@ -55,7 +55,7 @@ export default function CollectionDetailPage() {
       {items.length === 0 ? (
         <div className="text-sm text-white/30">No items in this collection yet.</div>
       ) : (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {items.map((item) => (
             <Link key={item.id} to={item.to}
               className="group relative overflow-hidden rounded-xl aspect-[2/3]"

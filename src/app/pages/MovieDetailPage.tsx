@@ -236,6 +236,7 @@ export default function MovieDetailPage() {
               title="More Like This"
               items={similarMovies.map((m) => ({ id: m.id, title: m.title, to: `/movie/${m.id}`, imageUrl: m.selected_poster_url, logoUrl: m.selected_logo_url, badge: m.tmdb_rating ? `★ ${m.tmdb_rating}` : null }))}
               aspect="poster" showLogo={false}
+              colsClassName="grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
             />
 
             <DetailSection title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>

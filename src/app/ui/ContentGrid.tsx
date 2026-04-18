@@ -15,14 +15,15 @@ type Props = {
   items: ContentGridItem[]
   aspect?: 'poster' | 'backdrop'
   showLogo?: boolean
+  colsClassName?: string
 }
 
-export default function ContentGrid({ title, items, aspect = 'poster' }: Props) {
+export default function ContentGrid({ title, items, aspect = 'poster', colsClassName }: Props) {
   if (!items.length) return null
 
-  const gridClass = aspect === 'poster'
+  const gridClass = colsClassName ?? (aspect === 'poster'
     ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
-    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3')
 
   return (
     <section className="space-y-3">
