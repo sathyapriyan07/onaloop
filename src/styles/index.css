@@ -47,7 +47,7 @@ body {
   @apply antialiased;
   background-color: var(--bg);
   color: var(--label);
-  font-family: 'Inter', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
