@@ -34,7 +34,7 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
             <Link
               key={item.id}
               to={item.to}
-              className="group relative shrink-0 w-[58vw] max-w-[240px] aspect-[2/3] overflow-hidden rounded-[28px]"
+              className="group relative shrink-0 w-[44vw] max-w-[190px] sm:w-[34vw] sm:max-w-[200px] aspect-[2/3] overflow-hidden rounded-[26px]"
               style={{ background: 'var(--surface)' }}
             >
               {item.posterUrl ? (
@@ -52,4 +52,3 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
     </section>
   )
 }
-

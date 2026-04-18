@@ -24,7 +24,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
           transition={reduceMotion ? { duration: 0 } : { duration: 0.18, ease: 'easeOut' }}
-          className={`mx-auto w-full max-w-screen-2xl overflow-x-clip ${
+          className={`mx-auto w-full ${isHome ? 'max-w-none' : 'max-w-screen-2xl'} overflow-x-clip ${
             isDetailPage ? 'pb-24' : isHome ? 'pb-24' : 'px-4 pb-24 pt-16'
           }`}
         >
