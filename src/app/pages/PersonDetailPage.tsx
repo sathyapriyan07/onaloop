@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import BackButton from '../ui/BackButton'
 import Expandable from '../ui/Expandable'
@@ -39,11 +39,18 @@ type Credit = {
 }
 type FlatCredit = { creditId: string; content: ContentInfo; to: string; role: string | null; type: 'movie' | 'series' }
 type CrewRow = { contentId: string; content: ContentInfo; to: string; jobs: string[]; type: 'movie' | 'series' }
+type FilmographyItem = { id: string; title: string; to: string; year: string | null; sub: string }
 
 function asOne<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null
   if (Array.isArray(value)) return (value[0] ?? null) as T | null
   return value
+}
+
+function yearNumber(year: string | null) {
+  if (!year) return -1
+  const n = Number(year)
+  return Number.isFinite(n) ? n : -1
 }
 
 export default function PersonDetailPage() {
@@ -105,27 +112,39 @@ export default function PersonDetailPage() {
 
   const sortedCast = useMemo(() => [...flatCredits].sort((a, b) => (b.content.tmdb_rating ?? 0) - (a.content.tmdb_rating ?? 0)), [flatCredits])
   const castCount = credits.filter((c) => c.credit_type === 'cast').length
-  const PREVIEW_COUNT = 24
+  const FILMOGRAPHY_PREVIEW = 20
 
-  const castItems = useMemo(() => sortedCast.map(({ creditId, content, to, role }) => ({
-    id: creditId,
-    title: content.title,
-    to,
-    imageUrl: content.selected_poster_url,
-    logoUrl: content.selected_logo_url,
-    badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
-    sub: [role, content.year].filter(Boolean).join(' · ') || null,
-  })), [sortedCast])
+  const filmographyCast = useMemo((): FilmographyItem[] => {
+    const items = flatCredits.map((c) => ({
+      id: c.creditId,
+      title: c.content.title,
+      to: c.to,
+      year: c.content.year,
+      sub: c.role?.trim() ? c.role : 'Actor',
+    }))
+    items.sort((a, b) => {
+      const d = yearNumber(b.year) - yearNumber(a.year)
+      if (d !== 0) return d
+      return a.title.localeCompare(b.title)
+    })
+    return items
+  }, [flatCredits])
 
-  const crewItems = useMemo(() => crewRows.map(({ contentId, content, to, jobs }) => ({
-    id: contentId,
-    title: content.title,
-    to,
-    imageUrl: content.selected_poster_url,
-    logoUrl: content.selected_logo_url,
-    badge: content.tmdb_rating ? `★ ${content.tmdb_rating}` : null,
-    sub: [content.year, jobs.length ? jobs.join(' · ') : null].filter(Boolean).join(' · ') || null,
-  })), [crewRows])
+  const filmographyCrew = useMemo((): FilmographyItem[] => {
+    const items = crewRows.map((r) => ({
+      id: r.contentId,
+      title: r.content.title,
+      to: r.to,
+      year: r.content.year,
+      sub: r.jobs.length ? r.jobs.join(', ') : 'Crew',
+    }))
+    items.sort((a, b) => {
+      const d = yearNumber(b.year) - yearNumber(a.year)
+      if (d !== 0) return d
+      return a.title.localeCompare(b.title)
+    })
+    return items
+  }, [crewRows])
 
   const knownForItems = useMemo(() => {
     const map = new Map<string, { id: string; title: string; to: string; imageUrl: string | null; logoUrl: string | null; badge: string | null; sub: string | null; rating: number }>()
@@ -266,19 +285,29 @@ export default function PersonDetailPage() {
                 </div>
               </div>
 
+              <div className="border-t" style={{ borderColor: 'var(--separator)' }} />
+
               {tab === 'crew' ? (
-                crewItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No crew credits.</div>
-                : crewItems.length > PREVIEW_COUNT ? (
-                  <Expandable preview={<ContentGrid title="" items={crewItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${crewItems.length}`} collapseLabel="Show less">
-                    <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
+                filmographyCrew.length === 0 ? <div className="text-sm text-[var(--label2)]">No crew credits.</div>
+                : filmographyCrew.length > FILMOGRAPHY_PREVIEW ? (
+                  <Expandable
+                    preview={<FilmographyList items={filmographyCrew.slice(0, FILMOGRAPHY_PREVIEW)} />}
+                    label={`Show all ${filmographyCrew.length}`}
+                    collapseLabel="Show less"
+                  >
+                    <FilmographyList items={filmographyCrew} />
                   </Expandable>
-                ) : <ContentGrid title="" items={crewItems} aspect="poster" showLogo={false} />
-              ) : castItems.length === 0 ? <div className="text-sm text-[var(--label2)]">No acting credits.</div>
-              : castItems.length > PREVIEW_COUNT ? (
-                <Expandable preview={<ContentGrid title="" items={castItems.slice(0, PREVIEW_COUNT)} aspect="poster" showLogo={false} />} label={`Show all ${castItems.length}`} collapseLabel="Show less">
-                  <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />
+                ) : <FilmographyList items={filmographyCrew} />
+              ) : filmographyCast.length === 0 ? <div className="text-sm text-[var(--label2)]">No acting credits.</div>
+              : filmographyCast.length > FILMOGRAPHY_PREVIEW ? (
+                <Expandable
+                  preview={<FilmographyList items={filmographyCast.slice(0, FILMOGRAPHY_PREVIEW)} />}
+                  label={`Show all ${filmographyCast.length}`}
+                  collapseLabel="Show less"
+                >
+                  <FilmographyList items={filmographyCast} />
                 </Expandable>
-              ) : <ContentGrid title="" items={castItems} aspect="poster" showLogo={false} />}
+              ) : <FilmographyList items={filmographyCast} />}
             </section>
           </main>
         </div>
@@ -296,3 +325,25 @@ function FactRow({ label, value }: { label: string; value: string }) {
   )
 }
 
+function FilmographyList({ items }: { items: FilmographyItem[] }) {
+  return (
+    <div className="columns-1 md:columns-2" style={{ columnGap: '3.5rem' }}>
+      {items.map((item) => (
+        <div key={item.id} className="break-inside-avoid py-3">
+          <div className="flex items-start gap-3">
+            <div className="w-12 shrink-0 text-right text-xs tabular-nums text-[var(--label3)]">
+              {item.year ?? '—'}
+            </div>
+            <div className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: 'var(--label3)' }} />
+            <div className="min-w-0">
+              <Link to={item.to} className="text-sm font-semibold text-[var(--label)] hover:underline">
+                {item.title}
+              </Link>
+              <div className="mt-0.5 text-xs text-[var(--label2)]">{item.sub}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
