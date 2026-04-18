@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Play, ChevronDown, Bookmark, BookmarkCheck, Eye, EyeOff, Star } from 'lucide-react'
 import BackButton from '../ui/BackButton'
-import YouTubeHero, { YouTubeHeroControls } from '../ui/YouTubeHero'
+import CurvedHero from '../ui/CurvedHero'
 import TextArea from '../ui/TextArea'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
@@ -127,70 +127,57 @@ export default function SeriesDetailPage() {
     <div>
       <BackButton />
 
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/8] overflow-hidden">
-        {videoId ? (
-          <YouTubeHero videoId={videoId} />
-        ) : series.selected_backdrop_url ? (
-          <img src={series.selected_backdrop_url} alt={series.title} className="h-full w-full object-cover" />
-        ) : (
-          <div className="h-full w-full" style={{ background: 'var(--surface)' }} />
-        )}
-        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to top, var(--bg), rgba(0,0,0,0.25), transparent)' }} />
-        <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.3), transparent)' }} />
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40" style={{ background: 'linear-gradient(to top, var(--bg), transparent)' }} />
-      </div>
+      <CurvedHero title={series.title} imageUrl={series.selected_backdrop_url} />
 
-      <div className="px-4 space-y-7 pb-10">
-
-        <div className="flex gap-4 relative z-10 -mt-24 md:-mt-32">
-          {series.selected_poster_url && (
-            <div className="shrink-0 w-24 md:w-36 rounded-2xl overflow-hidden" style={{ aspectRatio: '2/3', boxShadow: '0 8px 40px rgba(0,0,0,0.5)' }}>
+      <div className="px-5 -mt-12 relative z-10 space-y-6 pb-10">
+        <div className="flex items-start gap-4">
+          {series.selected_poster_url ? (
+            <div className="shrink-0 w-24 overflow-hidden rounded-[18px]" style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.18)', aspectRatio: '2/3' }}>
               <img src={series.selected_poster_url} alt={series.title} className="h-full w-full object-cover" />
             </div>
-          )}
-          <div className="flex-1 min-w-0 flex flex-col justify-end pb-1 space-y-2">
-            {series.selected_logo_url ? (
-              <img src={series.selected_logo_url} alt={series.title} className="max-h-10 md:max-h-14 w-auto max-w-[70%] object-contain object-left" style={{ filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))' }} />
-            ) : (
-              <h1 className="text-2xl md:text-4xl font-bold tracking-tight leading-tight text-[var(--label)]">{series.title}</h1>
-            )}
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-[var(--label2)]">
-              {series.first_air_date && <span>{series.first_air_date.slice(0, 4)}</span>}
-              {series.tmdb_rating && <><span className="text-[var(--label3)]">·</span><span className="flex items-center gap-1 font-semibold text-[var(--label)]"><Star size={10} className="text-yellow-400" fill="currentColor" />{series.tmdb_rating}</span></>}
+          ) : null}
+          <div className="flex-1 min-w-0 pt-1 space-y-2">
+            <h1 className="text-[28px] leading-tight font-bold tracking-tight text-[var(--label)]">{series.title}</h1>
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] text-[var(--label2)]">
+              {series.first_air_date ? <span>{series.first_air_date.slice(0, 4)}</span> : null}
+              {series.tmdb_rating ? (
+                <>
+                  <span className="text-[var(--label3)]">·</span>
+                  <span className="flex items-center gap-1 font-semibold text-[var(--label)]">
+                    <Star size={12} className="text-yellow-400" fill="currentColor" />
+                    {series.tmdb_rating}
+                  </span>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {videoId && <YouTubeHeroControls videoId={videoId} />}
-          {videoId && (
+          {videoId ? (
             <button onClick={() => setTrailerOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+              className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-85"
               style={{ background: 'var(--accent)' }}>
               <Play size={13} fill="currentColor" />
-              {trailerOpen ? 'Hide Trailer' : 'Trailer'}
-              <ChevronDown size={13} className={`transition-transform duration-300 ${trailerOpen ? 'rotate-180' : ''}`} />
+              Trailer
+              <ChevronDown size={13} className={`transition-transform duration-200 ${trailerOpen ? 'rotate-180' : ''}`} />
             </button>
-          )}
-          <button onClick={toggleWatchlist}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${inWatchlist ? 'text-accent' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
-            style={{ background: 'var(--surface)' }}>
-            {inWatchlist ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-            {inWatchlist ? 'Saved' : 'Watchlist'}
+          ) : null}
+          <button onClick={toggleWatchlist} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
+            {inWatchlist ? <BookmarkCheck size={14} className="text-accent" /> : <Bookmark size={14} className="text-[var(--label2)]" />}
+            <span className={inWatchlist ? 'text-accent' : 'text-[var(--label2)]'}>{inWatchlist ? 'Saved' : 'Watchlist'}</span>
           </button>
-          <button onClick={toggleWatched}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${isWatched ? 'text-green-400' : 'text-[var(--label2)] hover:text-[var(--label)]'}`}
-            style={{ background: 'var(--surface)' }}>
-            {isWatched ? <Eye size={14} /> : <EyeOff size={14} />}
-            {isWatched ? 'Watched' : 'Mark Watched'}
+          <button onClick={toggleWatched} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
+            {isWatched ? <Eye size={14} className="text-green-400" /> : <EyeOff size={14} className="text-[var(--label2)]" />}
+            <span className={isWatched ? 'text-green-400' : 'text-[var(--label2)]'}>{isWatched ? 'Watched' : 'Watched?'}</span>
           </button>
         </div>
 
         {genres.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {genres.map((g) => (
               <Link key={g.id} to={`/genre/${g.id}`}
-                className="rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
+                className="rounded-full px-4 py-2 text-xs font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
                 style={{ background: 'var(--surface)' }}>
                 {g.name}
               </Link>
@@ -309,13 +296,13 @@ function PersonScroll({ credits, sub = 'character' }: { credits: CreditRow[]; su
   return (
     <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {credits.map((c) => c.person && (
-        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-16 shrink-0 flex-col items-center gap-1.5 text-center group">
-          <div className="h-16 w-16 overflow-hidden rounded-2xl" style={{ background: 'var(--surface2)' }}>
+        <Link key={c.id} to={`/person/${c.person.id}`} className="flex w-14 shrink-0 flex-col items-center gap-1 text-center group">
+          <div className="h-14 w-14 overflow-hidden rounded-full" style={{ background: 'var(--surface2)' }}>
             {c.person.selected_profile_url
               ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
               : <div className="flex h-full w-full items-center justify-center text-lg font-bold text-[var(--label3)]">{c.person.name[0]}</div>}
           </div>
-          <div className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--label)]">{c.person.name}</div>
+          <div className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--label2)]">{c.person.name}</div>
           {(sub === 'character' ? c.character : c.job) && (
             <div className="w-full truncate text-[9px] text-[var(--label2)]">{sub === 'character' ? c.character : c.job}</div>
           )}
