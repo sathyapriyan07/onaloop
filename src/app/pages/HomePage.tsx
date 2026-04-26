@@ -78,8 +78,8 @@ export default function HomePage() {
           </div>
         ) : sections.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-20 text-center px-4">
-            <div className="text-base font-semibold text-[var(--label2)]">Nothing here yet.</div>
-            <div className="text-sm text-[var(--label3)]">Start exploring movies and series!</div>
+            <div className="text-sm font-semibold text-[var(--label2)]">Nothing here yet.</div>
+            <div className="text-xs text-[var(--label3)]">Start exploring movies and series!</div>
           </div>
         ) : (
           <div className="space-y-10">
