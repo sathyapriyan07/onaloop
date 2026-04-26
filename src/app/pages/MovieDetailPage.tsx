@@ -214,6 +214,32 @@ export default function MovieDetailPage() {
               </div>
             )}
 
+            {streamingLinks.length > 0 && (
+              <DetailSection title="Where to Watch">
+                <div className="flex flex-col gap-2">
+                  {streamingLinks.map((l) => {
+                    const logo = (l.platform as any)?.logo_url
+                    const name = (l.platform as any)?.name ?? l.label
+                    return (
+                      <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
+                        style={{ background: 'var(--surface)' }}>
+                        {l.cover_image_url ? (
+                          <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                        ) : logo ? (
+                          <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
+                        ) : null}
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                          {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Watch now</div>}
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+              </DetailSection>
+            )}
+
             {cast.length > 0 && (
               <DetailSection title="Top cast">
                 <Expandable preview={<PersonCreditRail credits={cast.slice(0, 10)} />} label={`All cast (${cast.length})`} collapseLabel="Show less">
@@ -315,32 +341,6 @@ export default function MovieDetailPage() {
                 </div>
               )}
             </div>
-
-            {streamingLinks.length > 0 && (
-              <DetailSection title="Where to Watch">
-                <div className="flex flex-col gap-2">
-                  {streamingLinks.map((l) => {
-                    const logo = (l.platform as any)?.logo_url
-                    const name = (l.platform as any)?.name ?? l.label
-                    return (
-                      <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                        className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
-                        style={{ background: 'var(--surface)' }}>
-                        {l.cover_image_url ? (
-                          <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
-                        ) : logo ? (
-                          <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
-                        ) : null}
-                        <div className="min-w-0">
-                          <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
-                          {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Watch now</div>}
-                        </div>
-                      </a>
-                    )
-                  })}
-                </div>
-              </DetailSection>
-            )}
 
             {musicLinks.length > 0 && (
               <DetailSection title="Music">
