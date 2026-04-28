@@ -175,7 +175,13 @@ export default function PersonDetailPage() {
         rating: r.content.tmdb_rating ?? 0,
       })
     }
-    return [...map.values()].sort((a, b) => b.rating - a.rating).slice(0, 12).map(({ rating: _r, ...item }) => item)
+    // Only include movies, sort by rating, and take top 3
+    return [...map.values()]
+      .filter(item => item.badge && item.badge.startsWith('★')) // has rating
+      .filter(item => item.to.startsWith('/movie/')) // only movies
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 3)
+      .map(({ rating: _r, ...item }) => item)
   }, [sortedCast, crewRows])
 
   const collagePosters = useMemo(() =>

@@ -27,7 +27,7 @@ export default function PersonCreditRail({ credits, sub = 'character' }: { credi
               className="flex flex-1 min-w-0 items-center gap-4 py-3 px-2 hover:bg-(--surface2) transition-colors rounded-md"
               style={{ alignSelf: 'stretch' }}
             >
-              <div className="h-14 w-14 min-w-14 min-h-14 overflow-hidden rounded-full bg-(--surface2) flex items-center justify-center">
+              <div className="h-10 w-10 min-w-10 min-h-10 overflow-hidden rounded-full bg-(--surface2) flex items-center justify-center">
                 {c.person.selected_profile_url
                   ? <img src={c.person.selected_profile_url} alt={c.person.name} className="h-full w-full object-cover" />
                   : <div className="flex h-full w-full items-center justify-center text-lg font-bold text-(--label3)">{c.person.name[0]}</div>}
