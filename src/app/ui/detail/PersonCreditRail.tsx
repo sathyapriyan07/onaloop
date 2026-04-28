@@ -33,9 +33,9 @@ export default function PersonCreditRail({ credits, sub = 'character' }: { credi
                   : <div className="flex h-full w-full items-center justify-center text-lg font-bold text-(--label3)">{c.person.name[0]}</div>}
               </div>
               <div className="flex flex-col min-w-0 justify-center">
-                <span className="truncate font-semibold text-base text-(--label2)">{c.person.name}</span>
+                <span className="truncate font-semibold text-[13px] text-(--label2)">{c.person.name}</span>
                 {(sub === 'character' ? c.character : c.job) && (
-                  <span className="truncate text-sm text-(--label2)">{sub === 'character' ? c.character : c.job}</span>
+                  <span className="truncate text-[11px] text-(--label2)">{sub === 'character' ? c.character : c.job}</span>
                 )}
               </div>
             </Link>
