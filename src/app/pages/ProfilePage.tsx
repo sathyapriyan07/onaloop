@@ -27,9 +27,9 @@ function ContentRow({ items }: { items: ContentItem[] }) {
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-2xl py-8 text-center" style={{ background: 'var(--surface)' }}>
+      <div className="flex flex-col items-center gap-2 rounded-2xl py-8 text-center" style={{ background: 'var(--surface)' }}>
       <div className="text-sm text-[var(--label3)]">{text}</div>
-      <Link to="/movies" className="mt-1 rounded-full px-4 py-1.5 text-xs font-semibold text-white" style={{ background: 'var(--accent)' }}>
+      <Link to="/movies" className="mt-1 rounded-full px-4 py-1.5 text-xs font-black" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
         Explore
       </Link>
     </div>
@@ -78,7 +78,7 @@ export default function ProfilePage() {
             <LogIn size={14} /> Log in
           </Link>
           <Link to="/signup" className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white hover:opacity-85 transition-opacity"
-            style={{ background: 'var(--accent)' }}>
+            style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
             Sign up free
           </Link>
         </div>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
       </div>
 
       <section className="space-y-3">
-        <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--label)]">
+        <h2 className="otl-section-title flex items-center gap-2 text-[var(--label)]">
           <Bookmark size={15} className="text-accent" /> Watchlist
           {watchlist.length > 0 && <span className="text-xs text-[var(--label3)] font-normal">{watchlist.length}</span>}
         </h2>
@@ -118,7 +118,7 @@ export default function ProfilePage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--label)]">
+        <h2 className="otl-section-title flex items-center gap-2 text-[var(--label)]">
           <Eye size={15} className="text-green-400" /> Watched
           {watched.length > 0 && <span className="text-xs text-[var(--label3)] font-normal">{watched.length}</span>}
         </h2>

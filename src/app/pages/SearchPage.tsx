@@ -86,7 +86,7 @@ export default function SearchPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Search</h1>
+      <h1 className="otl-title text-[var(--label)]">Search</h1>
 
       <div className="relative z-50">
         <div className="relative flex items-center">
@@ -196,10 +196,10 @@ export default function SearchPage() {
 
       {movies.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-[17px] font-bold text-[var(--label)]">Movies</h2>
+          <h2 className="otl-section-title text-[var(--label)]">Movies</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {movies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
+              <Link key={m.id} to={`/movie/${m.id}`} className="otl-card group aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5">
                 {m.selected_poster_url
                   ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{m.title}</div>}
@@ -213,10 +213,10 @@ export default function SearchPage() {
 
       {series.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-[17px] font-bold text-[var(--label)]">Series</h2>
+          <h2 className="otl-section-title text-[var(--label)]">Series</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {series.map((s) => (
-              <Link key={s.id} to={`/series/${s.id}`} className="group relative overflow-hidden rounded-xl aspect-[2/3]" style={{ background: 'var(--surface)' }}>
+              <Link key={s.id} to={`/series/${s.id}`} className="otl-card group aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5">
                 {s.selected_poster_url
                   ? <img src={s.selected_poster_url} alt={s.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{s.title}</div>}
@@ -230,12 +230,11 @@ export default function SearchPage() {
 
       {people.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-[17px] font-bold text-[var(--label)]">People</h2>
+          <h2 className="otl-section-title text-[var(--label)]">People</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
             {people.map((p) => (
               <Link key={p.id} to={`/person/${p.id}`}
-                className="flex items-center gap-3 rounded-xl p-3 hover:bg-[var(--surface2)] transition-colors"
-                style={{ background: 'var(--surface)' }}>
+                className="otl-card flex items-center gap-3 p-3 transition-transform duration-300 hover:-translate-y-0.5">
                 <div className="h-10 w-10 overflow-hidden rounded-full shrink-0" style={{ background: 'var(--surface2)' }}>
                   {p.selected_profile_url && <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" />}
                 </div>

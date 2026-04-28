@@ -15,7 +15,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
   const isDetailPage = isMovieDetail || isSeriesDetail || isPersonDetail
 
   return (
-    <div className="min-h-dvh" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-dvh">
       {!isDetailPage && !isHome && <FloatingBar />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
@@ -25,7 +25,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
           exit={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
           transition={reduceMotion ? { duration: 0 } : { duration: 0.18, ease: 'easeOut' }}
           className={`mx-auto w-full ${isHome ? 'max-w-none' : 'max-w-screen-2xl'} overflow-x-clip ${
-            isDetailPage ? 'pb-24' : isHome ? 'pb-24' : 'px-4 pb-24 pt-16'
+            isDetailPage ? 'pb-24' : isHome ? 'pb-24' : 'px-4 pb-24 pt-20'
           }`}
         >
           <Outlet />

@@ -272,13 +272,12 @@ export default function PersonDetailPage() {
 
             <section className="space-y-4">
               <div className="flex flex-wrap items-end justify-between gap-3">
-                <h2 className="text-[17px] font-bold tracking-tight">Filmography</h2>
+                <h2 className="otl-section-title text-[var(--label)]">Filmography</h2>
                 <div className="flex gap-1.5">
                   {(['cast', 'crew'] as const).map((t) => (
                     <button key={t} onClick={() => setTab(t)}
-                      className={clsx('rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-                        tab === t ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]')}
-                      style={tab === t ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}>
+                      className={clsx('otl-chip')}
+                      data-active={tab === t}>
                       {t === 'cast' ? `Acting (${castCount})` : `Crew (${crewRows.length})`}
                     </button>
                   ))}

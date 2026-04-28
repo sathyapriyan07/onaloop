@@ -19,9 +19,8 @@ const REGIONAL = ['ta', 'ml', 'hi', 'te', 'kn']
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button onClick={onClick}
-      className={clsx('shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-        active ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
-      style={active ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
+      className={clsx('otl-chip')}
+      data-active={active}>
       {children}
     </button>
   )
@@ -111,7 +110,7 @@ export default function DiscoverPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Discover</h1>
+          <h1 className="otl-title text-[var(--label)]">Discover</h1>
           <p className="text-xs text-[var(--label3)] mt-0.5">{results.length} titles</p>
         </div>
         <div className="flex items-center gap-2">
@@ -120,10 +119,7 @@ export default function DiscoverPage() {
               <X size={11} /> Clear
             </button>
           )}
-          <button onClick={() => setShowFilters((v) => !v)}
-            className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-              showFilters || activeFilterCount > 0 ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
-            style={showFilters || activeFilterCount > 0 ? { background: 'var(--accent)' } : { background: 'var(--surface)' }}>
+          <button onClick={() => setShowFilters((v) => !v)} className={clsx('otl-chip flex items-center gap-1.5')} data-active={showFilters || activeFilterCount > 0}>
             <SlidersHorizontal size={12} />
             Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
           </button>
@@ -147,7 +143,7 @@ export default function DiscoverPage() {
       </div>
 
       {showFilters && (
-        <div className="space-y-4 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
+        <div className="space-y-4 rounded-2xl p-4 border" style={{ background: 'var(--surface)', borderColor: 'var(--separator)' }}>
           <div className="space-y-2">
             <div className="text-[10px] uppercase tracking-wider text-[var(--label3)]">Genre</div>
             <div className="flex flex-wrap gap-1.5">
@@ -170,9 +166,8 @@ export default function DiscoverPage() {
               <div className="flex flex-wrap gap-1.5">
                 {platforms.map((p) => (
                   <button key={p.id} onClick={() => setPlatformFilter(platformFilter === p.id ? null : p.id)}
-                    className={clsx('flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-                      platformFilter === p.id ? 'text-white' : 'text-[var(--label2)] hover:text-[var(--label)]')}
-                    style={platformFilter === p.id ? { background: 'var(--accent)' } : { background: 'var(--surface2)' }}>
+                    className={clsx('otl-chip flex items-center gap-1.5')}
+                    data-active={platformFilter === p.id}>
                     {p.logo_url && <img src={p.logo_url} alt={p.name} className="h-3 w-auto max-w-[32px] object-contain" />}
                     {p.name}
                   </button>
@@ -200,8 +195,7 @@ export default function DiscoverPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {results.map((item) => (
             <Link key={`${item.type}-${item.id}`} to={item.to}
-              className="group relative overflow-hidden rounded-xl aspect-[2/3]"
-              style={{ background: 'var(--surface)' }}>
+              className="otl-card group aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5">
               {item.posterUrl
                 ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
                 : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{item.title}</div>}

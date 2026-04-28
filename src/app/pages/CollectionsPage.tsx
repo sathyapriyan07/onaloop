@@ -26,7 +26,7 @@ export default function CollectionsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-bold tracking-tight">Collections</h1>
+      <h1 className="otl-title text-[var(--label)]">Collections</h1>
       {collections.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-20 text-center">
           <div className="text-sm text-white/30">No collections yet.</div>
@@ -35,8 +35,7 @@ export default function CollectionsPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {collections.map((c) => (
             <Link key={c.id} to={`/collection/${c.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[16/9]"
-              style={{ background: 'var(--surface)' }}>
+              className="otl-card group aspect-[16/9] transition-transform duration-300 hover:-translate-y-0.5">
               {c.cover_image_url
                 ? <img src={c.cover_image_url} alt={c.name} loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />

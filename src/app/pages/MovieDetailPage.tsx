@@ -151,8 +151,8 @@ export default function MovieDetailPage() {
           <>
             {videoId ? (
               <button onClick={() => setTrailerOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-85"
-                style={{ background: 'var(--accent)' }}>
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black transition-opacity hover:opacity-90"
+                style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                 <Play size={13} fill="currentColor" />
                 Trailer
                 <ChevronDown size={13} className={`transition-transform duration-200 ${trailerOpen ? 'rotate-180' : ''}`} />
@@ -274,8 +274,8 @@ export default function MovieDetailPage() {
                     <TextArea placeholder="Write a review…" value={reviewText} onChange={(e) => setReviewText(e.target.value)} />
                     <div className="flex justify-end">
                       <button disabled={isSubmitting || !reviewText.trim()} onClick={submitReview}
-                        className="rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-40 transition-opacity hover:opacity-80"
-                        style={{ background: 'var(--accent)' }}>
+                        className="rounded-full px-5 py-2 text-sm font-black disabled:opacity-40 transition-opacity hover:opacity-90"
+                        style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                         Post
                       </button>
                     </div>

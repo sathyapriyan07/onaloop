@@ -19,14 +19,15 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
     <Link
       to={to}
       className={clsx(
-        'group relative block overflow-hidden rounded-xl transition-transform duration-300 hover:scale-[1.04]',
+        'otl-card group block transition-transform duration-300 hover:-translate-y-0.5',
         aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]',
       )}
-      style={{ background: 'var(--surface)' }}
     >
       {posterUrl ? (
         <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" />
       ) : null}
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 p-2.5">
         {logoUrl ? (
@@ -38,7 +39,7 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
           <div className="mt-0.5 flex items-center gap-1.5 text-[10px]">
             {rating ? (
               <span
-                className="flex items-center gap-0.5 rounded px-1 py-0.5 font-semibold backdrop-blur-sm"
+                className="flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-semibold backdrop-blur-sm"
                 style={{ background: 'var(--overlay-strong)', color: 'var(--label)' }}
               >
                 <Star size={8} className="text-yellow-400" fill="currentColor" />{rating}

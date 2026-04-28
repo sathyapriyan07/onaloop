@@ -8,8 +8,8 @@ export default function NotFoundPage() {
       <div className="flex gap-2">
         <Link
           to="/"
-          className="rounded-full px-5 py-2 text-sm font-semibold text-white hover:opacity-85 transition-opacity"
-          style={{ background: 'var(--accent)' }}
+          className="rounded-full px-5 py-2 text-sm font-black hover:opacity-90 transition-opacity"
+          style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
         >
           Go home
         </Link>

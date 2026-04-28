@@ -36,17 +36,17 @@ export default function GenreDetailPage() {
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-xl" style={{ background: '#161616' }}>
+      <div className="otl-card">
         <div className="aspect-[16/9] w-full md:aspect-[21/6]">
           {genre?.display_image_url
             ? <img src={genre.display_image_url} alt={genre.name} className="h-full w-full object-cover" />
-            : <div className="h-full w-full" style={{ background: '#1a1a1a' }} />}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
+            : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         </div>
         <div className="absolute inset-x-0 bottom-0 p-4">
           {loading
             ? <div className="h-7 w-32 skeleton rounded-lg" />
-            : <h1 className="text-2xl font-bold tracking-tight">{genre?.name}</h1>}
+            : <h1 className="otl-title text-[var(--label)]">{genre?.name}</h1>}
         </div>
       </div>
 

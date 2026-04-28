@@ -9,7 +9,8 @@ export default function TextArea({
     <textarea
       {...props}
       className={clsx(
-        'min-h-28 w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--accent)]',
+        'min-h-28 w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition-colors',
+        'focus:border-[var(--accent)] focus:shadow-[0_0_0_4px_var(--accent-glow)]',
         className,
       )}
       style={{ 

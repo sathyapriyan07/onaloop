@@ -27,16 +27,16 @@ export default function ContentGrid({ title, items, aspect = 'poster', colsClass
 
   return (
     <section className="space-y-3">
-      {title && <h2 className="text-[17px] font-bold tracking-tight text-[var(--label)]">{title}</h2>}
+      {title && <h2 className="otl-section-title text-[var(--label)]">{title}</h2>}
       <div className={`grid gap-2 ${gridClass}`}>
         {items.map((item) => (
           <Link key={item.id} to={item.to}
-            className={`group relative overflow-hidden rounded-xl ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
-            style={{ background: 'var(--surface)' }}>
+            className={`otl-card group transition-transform duration-300 hover:-translate-y-0.5 ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}>
             {item.imageUrl ? (
               <img src={item.imageUrl} alt={item.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
             ) : null}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
             {/* Title and logo removed as requested */}
             {item.badge && (
               <div

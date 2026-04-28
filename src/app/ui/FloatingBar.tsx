@@ -23,15 +23,6 @@ export default function FloatingBar() {
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const lastY = useRef(0)
-  const [isLight, setIsLight] = useState(document.documentElement.classList.contains('light'))
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsLight(document.documentElement.classList.contains('light'))
-    })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -54,36 +45,29 @@ export default function FloatingBar() {
 
   useKeyboardShortcut('/', () => navigate('/search'))
 
-  const bgOpacity = isLight ? (scrolled ? 0.92 : 0.85) : (scrolled ? 0.88 : 0.65)
-  const borderColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'
-  const textMutedColor = isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)'
-  const textMutedHover = isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.8)'
-  const hoverBg = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)'
-
   return (
     <div className="fixed top-3 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
       <header
-        className="pointer-events-auto flex items-center gap-0.5 px-1.5 py-1"
+        className="pointer-events-auto flex items-center gap-0.5 px-1.5 py-1 rounded-full border"
         style={{
-          background: isLight
-            ? `rgba(255,255,255,${bgOpacity})`
-            : `rgba(0,0,0,${bgOpacity})`,
+          background: scrolled ? 'rgba(20,22,26,0.92)' : 'rgba(20,22,26,0.78)',
+          borderColor: 'var(--separator)',
           backdropFilter: 'blur(24px) saturate(180%)',
           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          borderRadius: 999,
-          border: `1px solid ${borderColor}`,
-          boxShadow: scrolled ? '0 8px 40px rgba(0,0,0,0.25)' : 'none',
-          maxWidth: 700,
+          boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.35)' : '0 8px 30px rgba(0,0,0,0.22)',
+          maxWidth: 780,
           width: '100%',
           transform: hidden ? 'translateY(-72px)' : 'translateY(0)',
           opacity: hidden ? 0 : 1,
-          transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease, background 0.3s ease, border-color 0.3s ease',
+          transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease, background 0.25s ease',
         }}
       >
-        <Link to="/" className="flex items-center gap-1.5 px-2.5 py-1 shrink-0">
-          <Repeat2 size={14} className="text-accent" strokeWidth={2.5} />
-          <span className="text-[11px] font-bold tracking-tight hidden sm:inline">
-            On<span className="text-accent">The</span>Loop
+        <Link to="/" className="flex items-center gap-2 px-2.5 py-1.5 shrink-0">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
+            <Repeat2 size={14} strokeWidth={2.5} />
+          </span>
+          <span className="text-[11px] font-black tracking-tight hidden sm:inline text-[var(--label)]">
+            OnTheLoop
           </span>
         </Link>
 
@@ -91,15 +75,11 @@ export default function FloatingBar() {
           {navLinks.map(({ to, label, end }) => (
             <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
-                `px-3 py-1.5 text-[11px] font-medium rounded-full transition-all duration-200 ${
-                  isActive
-                    ? 'text-white bg-white/12'
-                    : `hover:opacity-100`
+                `px-3 py-1.5 text-[11px] font-semibold rounded-full transition-colors ${
+                  isActive ? 'text-[var(--on-accent)]' : 'text-[var(--label2)] hover:text-[var(--label)]'
                 }`
               }
-              style={({ isActive }: { isActive: boolean }) =>
-                !isActive ? { color: textMutedColor } : {}
-              }
+              style={({ isActive }: { isActive: boolean }) => isActive ? { background: 'var(--accent)' } : {}}
             >
               {label}
             </NavLink>
@@ -108,14 +88,12 @@ export default function FloatingBar() {
 
         <div className="flex items-center gap-0.5 ml-auto">
           <button onClick={() => navigate('/search')}
-            className="relative flex h-7 w-7 items-center justify-center rounded-full transition-colors"
-            style={{ color: textMutedColor }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = textMutedHover; (e.currentTarget as HTMLButtonElement).style.background = hoverBg }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = textMutedColor; (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+            className="relative flex h-8 w-8 items-center justify-center rounded-full border text-[var(--label2)] hover:text-[var(--label)] transition-colors"
+            style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'var(--separator)' }}
           >
             <Search size={13} />
             {newCount > 0 && (
-              <span className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full text-[6px] font-bold text-white" style={{ background: 'var(--accent)' }}>
+              <span className="absolute right-0.5 top-0.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-black" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                 {newCount > 9 ? '9+' : newCount}
               </span>
             )}
@@ -125,10 +103,8 @@ export default function FloatingBar() {
 
           {isAdmin && (
             <NavLink to="/admin"
-              className="flex h-7 w-7 items-center justify-center rounded-full transition-colors"
-              style={{ color: textMutedColor }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedHover; (e.currentTarget as HTMLAnchorElement).style.background = hoverBg }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedColor; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
+              className="flex h-8 w-8 items-center justify-center rounded-full border text-[var(--label2)] hover:text-[var(--label)] transition-colors"
+              style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'var(--separator)' }}
             >
               <Shield size={13} />
             </NavLink>
@@ -136,24 +112,19 @@ export default function FloatingBar() {
 
           {user ? (
             <Link to="/profile"
-              className="flex h-7 w-7 items-center justify-center rounded-full transition-colors"
-              style={{ color: textMutedColor }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedHover; (e.currentTarget as HTMLAnchorElement).style.background = hoverBg }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedColor; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
+              className="flex h-8 w-8 items-center justify-center rounded-full border text-[var(--label2)] hover:text-[var(--label)] transition-colors"
+              style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'var(--separator)' }}
             >
               <User size={13} />
             </Link>
           ) : (
             <>
               <NavLink to="/login"
-                className="px-2.5 py-1 text-[11px] font-medium rounded-full transition-colors"
-                style={{ color: textMutedColor }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedHover; (e.currentTarget as HTMLAnchorElement).style.background = hoverBg }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = textMutedColor; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
+                className="px-3 py-1.5 text-[11px] font-semibold rounded-full text-[var(--label2)] hover:text-[var(--label)] hover:bg-white/5 transition-colors"
               >
                 Log in
               </NavLink>
-              <NavLink to="/signup" className="px-3 py-1 text-[11px] font-semibold text-white rounded-full transition-opacity hover:opacity-85" style={{ background: 'var(--accent)' }}>
+              <NavLink to="/signup" className="px-3 py-1.5 text-[11px] font-black rounded-full transition-opacity hover:opacity-90" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                 Sign up
               </NavLink>
             </>

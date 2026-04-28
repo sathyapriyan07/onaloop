@@ -17,7 +17,7 @@ export default function GenresPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Genres</h1>
+      <h1 className="otl-title text-[var(--label)]">Genres</h1>
       {loading ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/2] rounded-xl skeleton" />)}
@@ -26,8 +26,7 @@ export default function GenresPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {genres.map((g) => (
             <Link key={g.id} to={`/genre/${g.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[3/2]"
-              style={{ background: 'var(--surface)' }}>
+              className="otl-card group aspect-[3/2] transition-transform duration-300 hover:-translate-y-0.5">
               {g.display_image_url
                 ? <img src={g.display_image_url} alt={g.name} loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />

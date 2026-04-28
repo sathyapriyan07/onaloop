@@ -54,7 +54,7 @@ export default function HomeBanner(_props: Props) {
         type="button"
         onClick={() => navigate('/discover')}
         className="absolute left-1/2 -translate-x-1/2 bottom-16 rounded-full px-14 py-3.5 text-[15px] font-bold tracking-tight shadow-[0_18px_70px_rgba(0,0,0,0.35)] hover:opacity-90 transition-opacity"
-        style={{ background: 'var(--label)', color: 'var(--bg)' }}
+        style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
       >
         Explore
       </button>

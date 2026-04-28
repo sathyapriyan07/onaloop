@@ -9,8 +9,8 @@ export default function AppCrashedPage() {
         <div className="mt-4 flex justify-center gap-2">
           <button
             onClick={() => window.location.reload()}
-            className="rounded-full px-5 py-2 text-sm font-semibold text-white hover:opacity-85 transition-opacity"
-            style={{ background: 'var(--accent)' }}
+            className="rounded-full px-5 py-2 text-sm font-black hover:opacity-90 transition-opacity"
+            style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
           >
             Refresh
           </button>

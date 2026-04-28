@@ -52,7 +52,7 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-[17px] font-bold tracking-tight text-[var(--label)]">{title}</h2>
+        <h2 className="otl-section-title text-[var(--label)]">{title}</h2>
         <div className="flex items-center gap-1.5">
           {viewAllTo && (
             <Link to={viewAllTo} className="flex items-center gap-0.5 text-[11px] font-semibold text-accent hover:opacity-80 transition-opacity">
@@ -61,13 +61,13 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
           )}
           <div className="hidden md:flex gap-0.5">
             <button ref={prevBtnRef} onClick={() => emblaApi?.scrollPrev()}
-              className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'var(--surface2)' }}>
+              className="flex h-7 w-7 items-center justify-center rounded-full border text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'var(--surface2)', borderColor: 'var(--separator)' }}>
               <ChevronLeft size={13} />
             </button>
             <button ref={nextBtnRef} onClick={() => emblaApi?.scrollNext()}
-              className="flex h-6 w-6 items-center justify-center rounded-full text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
-              style={{ background: 'var(--surface2)' }}>
+              className="flex h-7 w-7 items-center justify-center rounded-full border text-[var(--label2)] hover:text-[var(--label)] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              style={{ background: 'var(--surface2)', borderColor: 'var(--separator)' }}>
               <ChevronRight size={13} />
             </button>
           </div>
@@ -80,13 +80,13 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
             <Link
               key={item.id}
               to={item.to}
-              className={`group relative shrink-0 overflow-hidden rounded-xl ${cardW} ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
-              style={{ background: 'var(--surface)' }}
+              className={`otl-card group shrink-0 transition-transform duration-300 hover:-translate-y-0.5 ${cardW} ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
             >
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt={item.title} loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
               ) : null}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               {/* Title, overlay, and fallback removed as requested */}
             </Link>
           ))}

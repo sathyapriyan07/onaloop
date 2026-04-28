@@ -7,7 +7,8 @@ const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>
       ref={ref}
       {...props}
       className={clsx(
-        'w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--accent)]',
+        'w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors',
+        'focus:border-[var(--accent)] focus:shadow-[0_0_0_4px_var(--accent-glow)]',
         className,
       )}
       style={{ 

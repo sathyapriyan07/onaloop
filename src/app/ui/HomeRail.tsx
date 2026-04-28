@@ -20,7 +20,7 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3 px-4">
-        <h2 className="text-[20px] font-bold tracking-tight text-[var(--label)]">{title}</h2>
+        <h2 className="text-[20px] font-extrabold tracking-tight text-[var(--label)]">{title}</h2>
         {viewAllTo ? (
           <Link to={viewAllTo} className="flex items-center gap-1 text-[11px] font-semibold text-accent hover:opacity-80 transition-opacity pb-1">
             See All <ArrowRight size={14} />
@@ -34,8 +34,7 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
             <Link
               key={item.id}
               to={item.to}
-              className="group relative shrink-0 w-[calc((100vw-2rem-1.5rem)/3)] sm:w-[34vw] sm:max-w-[200px] aspect-[2/3] overflow-hidden rounded-[18px]"
-              style={{ background: 'var(--surface)' }}
+              className="otl-card group shrink-0 w-[calc((100vw-2rem-1.5rem)/3)] sm:w-[34vw] sm:max-w-[200px] aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5"
             >
               {item.posterUrl ? (
                 <img
@@ -45,6 +44,7 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               ) : null}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
             </Link>
           ))}
         </div>

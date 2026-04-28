@@ -19,13 +19,13 @@ export default function PlatformsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Platforms</h1>
+      <h1 className="otl-title text-[var(--label)]">Platforms</h1>
 
       <div className="flex gap-1.5">
         {(['ott', 'music'] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className="rounded-full px-4 py-1.5 text-[11px] font-semibold transition-colors"
-            style={tab === t ? { background: 'var(--surface2)', color: 'var(--label)' } : { background: 'var(--surface)', color: 'var(--label2)' }}>
+            className="otl-chip"
+            data-active={tab === t}>
             {t === 'ott' ? 'Streaming' : 'Music'}
           </button>
         ))}
@@ -41,8 +41,7 @@ export default function PlatformsPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((p) => (
             <Link key={p.id} to={`/platform/${p.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[16/9]"
-              style={{ background: 'var(--surface)' }}>
+              className="otl-card group aspect-[16/9] transition-transform duration-300 hover:-translate-y-0.5">
               {p.display_image_url
                 ? <img src={p.display_image_url} alt={p.name} loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />

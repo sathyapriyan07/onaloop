@@ -22,11 +22,8 @@ function FilterRow({ options, value, onChange }: { options: string[]; value: str
     <div className="snap-x-rail touch-pan-x flex gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {options.map((o) => (
         <button key={o} onClick={() => onChange(o)}
-          className={clsx(
-            'shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors',
-            o === value ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]',
-          )}
-          style={o === value ? { background: 'var(--surface2)' } : { background: 'var(--surface)' }}
+          className={clsx('otl-chip')}
+          data-active={o === value}
         >
           {o}
         </button>
@@ -69,7 +66,7 @@ export default function SeriesPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-[28px] font-bold tracking-tight text-[var(--label)]">Series</h1>
+      <h1 className="otl-title text-[var(--label)]">Series</h1>
 
       <FilterRow options={years} value={yearFilter} onChange={setYearFilter} />
       <FilterRow
@@ -82,8 +79,7 @@ export default function SeriesPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {filtered.map((s) => (
             <Link key={s.id} to={`/series/${s.id}`}
-              className="group relative overflow-hidden rounded-xl aspect-[2/3]"
-              style={{ background: 'var(--surface)' }}>
+              className="otl-card group aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5">
               <img src={s.selected_poster_url!} alt={s.title} loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
