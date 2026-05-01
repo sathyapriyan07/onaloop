@@ -12,9 +12,9 @@ type Props = {
 
 export default function DetailHero({ title, backdropUrl, posterUrl, logoUrl, meta, right }: Props) {
   return (
-    <section className="relative">
+    <section className="relative pt-6">
       <div className="mx-auto w-full max-w-screen-xl px-4">
-        <div className="relative overflow-hidden rounded-[28px]" style={{ background: 'var(--surface)' }}>
+        <div className="relative overflow-hidden rounded-[14px]" style={{ background: 'var(--surface)' }}>
           <div className="relative h-[200px] w-full md:h-[280px] lg:h-[340px]">
             {backdropUrl ? (
               <img src={backdropUrl} alt={title} className="h-full w-full object-cover" />
