@@ -132,27 +132,6 @@ export default function SeriesDetailPage() {
             ) : null}
           </div>
         )}
-        actions={(
-          <>
-            {videoId ? (
-              <button onClick={() => setTrailerOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black transition-opacity hover:opacity-90"
-                style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
-                <Play size={13} fill="currentColor" />
-                Trailer
-                <ChevronDown size={13} className={`transition-transform duration-200 ${trailerOpen ? 'rotate-180' : ''}`} />
-              </button>
-            ) : null}
-            <button onClick={toggleWatchlist} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
-              {inWatchlist ? <BookmarkCheck size={14} className="text-accent" /> : <Bookmark size={14} className="text-[var(--label2)]" />}
-              <span className={inWatchlist ? 'text-accent' : 'text-[var(--label2)]'}>{inWatchlist ? 'Saved' : 'Watchlist'}</span>
-            </button>
-            <button onClick={toggleWatched} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
-              {isWatched ? <Eye size={14} className="text-green-400" /> : <EyeOff size={14} className="text-[var(--label2)]" />}
-              <span className={isWatched ? 'text-green-400' : 'text-[var(--label2)]'}>{isWatched ? 'Watched' : 'Watched?'}</span>
-            </button>
-          </>
-        )}
         right={(
           <div className="rounded-2xl border p-4" style={{ background: 'var(--surface)', borderColor: 'var(--separator)' }}>
             <div className="text-[10px] uppercase tracking-widest text-[var(--label3)]">Ratings</div>
@@ -166,6 +145,26 @@ export default function SeriesDetailPage() {
       <div className="mx-auto w-full max-w-screen-xl px-4 pb-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <main className="min-w-0 space-y-6">
+            <div className="flex flex-wrap gap-2">
+              {videoId ? (
+                <button onClick={() => setTrailerOpen((v) => !v)}
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black transition-opacity hover:opacity-90"
+                  style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
+                  <Play size={13} fill="currentColor" />
+                  Trailer
+                  <ChevronDown size={13} className={`transition-transform duration-200 ${trailerOpen ? 'rotate-180' : ''}`} />
+                </button>
+              ) : null}
+              <button onClick={toggleWatchlist} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
+                {inWatchlist ? <BookmarkCheck size={14} className="text-accent" /> : <Bookmark size={14} className="text-[var(--label2)]" />}
+                <span className={inWatchlist ? 'text-accent' : 'text-[var(--label2)]'}>{inWatchlist ? 'Saved' : 'Watchlist'}</span>
+              </button>
+              <button onClick={toggleWatched} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors" style={{ background: 'var(--surface)' }}>
+                {isWatched ? <Eye size={14} className="text-green-400" /> : <EyeOff size={14} className="text-[var(--label2)]" />}
+                <span className={isWatched ? 'text-green-400' : 'text-[var(--label2)]'}>{isWatched ? 'Watched' : 'Watched?'}</span>
+              </button>
+            </div>
+
             {genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {genres.map((g) => (
