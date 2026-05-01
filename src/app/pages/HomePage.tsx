@@ -15,8 +15,6 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
   return value
 }
 
-// removed emoji helper
-
 export default function HomePage() {
   usePageMeta({ title: null })
   const [sections, setSections] = useState<HomeSection[]>([])
@@ -67,12 +65,12 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       <HomeBanner items={banners} />
 
-      <div className="space-y-10">
+      <div className="space-y-12">
         {loading ? (
-          <div className="px-4 space-y-8">
+          <div className="px-4 space-y-10">
             <SkeletonRail count={5} />
             <SkeletonRail count={5} />
           </div>
@@ -82,7 +80,7 @@ export default function HomePage() {
             <div className="text-xs text-[var(--label3)]">Start exploring movies and series!</div>
           </div>
         ) : (
-          <div className="space-y-10">
+          <div className="space-y-12">
             {sections.map((section) => {
               const sectionItems = (itemsBySection[section.id] ?? [])
                 .map((row: any) => {

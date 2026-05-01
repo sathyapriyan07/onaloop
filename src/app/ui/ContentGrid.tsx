@@ -27,7 +27,7 @@ export default function ContentGrid({ title, items, aspect = 'poster', colsClass
 
   return (
     <section className="space-y-4">
-      {title && <h2 className="otl-section-title text-[var(--label)]">{title}</h2>}
+      {title && <h2 className="text-[15px] font-extrabold tracking-tight text-[var(--label)]">{title}</h2>}
       <div className={`grid gap-5 ${gridClass}`}>
         {items.map((item) => (
           <Link key={item.id} to={item.to}

@@ -112,7 +112,7 @@ iframe { max-width: 100%; }
   .otl-container { @apply mx-auto w-full max-w-screen-2xl px-4; }
   .otl-page { @apply space-y-6; }
   .otl-title { @apply text-[28px] sm:text-[32px] font-black tracking-tight; }
-  .otl-section-title { @apply text-[17px] font-extrabold tracking-tight; }
+  .otl-section-title { @apply text-[15px] font-extrabold tracking-tight; }
 
   .otl-chip {
     @apply shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold transition-colors;
@@ -128,10 +128,9 @@ iframe { max-width: 100%; }
   }
 
   .otl-card {
-    @apply relative overflow-hidden rounded-xl border;
+    @apply relative overflow-hidden rounded-[14px] border;
     background: var(--surface);
     border-color: var(--separator);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   }
-  .otl-card:hover { box-shadow: 0 14px 44px rgba(0,0,0,0.28); }
 }

@@ -46,13 +46,13 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
   if (!items.length) return null
 
   const cardW = aspect === 'poster'
-    ? 'w-[38vw] max-w-[160px] md:max-w-[175px]'
-    : 'w-[68vw] max-w-[320px]'
+    ? 'w-[38vw] max-w-[170px] md:max-w-[185px]'
+    : 'w-[68vw] max-w-[340px]'
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3.5">
       <div className="flex items-center justify-between">
-        <h2 className="otl-section-title text-[var(--label)]">{title}</h2>
+        <h2 className="text-[15px] font-extrabold tracking-tight text-[var(--label)]">{title}</h2>
         <div className="flex items-center gap-1.5">
           {viewAllTo && (
             <Link to={viewAllTo} className="flex items-center gap-0.5 text-[11px] font-semibold text-accent hover:opacity-80 transition-opacity">
@@ -75,19 +75,18 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
       </div>
 
       <div className="overflow-hidden -mx-4" ref={emblaRef}>
-        <div className="flex gap-2.5 px-4 pb-1">
+        <div className="flex gap-4 px-4 pb-1">
           {items.map((item) => (
             <Link
               key={item.id}
               to={item.to}
-              className={`otl-card shrink-0 ${cardW} ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
+              className={`otl-card shrink-0 ${cardW} rounded-[14px] overflow-hidden ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
             >
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt={item.title} loading="lazy"
                   className="h-full w-full object-cover" />
               ) : null}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              {/* Title, overlay, and fallback removed as requested */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </Link>
           ))}
         </div>
