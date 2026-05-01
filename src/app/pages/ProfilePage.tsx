@@ -12,10 +12,10 @@ function ContentRow({ items }: { items: ContentItem[] }) {
   return (
     <div className="flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {items.map((item) => (
-        <Link key={item.id} to={item.to} className="group shrink-0 w-24">
+        <Link key={item.id} to={item.to} className="shrink-0 w-24">
           <div className="aspect-[2/3] overflow-hidden rounded-xl" style={{ background: 'var(--surface2)' }}>
             {item.posterUrl
-              ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+              ? <img src={item.posterUrl} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
               : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[9px] text-[var(--label3)]">{item.title}</div>}
           </div>
           <div className="mt-1.5 line-clamp-2 text-[10px] font-medium leading-tight text-[var(--label2)]">{item.title}</div>

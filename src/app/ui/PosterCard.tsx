@@ -19,12 +19,12 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
     <Link
       to={to}
       className={clsx(
-        'otl-card group block transition-transform duration-300 hover:-translate-y-0.5',
+        'otl-card block',
         aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]',
       )}
     >
       {posterUrl ? (
-        <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" />
+        <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover" />
       ) : null}
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />

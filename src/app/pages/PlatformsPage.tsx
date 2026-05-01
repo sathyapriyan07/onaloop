@@ -41,10 +41,10 @@ export default function PlatformsPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((p) => (
             <Link key={p.id} to={`/platform/${p.id}`}
-              className="otl-card group aspect-[16/9] transition-transform duration-300 hover:-translate-y-0.5">
+              className="otl-card aspect-[16/9]">
               {p.display_image_url
                 ? <img src={p.display_image_url} alt={p.name} loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                    className="h-full w-full object-cover" />
                 : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2), transparent)' }} />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">

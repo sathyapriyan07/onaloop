@@ -76,9 +76,9 @@ export default function MoviesPage() {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
         {filtered.map((m) => (
           <Link key={m.id} to={`/movie/${m.id}`}
-            className="otl-card group aspect-[2/3] transition-transform duration-300 hover:-translate-y-0.5">
+            className="otl-card aspect-[2/3]">
             <img src={m.selected_poster_url!} alt={m.title} loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+              className="h-full w-full object-cover" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-2">
               {m.selected_logo_url

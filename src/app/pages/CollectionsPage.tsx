@@ -35,10 +35,10 @@ export default function CollectionsPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {collections.map((c) => (
             <Link key={c.id} to={`/collection/${c.id}`}
-              className="otl-card group aspect-[16/9] transition-transform duration-300 hover:-translate-y-0.5">
+              className="otl-card aspect-[16/9]">
               {c.cover_image_url
                 ? <img src={c.cover_image_url} alt={c.name} loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                    className="h-full w-full object-cover" />
                 : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-2.5">

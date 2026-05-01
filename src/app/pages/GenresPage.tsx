@@ -26,10 +26,10 @@ export default function GenresPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {genres.map((g) => (
             <Link key={g.id} to={`/genre/${g.id}`}
-              className="otl-card group aspect-[3/2] transition-transform duration-300 hover:-translate-y-0.5">
+              className="otl-card aspect-[3/2]">
               {g.display_image_url
                 ? <img src={g.display_image_url} alt={g.name} loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+                    className="h-full w-full object-cover" />
                 : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2), transparent)' }} />
               <div className="absolute inset-x-0 bottom-0 p-3">
