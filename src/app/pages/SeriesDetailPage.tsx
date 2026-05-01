@@ -36,6 +36,7 @@ export default function SeriesDetailPage() {
   const [credits, setCredits] = useState<CreditRow[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [streamingLinks, setStreamingLinks] = useState<LinkRow[]>([])
+  const [musicLinks, setMusicLinks] = useState<LinkRow[]>([])
   const [reviewText, setReviewText] = useState('')
   const [reviewRating, setReviewRating] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -48,12 +49,13 @@ export default function SeriesDetailPage() {
     if (!id) return
     let isMounted = true
     async function run() {
-      const [{ data: row }, { data: genreRows }, { data: creditRows }, { data: reviewRows }, { data: streamingRows }] = await Promise.all([
+      const [{ data: row }, { data: genreRows }, { data: creditRows }, { data: reviewRows }, { data: streamingRows }, { data: musicRows }] = await Promise.all([
         supabase.from('series').select('id,title,overview,first_air_date,tmdb_rating,trailer_url,selected_backdrop_url,selected_logo_url,selected_poster_url').eq('id', id).maybeSingle(),
         supabase.from('series_genres').select('genre:genres(id,name)').eq('series_id', id),
         supabase.from('credits').select('id,credit_type,character,job,sort_order,person:people(id,name,selected_profile_url)').eq('series_id', id).order('sort_order', { ascending: true }),
         supabase.from('reviews').select('id,user_id,rating,review_text,created_at').eq('series_id', id).order('created_at', { ascending: false }),
         supabase.from('series_streaming_links').select('id,label,url,cover_image_url,platform:platforms(name,logo_url)').eq('series_id', id).order('sort_order'),
+        supabase.from('series_music_links').select('id,label,url,cover_image_url,platform:platforms(name,logo_url)').eq('series_id', id).order('sort_order'),
       ])
       if (!isMounted) return
       setSeries((row ?? null) as Series | null)
@@ -62,6 +64,7 @@ export default function SeriesDetailPage() {
       setCredits((creditRows ?? []) as unknown as CreditRow[])
       setReviews((reviewRows ?? []) as unknown as Review[])
       setStreamingLinks((streamingRows ?? []) as unknown as LinkRow[])
+      setMusicLinks((musicRows ?? []) as unknown as LinkRow[])
       if (fetchedGenres.length >= 1) {
         const { data: simRows } = await supabase.from('series_genres').select('series_id,genre_id,series:series(id,title,selected_poster_url,selected_logo_url,tmdb_rating)').in('genre_id', fetchedGenres.map((g) => g.id)).neq('series_id', id)
         if (isMounted) {
@@ -193,6 +196,32 @@ export default function SeriesDetailPage() {
                     className="h-full w-full max-w-full" style={{ border: 'none' }} />
                 </div>
               </div>
+            )}
+
+            {musicLinks.length > 0 && (
+              <DetailSection title="Music">
+                <div className="flex flex-col gap-2">
+                  {musicLinks.map((l) => {
+                    const logo = (l.platform as any)?.logo_url
+                    const name = (l.platform as any)?.name ?? l.label
+                    return (
+                      <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
+                        style={{ background: 'var(--surface)' }}>
+                        {l.cover_image_url ? (
+                          <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                        ) : logo ? (
+                          <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
+                        ) : null}
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                          {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Listen now</div>}
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+              </DetailSection>
             )}
 
             {cast.length > 0 && (

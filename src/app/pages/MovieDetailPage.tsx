@@ -173,7 +173,6 @@ export default function MovieDetailPage() {
             <div className="text-[10px] uppercase tracking-widest text-[var(--label3)]">Ratings</div>
             <div className="mt-3 space-y-2">
               <RatingRow label="TMDB" value={movie.tmdb_rating ? `${movie.tmdb_rating}/10` : '—'} />
-              <RatingRow label="Community" value={avgRating ? `${avgRating}/5` : '—'} />
               <RatingRow label="IMDb" value={movie.imdb_rating ? `${movie.imdb_rating}/10` : '—'} />
               <RatingRow label="Rotten Tomatoes" value={movie.rotten_tomatoes_rating ? `${movie.rotten_tomatoes_rating}%` : '—'} />
             </div>
@@ -232,6 +231,32 @@ export default function MovieDetailPage() {
                         <div className="min-w-0">
                           <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
                           {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Watch now</div>}
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+              </DetailSection>
+            )}
+
+            {musicLinks.length > 0 && (
+              <DetailSection title="Music">
+                <div className="flex flex-col gap-2">
+                  {musicLinks.map((l) => {
+                    const logo = (l.platform as any)?.logo_url
+                    const name = (l.platform as any)?.name ?? l.label
+                    return (
+                      <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
+                        className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
+                        style={{ background: 'var(--surface)' }}>
+                        {l.cover_image_url ? (
+                          <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                        ) : logo ? (
+                          <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
+                        ) : null}
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
+                          {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Listen now</div>}
                         </div>
                       </a>
                     )
@@ -342,31 +367,6 @@ export default function MovieDetailPage() {
               )}
             </div>
 
-            {musicLinks.length > 0 && (
-              <DetailSection title="Music">
-                <div className="flex flex-col gap-2">
-                  {musicLinks.map((l) => {
-                    const logo = (l.platform as any)?.logo_url
-                    const name = (l.platform as any)?.name ?? l.label
-                    return (
-                      <a key={l.id} href={l.url} target="_blank" rel="noreferrer"
-                        className="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors hover:brightness-125"
-                        style={{ background: 'var(--surface)' }}>
-                        {l.cover_image_url ? (
-                          <img src={l.cover_image_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
-                        ) : logo ? (
-                          <img src={logo} alt={name} className="h-5 w-auto max-w-[56px] object-contain shrink-0" />
-                        ) : null}
-                        <div className="min-w-0">
-                          <div className="text-xs font-semibold text-[var(--label)]">{name}</div>
-                          {l.cover_image_url && <div className="text-[10px] text-[var(--label3)]">Listen now</div>}
-                        </div>
-                      </a>
-                    )
-                  })}
-                </div>
-              </DetailSection>
-            )}
           </aside>
         </div>
       </div>
