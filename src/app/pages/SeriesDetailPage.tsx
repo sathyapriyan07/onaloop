@@ -145,6 +145,26 @@ export default function SeriesDetailPage() {
       <div className="mx-auto w-full max-w-screen-xl px-4 pb-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <main className="min-w-0 space-y-6">
+            {series.overview ? (
+              <Expandable
+                preview={<p className="text-sm leading-relaxed text-[var(--label2)] line-clamp-4">{series.overview}</p>}
+                label="Read more" collapseLabel="Show less">
+                <p className="text-sm leading-relaxed text-[var(--label2)]">{series.overview}</p>
+              </Expandable>
+            ) : null}
+
+            {genres.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {genres.map((g) => (
+                  <Link key={g.id} to={`/genre/${g.id}`}
+                    className="rounded-full px-4 py-2 text-xs font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
+                    style={{ background: 'var(--surface)' }}>
+                    {g.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2">
               {videoId ? (
                 <button onClick={() => setTrailerOpen((v) => !v)}
@@ -164,26 +184,6 @@ export default function SeriesDetailPage() {
                 <span className={isWatched ? 'text-green-400' : 'text-[var(--label2)]'}>{isWatched ? 'Watched' : 'Watched?'}</span>
               </button>
             </div>
-
-            {genres.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {genres.map((g) => (
-                  <Link key={g.id} to={`/genre/${g.id}`}
-                    className="rounded-full px-4 py-2 text-xs font-semibold text-[var(--label2)] hover:text-[var(--label)] transition-colors"
-                    style={{ background: 'var(--surface)' }}>
-                    {g.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {series.overview ? (
-              <Expandable
-                preview={<p className="text-sm leading-relaxed text-[var(--label2)] line-clamp-4">{series.overview}</p>}
-                label="Read more" collapseLabel="Show less">
-                <p className="text-sm leading-relaxed text-[var(--label2)]">{series.overview}</p>
-              </Expandable>
-            ) : null}
 
             {videoId && trailerOpen && (
               <div className="overflow-hidden rounded-2xl" style={{ background: 'var(--surface)' }}>
