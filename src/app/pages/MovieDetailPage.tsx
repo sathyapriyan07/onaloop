@@ -7,7 +7,6 @@ import Gallery from '../ui/Gallery'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import StarRating from '../ui/StarRating'
-import RatingSummary from '../ui/RatingSummary'
 import DetailHero from '../ui/detail/DetailHero'
 import DetailSection from '../ui/detail/DetailSection'
 import PersonCreditRail from '../ui/detail/PersonCreditRail'
@@ -292,7 +291,6 @@ export default function MovieDetailPage() {
 
             <DetailSection title={`Reviews${avgRating ? ` · ★ ${avgRating}` : ''}`}>
               <div className="space-y-3">
-                <RatingSummary ratings={reviews.map((r) => r.rating)} />
                 {user ? (
                   <div className="space-y-3 rounded-2xl p-4" style={{ background: 'var(--surface)' }}>
                     <StarRating value={reviewRating} onChange={setReviewRating} />
