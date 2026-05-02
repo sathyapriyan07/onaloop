@@ -189,7 +189,7 @@ export default function MovieDetailPage() {
             <div className="space-y-3">
               {studios.length > 0 && (
                 <div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--label3)] mb-2">Studios</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--label3)] mb-2">Production</div>
                   <div className="flex flex-wrap gap-2">
                     {studios.map((s) => (
                       <Link key={s.id} to={`/studio/${s.id}`}

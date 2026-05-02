@@ -58,7 +58,7 @@ export default function ProductionHouseDetailPage() {
       {studio.description ? <p className="text-sm text-white/60">{studio.description}</p> : null}
 
       {movies.length ? (
-        <PosterRail title="Movies" items={movies} />
+        <PosterRail title={`${studio.name} Movies`} items={movies} />
       ) : (
         <div className="text-sm text-white/50">No movies assigned yet.</div>
       )}
