@@ -38,8 +38,8 @@ export default function HomeBanner(_props: Props) {
             <div key={ci} className="flex flex-1 flex-col gap-1.5"
               style={{ marginTop: ci % 2 === 1 ? '-20px' : ci % 3 === 2 ? '-10px' : '0px' }}>
               {col.map((url, ri) => (
-                <img key={ri} src={url} alt="" loading="lazy"
-                  className="w-full aspect-[2/3] object-cover rounded-[10px] shrink-0" />
+                <img key={ri} src={url} alt=""
+                  className="w-full aspect-[193/256] object-cover rounded-[10px] shrink-0" />
               ))}
             </div>
           ))}

@@ -95,7 +95,7 @@ export default function AdminHeroCollagePage() {
             if (!m) return null
             return (
               <div key={item.id} className="group relative">
-                <div className="aspect-[2/3] overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                <div className="aspect-[193/256] overflow-hidden rounded-xl border border-white/10 bg-white/5">
                   {m.selected_poster_url
                     ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" />
                     : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-white/30">{m.title}</div>

@@ -80,10 +80,10 @@ export default function ContentRail({ title, items, aspect = 'poster', viewAllTo
             <Link
               key={item.id}
               to={item.to}
-              className={`otl-card shrink-0 ${cardW} rounded-[14px] overflow-hidden ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}
+              className={`otl-card shrink-0 ${cardW} ${aspect === 'poster' ? 'aspect-[193/256]' : 'aspect-[16/9]'}`}
             >
               {item.imageUrl ? (
-                <img src={item.imageUrl} alt={item.title} loading="lazy"
+                <img src={item.imageUrl} alt={item.title}
                   className="h-full w-full object-cover" />
               ) : null}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />

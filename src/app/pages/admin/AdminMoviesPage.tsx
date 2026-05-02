@@ -548,13 +548,13 @@ export default function AdminMoviesPage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search movies…" />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {movies.filter((m) => m.title.toLowerCase().includes(search.toLowerCase())).map((m) => (
           <div key={m.id} className="group relative">
             <button onClick={() => startEdit(m)} className="w-full text-left">
-              <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-white/5">
+              <div className="relative aspect-[193/256] overflow-hidden rounded-xl bg-white/5">
                 {m.selected_poster_url
-                  ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" loading="lazy" />
+                  ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-white/30">{m.title}</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-1.5">

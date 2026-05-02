@@ -76,16 +76,16 @@ export default function SeriesPage() {
       />
 
       {loading ? <PosterGridSkeleton count={18} /> : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
+        <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {filtered.map((s) => (
             <Link key={s.id} to={`/series/${s.id}`}
-              className="otl-card aspect-[2/3]">
-              <img src={s.selected_poster_url!} alt={s.title} loading="lazy"
+              className="otl-card aspect-[193/256]">
+              <img src={s.selected_poster_url!} alt={s.title}
                 className="h-full w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-2">
                 {s.selected_logo_url
-                  ? <img src={s.selected_logo_url} alt="" className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" loading="lazy" />
+                  ? <img src={s.selected_logo_url} alt="" className="max-h-6 max-w-[85%] object-contain object-left drop-shadow-md" />
                   : <div className="line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{s.title}</div>}
               </div>
             </Link>

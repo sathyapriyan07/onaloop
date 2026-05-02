@@ -43,7 +43,7 @@ export default function PlatformsPage() {
             <Link key={p.id} to={`/platform/${p.id}`}
               className="otl-card aspect-[16/9]">
               {p.display_image_url
-                ? <img src={p.display_image_url} alt={p.name} loading="lazy"
+                ? <img src={p.display_image_url} alt={p.name}
                     className="h-full w-full object-cover" />
                 : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2), transparent)' }} />

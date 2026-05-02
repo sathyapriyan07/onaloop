@@ -25,7 +25,6 @@ export default function Gallery({ images, title }: Props) {
             <img
               src={url}
               alt={`${title} ${i + 1}`}
-              loading="lazy"
               className="w-full h-auto block"
             />
           </div>

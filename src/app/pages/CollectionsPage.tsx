@@ -37,7 +37,7 @@ export default function CollectionsPage() {
             <Link key={c.id} to={`/collection/${c.id}`}
               className="otl-card aspect-[16/9]">
               {c.cover_image_url
-                ? <img src={c.cover_image_url} alt={c.name} loading="lazy"
+                ? <img src={c.cover_image_url} alt={c.name}
                     className="h-full w-full object-cover" />
                 : <div className="h-full w-full" style={{ background: 'var(--surface2)' }} />}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />

@@ -58,7 +58,7 @@ body {
   @apply antialiased;
   background-color: var(--bg);
   color: var(--label);
-  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Momo Trust Sans', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -128,9 +128,8 @@ iframe { max-width: 100%; }
   }
 
   .otl-card {
-    @apply relative overflow-hidden rounded-[14px] border;
+    @apply relative overflow-hidden rounded-[18px];
     background: var(--surface);
-    border-color: var(--separator);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.45);
   }
 }

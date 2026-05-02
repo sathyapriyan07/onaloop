@@ -55,12 +55,12 @@ export default function CollectionDetailPage() {
       {items.length === 0 ? (
         <div className="text-sm text-white/30">No items in this collection yet.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {items.map((item) => (
             <Link key={item.id} to={item.to}
-              className="otl-card aspect-[2/3]">
+              className="otl-card aspect-[193/256]">
               {item.posterUrl
-                ? <img src={item.posterUrl} alt={item.title} loading="lazy"
+                ? <img src={item.posterUrl} alt={item.title}
                     className="h-full w-full object-cover" />
                 : <div className="flex h-full w-full items-center justify-center p-2 text-center text-xs text-[var(--label3)]">{item.title}</div>}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

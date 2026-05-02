@@ -24,8 +24,7 @@ export default function PosterCollage({ posters }: Props) {
                 key={ri}
                 src={url}
                 alt=""
-                loading="lazy"
-                className="w-full aspect-[2/3] object-cover rounded-lg shrink-0"
+                className="w-full aspect-[193/256] object-cover rounded-lg shrink-0"
               />
             ))}
           </div>

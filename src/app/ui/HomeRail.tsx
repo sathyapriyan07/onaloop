@@ -34,13 +34,12 @@ export default function HomeRail({ title, items, viewAllTo }: Props) {
             <Link
               key={item.id}
               to={item.to}
-              className="otl-card shrink-0 w-[calc((100vw-2rem-2rem)/3)] sm:w-[34vw] sm:max-w-[210px] aspect-[2/3] rounded-[14px] overflow-hidden"
+              className="otl-card shrink-0 w-[calc((100vw-2rem-2rem)/3)] sm:w-[34vw] sm:max-w-[210px] aspect-[193/256]"
             >
               {item.posterUrl ? (
                 <img
                   src={item.posterUrl}
                   alt={item.title}
-                  loading="lazy"
                   className="h-full w-full object-cover"
                 />
               ) : null}

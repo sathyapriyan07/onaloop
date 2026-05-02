@@ -20,18 +20,18 @@ export default function PosterCard({ to, title, posterUrl, logoUrl, aspect = 'po
       to={to}
       className={clsx(
         'otl-card block',
-        aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]',
+        aspect === 'poster' ? 'aspect-[193/256]' : 'aspect-[16/9]',
       )}
     >
       {posterUrl ? (
-        <img src={posterUrl} alt={title} loading="lazy" className="h-full w-full object-cover" />
+        <img src={posterUrl} alt={title} className="h-full w-full object-cover" />
       ) : null}
 
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 p-2.5">
         {logoUrl ? (
-          <img src={logoUrl} alt={title} loading="lazy" className="max-h-8 w-auto max-w-full object-contain object-left drop-shadow-lg" />
+          <img src={logoUrl} alt={title} className="max-h-8 w-auto max-w-full object-contain object-left drop-shadow-lg" />
         ) : (
           <div className="line-clamp-2 text-xs font-semibold leading-tight text-[var(--label)]">{title}</div>
         )}

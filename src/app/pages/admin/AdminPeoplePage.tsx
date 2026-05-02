@@ -219,13 +219,13 @@ export default function AdminPeoplePage() {
       </div>
       {error ? <div className="text-sm text-red-300">{error}</div> : null}
       <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search people…" />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {people.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).map((p) => (
           <div key={p.id} className="group relative">
             <button onClick={() => setEditing(p)} className="w-full text-left">
-              <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-white/5">
+              <div className="relative aspect-[193/256] overflow-hidden rounded-xl bg-white/5">
                 {p.selected_profile_url
-                  ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
+                  ? <img src={p.selected_profile_url} alt={p.name} className="h-full w-full object-cover" />
                   : <div className="flex h-full w-full items-center justify-center text-2xl text-white/20">{p.name[0]}</div>}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-1.5">

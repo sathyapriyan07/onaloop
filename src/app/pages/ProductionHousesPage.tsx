@@ -23,7 +23,7 @@ export default function ProductionHousesPage() {
           p.display_image_url ? (
             <Link key={p.id} to={`/studio/${p.id}`} className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 block">
               <div className="aspect-[16/10] w-full">
-                <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover" loading="lazy" />
+                <img src={p.display_image_url} alt={p.name} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0" />
               </div>
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3">

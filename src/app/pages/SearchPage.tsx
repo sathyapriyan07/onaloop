@@ -197,11 +197,11 @@ export default function SearchPage() {
       {movies.length > 0 && (
         <section className="space-y-3">
           <h2 className="otl-section-title text-[var(--label)]">Movies</h2>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {movies.map((m) => (
-              <Link key={m.id} to={`/movie/${m.id}`} className="otl-card aspect-[2/3]">
+              <Link key={m.id} to={`/movie/${m.id}`} className="otl-card aspect-[193/256]">
                 {m.selected_poster_url
-                  ? <img src={m.selected_poster_url} alt={m.title} loading="lazy" className="h-full w-full object-cover" />
+                  ? <img src={m.selected_poster_url} alt={m.title} className="h-full w-full object-cover" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{m.title}</div>}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-2 line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{m.title}</div>
@@ -214,11 +214,11 @@ export default function SearchPage() {
       {series.length > 0 && (
         <section className="space-y-3">
           <h2 className="otl-section-title text-[var(--label)]">Series</h2>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="w-[965px] max-w-full mx-auto grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {series.map((s) => (
-              <Link key={s.id} to={`/series/${s.id}`} className="otl-card aspect-[2/3]">
+              <Link key={s.id} to={`/series/${s.id}`} className="otl-card aspect-[193/256]">
                 {s.selected_poster_url
-                  ? <img src={s.selected_poster_url} alt={s.title} loading="lazy" className="h-full w-full object-cover" />
+                  ? <img src={s.selected_poster_url} alt={s.title} className="h-full w-full object-cover" />
                   : <div className="flex h-full w-full items-center justify-center p-2 text-center text-[10px] text-[var(--label3)]">{s.title}</div>}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-2 line-clamp-2 text-[10px] font-semibold leading-tight text-[var(--label)]">{s.title}</div>

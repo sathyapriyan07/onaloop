@@ -24,12 +24,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="absolute inset-0">
         <div className="grid grid-cols-6 gap-2 h-full opacity-20">
           {images.slice(0, 24).map((image, index) => (
-            <div key={index} className="aspect-[2/3] overflow-hidden rounded-lg">
+            <div key={index} className="aspect-[193/256] overflow-hidden rounded-lg">
               <img 
                 src={image.src} 
                 alt={image.alt}
                 className="w-full h-full object-cover"
-                loading="lazy"
               />
             </div>
           ))}

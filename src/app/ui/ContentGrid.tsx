@@ -31,10 +31,10 @@ export default function ContentGrid({ title, items, aspect = 'poster', colsClass
       <div className={`grid gap-5 ${gridClass}`}>
         {items.map((item) => (
           <Link key={item.id} to={item.to}
-            className={`block rounded-[14px] overflow-hidden ${aspect === 'poster' ? 'aspect-[2/3]' : 'aspect-[16/9]'}`}>
+            className={`otl-card block ${aspect === 'poster' ? 'aspect-[193/256]' : 'aspect-[16/9]'}`}>
             <div className="relative h-full w-full">
               {item.imageUrl ? (
-                <img src={item.imageUrl} alt={item.title} loading="lazy"
+                <img src={item.imageUrl} alt={item.title}
                   className="h-full w-full object-cover" />
               ) : null}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
