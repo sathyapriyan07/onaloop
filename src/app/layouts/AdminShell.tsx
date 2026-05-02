@@ -12,7 +12,7 @@ export default function AdminShell() {
   return (
     <div className="min-h-dvh" style={{ background: 'var(--bg)' }}>
       <TopBar />
-      <div className="mx-auto w-full max-w-screen-2xl px-4 pt-28 pb-6">
+      <div className="mx-auto w-full max-w-screen-2xl px-4 pt-20 md:pt-14 pb-6">
         <Outlet />
       </div>
     </div>
