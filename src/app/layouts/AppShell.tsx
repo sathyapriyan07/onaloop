@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import BottomNav from '../ui/BottomNav'
-import FloatingBar from '../ui/FloatingBar'
+import TopBar from '../ui/TopBar'
 import Footer from '../ui/Footer'
 
 export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
@@ -16,7 +15,7 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
 
   return (
     <div className="min-h-dvh">
-      {!isDetailPage && !isHome && <FloatingBar />}
+      <TopBar />
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
           key={location.pathname}
@@ -25,14 +24,13 @@ export default function AppShell({ noFooter = false }: { noFooter?: boolean }) {
           exit={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
           transition={reduceMotion ? { duration: 0 } : { duration: 0.18, ease: 'easeOut' }}
           className={`mx-auto w-full ${isHome ? 'max-w-none' : 'max-w-screen-2xl'} overflow-x-clip ${
-            isDetailPage ? 'pb-24' : isHome ? 'pb-24' : 'px-4 pb-24 pt-20'
+            isDetailPage ? 'pb-24' : isHome ? 'pb-12' : 'px-4 pb-12 pt-16'
           }`}
         >
           <Outlet />
         </motion.main>
       </AnimatePresence>
       {!noFooter && <Footer />}
-      <BottomNav />
     </div>
   )
 }

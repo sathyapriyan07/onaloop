@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Search, Shield, LogIn, User, Repeat2 } from 'lucide-react'
+import { Search, Shield, User, Repeat2 } from 'lucide-react'
 import { useSession } from '../../lib/useSession'
 import { supabase } from '../../lib/supabase'
 import { useAdminGuard } from '../../lib/useAdminGuard'
@@ -20,6 +20,7 @@ export default function TopBar() {
   const { isAdmin } = useAdminGuard()
   const navigate = useNavigate()
   const [newCount, setNewCount] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -29,51 +30,56 @@ export default function TopBar() {
     ]).then(([m, s]) => setNewCount((m.count ?? 0) + (s.count ?? 0)))
   }, [])
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   useKeyboardShortcut('/', () => navigate('/search'))
 
   return (
-    <header className="sticky top-0 z-40" style={{ background: 'var(--surface)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--separator)' }}>
-      <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 h-14 gap-4">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 border-b"
+      style={{
+        background: scrolled ? 'rgba(11,12,15,0.95)' : 'rgba(11,12,15,0.85)',
+        borderColor: 'var(--separator)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      }}
+    >
+      <div className="mx-auto flex h-12 w-full max-w-screen-2xl items-center gap-3 px-4">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <Repeat2 size={18} className="text-accent" strokeWidth={2.5} />
-          <span className="text-sm font-bold tracking-tight uppercase">
-            On<span className="text-accent">The</span>Loop
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
+            <Repeat2 size={14} strokeWidth={2.5} />
+          </span>
+          <span className="text-sm font-black tracking-tight text-[var(--label)] hidden sm:inline">
+            OnTheLoop
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-0">
+        <nav className="hidden md:flex items-center gap-0.5 flex-1">
           {navLinks.map(({ to, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
+            <NavLink key={to} to={to} end={end}
               className={({ isActive }) =>
-                `relative px-4 h-14 flex items-center text-sm font-medium transition-colors ${
-                  isActive ? 'text-[var(--label)]' : 'text-[var(--label2)] hover:text-[var(--label)]'
+                `px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
+                  isActive ? 'text-[var(--on-accent)]' : 'text-[var(--label2)] hover:text-[var(--label)]'
                 }`
               }
+              style={({ isActive }: { isActive: boolean }) => isActive ? { background: 'var(--accent)' } : {}}
             >
-              {({ isActive }) => (
-                <>
-                  {label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full" style={{ background: 'var(--accent)' }} />
-                  )}
-                </>
-              )}
+              {label}
             </NavLink>
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => navigate('/search')}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors"
-            aria-label="Search"
+        <div className="flex items-center gap-1 ml-auto">
+          <button onClick={() => navigate('/search')}
+            className="relative flex h-8 w-8 items-center justify-center rounded-md text-[var(--label2)] hover:text-[var(--label)] hover:bg-white/5 transition-colors"
           >
-            <Search size={17} />
+            <Search size={15} />
             {newCount > 0 && (
-              <span className="absolute right-1 top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold text-white" style={{ background: 'var(--accent)' }}>
+              <span className="absolute right-0 top-0 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[7px] font-black" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                 {newCount > 9 ? '9+' : newCount}
               </span>
             )}
@@ -82,29 +88,47 @@ export default function TopBar() {
           <ThemeToggle />
 
           {isAdmin && (
-            <NavLink to="/admin" className="flex items-center gap-1.5 rounded-lg px-3 h-9 text-xs font-medium text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors">
-              <Shield size={14} />
-              <span className="hidden sm:inline">Admin</span>
+            <NavLink to="/admin"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-[var(--label2)] hover:text-[var(--label)] hover:bg-white/5 transition-colors"
+            >
+              <Shield size={15} />
             </NavLink>
           )}
 
           {user ? (
-            <Link to="/profile" className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--label2)] hover:text-[var(--label)] hover:bg-[var(--surface3)] transition-colors">
-              <User size={17} />
+            <Link to="/profile"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-[var(--label2)] hover:text-[var(--label)] hover:bg-white/5 transition-colors"
+            >
+              <User size={15} />
             </Link>
           ) : (
             <>
-              <NavLink to="/login" className="flex items-center h-9 px-3 text-xs font-medium text-[var(--label2)] hover:text-[var(--label)] transition-colors">
-                <LogIn size={14} className="mr-1.5" />
-                <span className="hidden sm:inline">Log in</span>
+              <NavLink to="/login"
+                className="px-3 py-1.5 text-xs font-semibold rounded-md text-[var(--label2)] hover:text-[var(--label)] hover:bg-white/5 transition-colors"
+              >
+                Log in
               </NavLink>
-              <NavLink to="/signup" className="flex items-center h-8 px-4 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-90" style={{ background: 'var(--accent)' }}>
+              <NavLink to="/signup" className="px-3 py-1.5 text-xs font-bold rounded-md transition-opacity hover:opacity-90" style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}>
                 Sign up
               </NavLink>
             </>
           )}
         </div>
       </div>
+
+      <nav className="flex md:hidden border-t" style={{ borderColor: 'var(--separator)' }}>
+        {navLinks.map(({ to, label, end }) => (
+          <NavLink key={to} to={to} end={end}
+            className={({ isActive }) =>
+              `flex-1 py-2 text-center text-[10px] font-semibold transition-colors ${
+                isActive ? 'text-[var(--accent)]' : 'text-[var(--label3)]'
+              }`
+            }
+          >
+            {label}
+          </NavLink>
+        ))}
+      </nav>
     </header>
   )
 }

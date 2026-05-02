@@ -1,6 +1,6 @@
 import { Outlet, Navigate, useLocation } from 'react-router-dom'
 import { useAdminGuard } from '../../lib/useAdminGuard'
-import FloatingBar from '../ui/FloatingBar'
+import TopBar from '../ui/TopBar'
 
 export default function AdminShell() {
   const location = useLocation()
@@ -11,8 +11,8 @@ export default function AdminShell() {
 
   return (
     <div className="min-h-dvh" style={{ background: 'var(--bg)' }}>
-      <FloatingBar />
-      <div className="mx-auto w-full max-w-screen-2xl px-4 pt-20 pb-6">
+      <TopBar />
+      <div className="mx-auto w-full max-w-screen-2xl px-4 pt-28 pb-6">
         <Outlet />
       </div>
     </div>
