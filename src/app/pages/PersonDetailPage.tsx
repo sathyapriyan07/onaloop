@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
-import BackButton from '../ui/BackButton'
 import Expandable from '../ui/Expandable'
 import ContentGrid from '../ui/ContentGrid'
 import PosterCollage from '../ui/PosterCollage'
@@ -193,7 +192,6 @@ export default function PersonDetailPage() {
   if (!person) return (
     <div className="space-y-4">
       <div className="mx-auto w-full max-w-screen-xl px-4 pt-16">
-        <BackButton />
         <div className="mt-4 min-h-[200px] rounded-xl skeleton" />
         <div className="mt-4 h-6 w-40 skeleton rounded-lg" />
         <div className="mt-2 h-4 w-56 skeleton rounded" />
@@ -207,10 +205,6 @@ export default function PersonDetailPage() {
 
   return (
     <div className="pb-10">
-      <div className="mx-auto w-full max-w-screen-xl px-4 pt-4">
-        <BackButton />
-      </div>
-
       <div className="mt-4">
         <PosterCollage posters={collagePosters} />
       </div>
